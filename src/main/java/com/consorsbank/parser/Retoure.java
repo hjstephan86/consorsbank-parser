@@ -11,13 +11,16 @@ public class Retoure implements Comparable<Retoure> {
     private String date;
     private String time;
     private LocalDateTime dateTime;
+    private DateTimeFormatter readFormat;
+    private DateTimeFormatter writeFormat;
+
+    public Retoure() {
+        readFormat = DateTimeFormatter.ofPattern(Helper.DATETIME_FORMAT_READ);
+        writeFormat = DateTimeFormatter.ofPattern(Helper.DATETIME_FORMAT_WRITE);
+    }
 
     public LocalDateTime getDateTime() {
         return dateTime;
-    }
-
-    public void setDateTime(LocalDateTime dateTime) {
-        this.dateTime = dateTime;
     }
 
     public String getTrackingId() {
@@ -47,8 +50,7 @@ public class Retoure implements Comparable<Retoure> {
     public void setTime(String time) {
         this.time = time;
         String dateTime = this.date + " " + this.time;
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-        LocalDateTime localDateTime = LocalDateTime.parse(dateTime, formatter);
+        LocalDateTime localDateTime = LocalDateTime.parse(dateTime, readFormat);
         this.dateTime = localDateTime;
     }
 
@@ -62,5 +64,12 @@ public class Retoure implements Comparable<Retoure> {
             return 0;
         else
             return this.getDateTime().isBefore(o.getDateTime()) ? -1 : 1;
+    }
+
+    public String toPaddedString() {
+        return Helper.padRight(this.sender, Helper.SENDER_COL_WIDTH)
+                + Helper.padRight(this.recipient, Helper.RECEPIENT_COL_WIDTH)
+                + Helper.padRight(this.writeFormat.format(this.dateTime), Helper.DATETIME_COL_WIDTH)
+                + Helper.padRight(this.trackingId, Helper.TRACKING_ID_COL_WIDTH);
     }
 }

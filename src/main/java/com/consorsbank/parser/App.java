@@ -13,10 +13,12 @@ import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
 import java.util.StringTokenizer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 public class App {
 
@@ -26,17 +28,26 @@ public class App {
         File folderPDF = new File(Helper.PATH_TO_PDF_REPORTS);
         File[] listOfPDFFiles = folderPDF.listFiles();
         ArrayList<Transfer> transfers = new ArrayList<Transfer>();
-        readTransfers(listOfPDFFiles, transfers);
+        parseTransfers(listOfPDFFiles, transfers);
 
         Collections.sort(transfers);
         setPosition(transfers);
         findRetoure(transfers);
+        List<Transfer> transfersWithRetoure =
+                transfers.stream().filter(transfer -> transfer.getRetoure() > 0)
+                        .collect(Collectors.toList());
 
         File folderJPEG = new File(Helper.PATH_TO_RETOURE_LABELS);
         File[] listOfJPEGFiles = folderJPEG.listFiles();
-        HashMap<String, Retoure> labels = parseRetoureLabels(listOfJPEGFiles);
+        HashMap<String, Retoure> labelsMap = parseRetoureLabels(listOfJPEGFiles);
+        ArrayList<Retoure> labels = new ArrayList<Retoure>(labelsMap.values());
+        Collections.sort(labels);
 
         printTransfers(transfers);
+        System.out.println();
+        printTransfers(transfersWithRetoure);
+        System.out.println();
+        printRetoures(labels);
         exportTransfers(transfers);
     }
 
@@ -64,7 +75,7 @@ public class App {
                 Retoure label = null;
                 while (jpegTokenizer.hasMoreTokens()) {
                     String token = jpegTokenizer.nextToken();
-                    label = parseRetourelabel(label, token);
+                    label = parseRetoureLabel(label, token);
                     if (label != null
                             && label.getRecipient() != null
                             && label.getSender() != null
@@ -80,25 +91,25 @@ public class App {
         return labels;
     }
 
-    private static Retoure parseRetourelabel(Retoure label, String token) {
-        if (token.startsWith(":recipient_name: [{value=")) {
+    private static Retoure parseRetoureLabel(Retoure label, String token) {
+        if (token.startsWith(Helper.JPEG_RECIPIENT_IN_TXT)) {
             label = new Retoure();
             String recipient = token.substring(token.indexOf("=") + 1, token.indexOf("}"));
             label.setRecipient(recipient);
         }
-        if (token.startsWith(":sender_name: [{value=")) {
+        if (token.startsWith(Helper.JPEG_SENDER_IN_TXT)) {
             String sender = token.substring(token.indexOf("=") + 1, token.indexOf("}"));
             label.setSender(sender);
         }
-        if (token.startsWith(":shipment_date: [{value=")) {
+        if (token.startsWith(Helper.JPEG_DATE_IN_TXT)) {
             String date = token.substring(token.indexOf("=") + 1, token.indexOf("}"));
             label.setDate(date);
         }
-        if (token.startsWith(":shipment_time: [{value=")) {
+        if (token.startsWith(Helper.JPEG_TIME_IN_TXT)) {
             String time = token.substring(token.indexOf("=") + 1, token.indexOf("}"));
             label.setTime(time);
         }
-        if (token.startsWith(":tracking_number: [{value=")) {
+        if (token.startsWith(Helper.JPEG_TRACKING_ID_IN_TXT)) {
             String trackingId = token.substring(token.indexOf("=") + 1, token.indexOf("}"));
             if (Helper.trackingIDExists(trackingId)) {
                 label.setTrackingId(trackingId);
@@ -107,17 +118,17 @@ public class App {
         return label;
     }
 
-    private static void readTransfers(File[] listOfFiles, ArrayList<Transfer> transfers)
+    private static void parseTransfers(File[] listOfFiles, ArrayList<Transfer> transfers)
             throws IOException {
         for (File f : listOfFiles) {
             if (f.isFile() && f.getName().toLowerCase().endsWith(".pdf")) {
                 String pdfText = Helper.getPDFText(f.getAbsolutePath());
-                readTransfers(pdfText, transfers);
+                parseTransfers(pdfText, transfers);
             }
         }
     }
 
-    private static void readTransfers(String pdfText, ArrayList<Transfer> transfers) {
+    private static void parseTransfers(String pdfText, ArrayList<Transfer> transfers) {
         SimpleDateFormat dateFormat = new SimpleDateFormat(Helper.SIMPLE_DATE_FORMAT);
         DecimalFormat decimalFormat = new DecimalFormat("#.00");
         decimalFormat.setDecimalFormatSymbols(DecimalFormatSymbols.getInstance(Locale.GERMAN));
@@ -221,7 +232,7 @@ public class App {
         }
     }
 
-    private static void printTransfers(ArrayList<Transfer> transfers) {
+    private static void printTransfers(List<Transfer> transfers) {
         double sum = 0;
         System.out.println(
                 Helper.padRight("Pos", Helper.POS_COL_WIDTH)
@@ -243,13 +254,24 @@ public class App {
         System.out.println("Total sum: " + decimalFormat.format(sum));
     }
 
+    private static void printRetoures(ArrayList<Retoure> labelsList) {
+        System.out.println(
+                Helper.padRight("Sender", Helper.SENDER_COL_WIDTH)
+                        + Helper.padRight("Recipient", Helper.RECEPIENT_COL_WIDTH)
+                        + Helper.padRight("Datetime", Helper.DATETIME_COL_WIDTH)
+                        + Helper.padRight("Tracking Id", Helper.TRACKING_ID_COL_WIDTH));
+
+        for (Retoure r : labelsList) {
+            System.out.println(r.toPaddedString());
+        }
+    }
+
     private static void exportTransfers(ArrayList<Transfer> transfers) {
         StringBuilder stringBuilder = new StringBuilder();
 
-        int counter = 1;
         stringBuilder.append("Pos;Date;Balance;Retoure (Pos);BIC;IBAN;Name;Purpose\n");
         for (Transfer transfer : transfers) {
-            stringBuilder.append(String.valueOf(counter++) + ";" + transfer.toCSVString() + "\n");
+            stringBuilder.append(transfer.toCSVString() + "\n");
         }
 
         try {

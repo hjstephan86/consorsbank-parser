@@ -29,7 +29,7 @@ public class Transfer implements Comparable<Transfer> {
         this.name = "";
         this.purpose = "";
 
-        dateFormat = new SimpleDateFormat(Helper.SIMPLE_DATE_FORMAT);
+        this.dateFormat = new SimpleDateFormat(Helper.SIMPLE_DATE_FORMAT);
     }
 
     public int getPosition() {
@@ -71,17 +71,22 @@ public class Transfer implements Comparable<Transfer> {
     }
 
     public String toPaddedString() {
-        return Helper.padRight(dateFormat.format(this.date), Helper.DATE_COL_WIDTH)
+        return Helper.padRight(String.valueOf(this.position), Helper.POS_COL_WIDTH)
+                + Helper.padRight(dateFormat.format(this.date), Helper.DATE_COL_WIDTH)
                 + Helper.padRight(this.balanceNumber.toString(), Helper.BALANCE_COL_WIDTH)
                 + Helper.padRight(String.valueOf(this.retoure), Helper.RETOURE_COL_WIDTH)
                 + Helper.padRight(this.BIC, Helper.BIC_COL_WIDTH)
                 + Helper.padRight(this.IBAN, Helper.IBAN_COL_WIDTH)
-                + Helper.padRight(this.name, Helper.NAME_COL_WIDTH)
+                + Helper.padRight(
+                        Helper.truncate(this.name,
+                                Helper.NAME_COL_WIDTH - Helper.TRUNCATE_COL_WIDTH_DELTA),
+                        Helper.NAME_COL_WIDTH)
                 + this.purpose;
     }
 
     public String toCSVString() {
-        return dateFormat.format(this.date)
+        return this.position
+                + ";" + this.dateFormat.format(this.date)
                 + ";" + this.balanceNumber.toString()
                 + ";" + this.retoure
                 + ";" + this.BIC
@@ -112,5 +117,9 @@ public class Transfer implements Comparable<Transfer> {
 
     public void setRetoure(int retoure) {
         this.retoure = retoure;
+    }
+
+    public int getRetoure() {
+        return retoure;
     }
 }

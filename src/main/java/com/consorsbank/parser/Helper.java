@@ -24,24 +24,45 @@ public class Helper {
             "/home/stephan/Downloads/Kontobewegungen/230583809/Transfers-%DATETIME%.csv";
 
     public static final String SIMPLE_DATE_FORMAT = "dd.MM.yyyy";
+    public static final String DATETIME_FORMAT_READ = "yyyy-MM-dd HH:mm:ss";
+    public static final String DATETIME_FORMAT_WRITE = "dd.MM.yyyy HH:mm";
 
     public static final String PDF_REGEX_TRANSFER_TYPES =
             "GEHALT/RENTE|EURO-UEBERW.|LASTSCHRIFT|DAUERAUFTRAG|GIROCARD|GEBUEHREN";
     public static final String PDF_KONTOSTAND_ZUM_IN_TXT = "Kontostand zum ";
     public static final String PDF_INTERIM_KONTOSTAND_ZUM_IN_TXT = "*** Kontostand zum ";
 
+    public static final String JPEG_RECIPIENT_IN_TXT = ":recipient_name: [{value=";
+    public static final String JPEG_SENDER_IN_TXT = ":sender_name: [{value=";
+    public static final String JPEG_DATE_IN_TXT = ":shipment_date: [{value=";
+    public static final String JPEG_TIME_IN_TXT = ":shipment_time: [{value=";
+    public static final String JPEG_TRACKING_ID_IN_TXT = ":tracking_number: [{value=";
+
     public static final int RETOURE_LIMIT_DAYS = 100;
 
     public static final int POS_COL_WIDTH = 10;
     public static final int DATE_COL_WIDTH = 15;
     public static final int BALANCE_COL_WIDTH = 15;
-    public static final int RETOURE_COL_WIDTH = 10;
+    public static final int RETOURE_COL_WIDTH = 15;
     public static final int BIC_COL_WIDTH = 15;
     public static final int IBAN_COL_WIDTH = 25;
     public static final int NAME_COL_WIDTH = 25;
 
+    public static final int SENDER_COL_WIDTH = 30;
+    public static final int RECEPIENT_COL_WIDTH = 30;
+    public static final int DATETIME_COL_WIDTH = 30;
+    public static final int TRACKING_ID_COL_WIDTH = 30;
+
+    public static final int TRUNCATE_COL_WIDTH_DELTA = 5;
+
     public static String padRight(String s, int n) {
         return String.format("%-" + n + "s", s);
+    }
+
+    public static String truncate(String str, int length) {
+        return (str.length() > length)
+                ? str.substring(0, length) + "..."
+                : str;
     }
 
     public static String getPDFText(String filename) throws IOException {
