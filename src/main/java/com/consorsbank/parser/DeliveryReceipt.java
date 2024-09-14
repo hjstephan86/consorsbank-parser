@@ -3,18 +3,18 @@ package com.consorsbank.parser;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
-public class Retoure implements Comparable<Retoure> {
+public class DeliveryReceipt implements Comparable<DeliveryReceipt> {
 
-    private String trackingId;
-    private String recipient;
     private String sender;
+    private String recipient;
     private String date;
     private String time;
     private LocalDateTime dateTime;
+    private String trackingId;
     private DateTimeFormatter readFormat;
     private DateTimeFormatter writeFormat;
 
-    public Retoure() {
+    public DeliveryReceipt() {
         readFormat = DateTimeFormatter.ofPattern(Helper.DATETIME_FORMAT_READ);
         writeFormat = DateTimeFormatter.ofPattern(Helper.DATETIME_FORMAT_WRITE);
     }
@@ -59,7 +59,7 @@ public class Retoure implements Comparable<Retoure> {
     }
 
     @Override
-    public int compareTo(Retoure o) {
+    public int compareTo(DeliveryReceipt o) {
         if (this.getDateTime().equals(o.getDateTime()))
             return 0;
         else
@@ -67,9 +67,25 @@ public class Retoure implements Comparable<Retoure> {
     }
 
     public String toPaddedString() {
-        return Helper.padRight(this.sender, Helper.SENDER_COL_WIDTH)
-                + Helper.padRight(this.recipient, Helper.RECEPIENT_COL_WIDTH)
-                + Helper.padRight(this.writeFormat.format(this.dateTime), Helper.DATETIME_COL_WIDTH)
-                + Helper.padRight(this.trackingId, Helper.TRACKING_ID_COL_WIDTH);
+        return Helper.padRight(
+                Helper.truncate(
+                        this.sender != null && !this.sender.toLowerCase().equals("null")
+                                ? this.sender
+                                : "",
+                        Helper.SENDER_COL_WIDTH - Helper.TRUNCATE_COL_WIDTH_DELTA),
+                Helper.SENDER_COL_WIDTH)
+                + Helper.padRight(
+                        Helper.truncate(
+                                this.recipient != null
+                                        && !this.recipient.toLowerCase().equals("null")
+                                                ? this.recipient
+                                                : "",
+                                Helper.RECEPIENT_COL_WIDTH - Helper.TRUNCATE_COL_WIDTH_DELTA),
+                        Helper.RECEPIENT_COL_WIDTH)
+                + Helper.padRight(
+                        this.dateTime != null ? this.writeFormat.format(this.dateTime) : "",
+                        Helper.DATETIME_COL_WIDTH)
+                + Helper.padRight(this.trackingId != null ? this.trackingId : "",
+                        Helper.TRACKING_ID_COL_WIDTH);
     }
 }

@@ -1,8 +1,8 @@
 ## consorsbank-parser
 
-This is a simple java project to parse monthly PDF reports genrated by Consorsbank and retoure labels. Notice, [pdfbox](https://pdfbox.apache.org/3.0/commandline.html) is used to parse PDF reports and [mindee](https://platform.mindee.com) is used to parse retoure labels.
+This is a simple java project to parse monthly PDF reports genrated by Consorsbank and DHL delivery receipts. Notice, [pdfbox](https://pdfbox.apache.org/3.0/commandline.html) is used to parse PDF reports and [mindee](https://platform.mindee.com) is used to parse delivery receipts.
 
-This parser parses PDF reports and prints the data of each transfer in a pretty format to console. It also parses retoure labels in JPEG format and prints the data of each retoure label to console. Additionally, it exports the transfers to CSV. Paths can be configured inside `App.Helper`, i.e., 
+This parser parses PDF reports and prints the data of each transfer in a pretty format to console. It also parses delivery receipts in JPEG format and prints the data of each delivery receipt including the tracking id to console. It identifies retoure transfers to which you can assign tracking ids interactively via console. Additionally, it exports the transfers to CSV, respecting tracking id assignemnts by the user. The API key for mindee and paths can be configured inside `App.Helper`, i.e., 
 - the path to the folder where the PDF reports to pasrse are located in, 
 - the path to the folder where the JPEG retoure lables are located in, 
 - and the path to the CSV which should be generated for export.

@@ -10,13 +10,18 @@ public class Transfer implements Comparable<Transfer> {
     private int position;
     private Date date;
     private BalanceNumber balanceNumber;
-    private int retoure;
+
+    /**
+     * The position of the transfer for which this transfer is a retoure
+     */
+    private int retourePosition;
     private boolean isBalanced;
     private String bankID;
     private String BIC;
     private String IBAN;
     private String name;
     private String purpose;
+    private DeliveryReceipt deliveryReceipt;
 
     private SimpleDateFormat dateFormat;
 
@@ -70,11 +75,14 @@ public class Transfer implements Comparable<Transfer> {
         this.IBAN = this.bankID.substring(this.bankID.indexOf(" ") + 1);
     }
 
+    public String getPaddedPosistion() {
+        return Helper.padRight(String.valueOf(this.position), Helper.POS_COL_WIDTH);
+    }
+
     public String toPaddedString() {
-        return Helper.padRight(String.valueOf(this.position), Helper.POS_COL_WIDTH)
-                + Helper.padRight(dateFormat.format(this.date), Helper.DATE_COL_WIDTH)
+        return Helper.padRight(dateFormat.format(this.date), Helper.DATE_COL_WIDTH)
                 + Helper.padRight(this.balanceNumber.toString(), Helper.BALANCE_COL_WIDTH)
-                + Helper.padRight(String.valueOf(this.retoure), Helper.RETOURE_COL_WIDTH)
+                + Helper.padRight(String.valueOf(this.retourePosition), Helper.RETOURE_COL_WIDTH)
                 + Helper.padRight(this.BIC, Helper.BIC_COL_WIDTH)
                 + Helper.padRight(this.IBAN, Helper.IBAN_COL_WIDTH)
                 + Helper.padRight(
@@ -88,11 +96,12 @@ public class Transfer implements Comparable<Transfer> {
         return this.position
                 + ";" + this.dateFormat.format(this.date)
                 + ";" + this.balanceNumber.toString()
-                + ";" + this.retoure
+                + ";" + this.retourePosition
                 + ";" + this.BIC
                 + ";" + this.IBAN
                 + ";" + this.name
-                + ";" + this.purpose;
+                + ";" + this.purpose
+                + ";" + this.getTrackingID();
     }
 
     @Override
@@ -115,11 +124,23 @@ public class Transfer implements Comparable<Transfer> {
         this.isBalanced = isBalanced;
     }
 
-    public void setRetoure(int retoure) {
-        this.retoure = retoure;
+    public void setRetourePosition(int retoure) {
+        this.retourePosition = retoure;
     }
 
-    public int getRetoure() {
-        return retoure;
+    public int getRetourePosition() {
+        return retourePosition;
+    }
+
+    private String getTrackingID() {
+        return (deliveryReceipt != null) ? deliveryReceipt.getTrackingId() : "";
+    }
+
+    public DeliveryReceipt getDeliveryReceipt() {
+        return deliveryReceipt;
+    }
+
+    public void setDeliveryReceipt(DeliveryReceipt deliveryReceipt) {
+        this.deliveryReceipt = deliveryReceipt;
     }
 }

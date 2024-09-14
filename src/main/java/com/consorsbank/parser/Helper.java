@@ -2,6 +2,7 @@ package com.consorsbank.parser;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.apache.pdfbox.Loader;
@@ -48,12 +49,20 @@ public class Helper {
     public static final int IBAN_COL_WIDTH = 25;
     public static final int NAME_COL_WIDTH = 25;
 
-    public static final int SENDER_COL_WIDTH = 30;
-    public static final int RECEPIENT_COL_WIDTH = 30;
-    public static final int DATETIME_COL_WIDTH = 30;
-    public static final int TRACKING_ID_COL_WIDTH = 30;
+    public static final int EMPTY_COL_WIDTH = 5;
+    public static final int SENDER_COL_WIDTH = 25;
+    public static final int RECEPIENT_COL_WIDTH = 25;
+    public static final int DATETIME_COL_WIDTH = 25;
+    public static final int TRACKING_ID_COL_WIDTH = 25;
 
     public static final int TRUNCATE_COL_WIDTH_DELTA = 5;
+
+    public static final String CONSOLE_COLOR_YELLOW = "\033[0;33m";
+    public static final String CONSOLE_COLOR_BLUE = "\033[0;34m";
+    public static final String CONSOLE_COLOR_CYAN = "\033[0;36m";
+    public static final String CONSOLE_COLOR_RESET = "\033[0m";
+    public static final String CONSOLE_COLOR_RED = "\033[0;31m";
+    public static final String CONSOLE_COLOR_GREEN = "\033[0;32m";
 
     public static String padRight(String s, int n) {
         return String.format("%-" + n + "s", s);
@@ -123,5 +132,20 @@ public class Helper {
         Matcher matcher = pattern.matcher(trackingID);
 
         return matcher.matches();
+    }
+
+    public static DeliveryReceipt getRetoure(ArrayList<DeliveryReceipt> receipts, int number) {
+        if (receipts.size() == 0)
+            return null;
+        if (number > 0 && number <= receipts.size()) {
+            int counter = 1;
+            for (DeliveryReceipt r : receipts) {
+                if (counter == number) {
+                    return r;
+                }
+                counter++;
+            }
+        }
+        return null;
     }
 }

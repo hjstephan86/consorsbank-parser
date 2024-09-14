@@ -1,6 +1,7 @@
 package com.consorsbank.parser;
 
 import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileReader;
 import org.junit.Test;
@@ -11,7 +12,7 @@ public class AppTest {
     public void testMain() {
         int expectedEntriesCount = 1554;
         String expectedLastEntry =
-                "1554;30.08.2024;500,00;0;<SPBIDE3B>;DE72480501610150252765;DAMARIS EPP;Erbe";
+                "1554;30.08.2024;500,00;0;<SPBIDE3B>;DE72480501610150252765;DAMARIS EPP;Erbe;";
 
         String pathToPDFs = "/home/stephan/Downloads/Kontobewegungen/Test/";
         String pathToRetoureLabels = "/home/stephan/Downloads/Kontobewegungen/Test/";
@@ -20,6 +21,11 @@ public class AppTest {
 
         String[] arguments = {pathToPDFs, pathToRetoureLabels, pathToCSV};
         try {
+
+            String simulatedInput = "1";
+            ByteArrayInputStream in = new ByteArrayInputStream(simulatedInput.getBytes());
+            System.setIn(in);
+
             App.main(arguments);
 
             File f = new File(pathToCSV);
