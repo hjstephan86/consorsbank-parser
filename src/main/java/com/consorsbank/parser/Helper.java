@@ -19,7 +19,7 @@ public class Helper {
     public static String MINDEE_API_KEY = "";
 
     public static String PATH_TO_PDF_REPORTS = "/home/stephan/Downloads/Kontobewegungen/230583809/";
-    public static String PATH_TO_RETOURE_LABELS =
+    public static String PATH_TO_DELIVERY_RECEIPTS =
             "/home/stephan/Downloads/Kontobewegungen/Retoure/";
     public static String PATH_TO_CSV =
             "/home/stephan/Downloads/Kontobewegungen/230583809/Transfers-%DATETIME%.csv";
@@ -28,16 +28,17 @@ public class Helper {
     public static final String DATETIME_FORMAT_READ = "yyyy-MM-dd HH:mm:ss";
     public static final String DATETIME_FORMAT_WRITE = "dd.MM.yyyy HH:mm";
 
-    public static final String PDF_REGEX_TRANSFER_TYPES =
+    public static final String PDF_REPORT_REGEX_TRANSFER_TYPES =
             "GEHALT/RENTE|EURO-UEBERW.|LASTSCHRIFT|DAUERAUFTRAG|GIROCARD|GEBUEHREN";
-    public static final String PDF_KONTOSTAND_ZUM_IN_TXT = "Kontostand zum ";
-    public static final String PDF_INTERIM_KONTOSTAND_ZUM_IN_TXT = "*** Kontostand zum ";
+    public static final String PDF_REPORT_KONTOSTAND_ZUM_IN_TXT = "Kontostand zum ";
+    public static final String PDF_REPORT_INTERIM_KONTOSTAND_ZUM_IN_TXT = "*** Kontostand zum ";
 
-    public static final String JPEG_RECIPIENT_IN_TXT = ":recipient_name: [{value=";
-    public static final String JPEG_SENDER_IN_TXT = ":sender_name: [{value=";
-    public static final String JPEG_DATE_IN_TXT = ":shipment_date: [{value=";
-    public static final String JPEG_TIME_IN_TXT = ":shipment_time: [{value=";
-    public static final String JPEG_TRACKING_ID_IN_TXT = ":tracking_number: [{value=";
+    public static final String DELIVERY_RECEIPT_DEFAULT_SENDER = "Deutsche Post AG";
+    public static final String DELIVERY_RECEIPT_RECIPIENT_IN_TXT = ":recipient_name: [{value=";
+    public static final String DELIVERY_RECEIPT_SENDER_IN_TXT = ":sender_name: [{value=";
+    public static final String DELIVERY_RECEIPT_DATE_IN_TXT = ":shipment_date: [{value=";
+    public static final String DELIVERY_RECEIPT_TIME_IN_TXT = ":shipment_time: [{value=";
+    public static final String DELIVERY_RECEIPT_TRACKING_ID_IN_TXT = ":tracking_number: [{value=";
 
     public static final int RETOURE_LIMIT_DAYS = 100;
 
@@ -50,10 +51,11 @@ public class Helper {
     public static final int NAME_COL_WIDTH = 25;
 
     public static final int EMPTY_COL_WIDTH = 5;
-    public static final int SENDER_COL_WIDTH = 25;
-    public static final int RECEPIENT_COL_WIDTH = 25;
-    public static final int DATETIME_COL_WIDTH = 25;
-    public static final int TRACKING_ID_COL_WIDTH = 25;
+    public static final int SENDER_COL_WIDTH = 22;
+    public static final int RECEPIENT_COL_WIDTH = 22;
+    public static final int DATETIME_COL_WIDTH = 22;
+    public static final int TRACKING_ID_COL_WIDTH = 22;
+    public static final int FILENAME_COL_WIDTH = 22;
 
     public static final int TRUNCATE_COL_WIDTH_DELTA = 5;
 
@@ -74,13 +76,14 @@ public class Helper {
                 : str;
     }
 
-    public static String getPDFText(String filename) throws IOException {
+    public static String getPDFReportText(String filename) throws IOException {
         PDDocument pdDocument = Loader.loadPDF(new File(filename));
         PDFTextStripper pdfTextStripper = new PDFTextStripper();
         return pdfTextStripper.getText(pdDocument);
     }
 
-    public static String getJPEGText(String filename) throws IOException, InterruptedException {
+    public static String getDeliveryReceiptText(String filename)
+            throws IOException, InterruptedException {
         MindeeClient mindeeClient = new MindeeClient(Helper.MINDEE_API_KEY);
         LocalInputSource inputSource = new LocalInputSource(new File(filename));
         Endpoint endpoint = new Endpoint(
@@ -134,14 +137,15 @@ public class Helper {
         return matcher.matches();
     }
 
-    public static DeliveryReceipt getRetoure(ArrayList<DeliveryReceipt> receipts, int number) {
+    public static DeliveryReceipt getDeliveryReceipt(ArrayList<DeliveryReceipt> receipts,
+            int number) {
         if (receipts.size() == 0)
             return null;
         if (number > 0 && number <= receipts.size()) {
             int counter = 1;
-            for (DeliveryReceipt r : receipts) {
+            for (DeliveryReceipt receipt : receipts) {
                 if (counter == number) {
-                    return r;
+                    return receipt;
                 }
                 counter++;
             }

@@ -15,6 +15,10 @@ public class Transfer implements Comparable<Transfer> {
      * The position of the transfer for which this transfer is a retoure
      */
     private int retourePosition;
+
+    /**
+     * True iff this transfer is balanced by a subsequent retour transfer
+     */
     private boolean isBalanced;
     private String bankID;
     private String BIC;

@@ -11,6 +11,8 @@ public class DeliveryReceipt implements Comparable<DeliveryReceipt> {
     private String time;
     private LocalDateTime dateTime;
     private String trackingId;
+    private String filename;
+
     private DateTimeFormatter readFormat;
     private DateTimeFormatter writeFormat;
 
@@ -71,7 +73,7 @@ public class DeliveryReceipt implements Comparable<DeliveryReceipt> {
                 Helper.truncate(
                         this.sender != null && !this.sender.toLowerCase().equals("null")
                                 ? this.sender
-                                : "",
+                                : Helper.DELIVERY_RECEIPT_DEFAULT_SENDER,
                         Helper.SENDER_COL_WIDTH - Helper.TRUNCATE_COL_WIDTH_DELTA),
                 Helper.SENDER_COL_WIDTH)
                 + Helper.padRight(
@@ -86,6 +88,15 @@ public class DeliveryReceipt implements Comparable<DeliveryReceipt> {
                         this.dateTime != null ? this.writeFormat.format(this.dateTime) : "",
                         Helper.DATETIME_COL_WIDTH)
                 + Helper.padRight(this.trackingId != null ? this.trackingId : "",
-                        Helper.TRACKING_ID_COL_WIDTH);
+                        Helper.TRACKING_ID_COL_WIDTH)
+                + Helper.padRight(this.filename, Helper.FILENAME_COL_WIDTH);
+    }
+
+    public String getFilename() {
+        return filename;
+    }
+
+    public void setFilename(String filename) {
+        this.filename = filename;
     }
 }

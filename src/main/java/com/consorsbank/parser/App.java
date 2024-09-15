@@ -27,27 +27,27 @@ public class App {
     public static void main(String[] args) throws Exception {
         parseArguments(args);
 
-        File folderPDF = new File(Helper.PATH_TO_PDF_REPORTS);
-        File[] listOfPDFFiles = folderPDF.listFiles();
+        File folder = new File(Helper.PATH_TO_PDF_REPORTS);
+        File[] listOfPDFReportFiles = folder.listFiles();
         ArrayList<Transfer> transfers = new ArrayList<Transfer>();
-        parseTransfers(listOfPDFFiles, transfers);
+        parseTransfers(listOfPDFReportFiles, transfers);
 
         Collections.sort(transfers);
         setPosition(transfers);
         findRetourePosititions(transfers);
-        List<Transfer> transfersWithRetoure =
+        List<Transfer> retoureTransfers =
                 transfers.stream().filter(transfer -> transfer.getRetourePosition() > 0)
                         .collect(Collectors.toList());
 
-        File folderJPEG = new File(Helper.PATH_TO_RETOURE_LABELS);
-        File[] listOfJPEGFiles = folderJPEG.listFiles();
-        HashMap<String, DeliveryReceipt> receiptMap = parseDeliveryReceipts(listOfJPEGFiles);
+        folder = new File(Helper.PATH_TO_DELIVERY_RECEIPTS);
+        File[] listOfReceiptFiles = folder.listFiles();
+        HashMap<String, DeliveryReceipt> receiptMap = parseDeliveryReceipts(listOfReceiptFiles);
         ArrayList<DeliveryReceipt> receipts = new ArrayList<DeliveryReceipt>(receiptMap.values());
         Collections.sort(receipts);
 
-        printTransfers(transfers, transfersWithRetoure);
+        printTransfers(transfers, retoureTransfers);
         printReceipts(receipts);
-        assignTrackingIDs(transfers, transfersWithRetoure, receipts);
+        assignTrackingIds(transfers, retoureTransfers, receipts);
     }
 
     private static void parseArguments(String[] args) {
@@ -58,7 +58,7 @@ public class App {
                     && pathToRetoureLabels.exists() && pathToRetoureLabels.isDirectory()
                     && args[2].toLowerCase().endsWith(".csv")) {
                 Helper.PATH_TO_PDF_REPORTS = args[0];
-                Helper.PATH_TO_RETOURE_LABELS = args[1];
+                Helper.PATH_TO_DELIVERY_RECEIPTS = args[1];
                 Helper.PATH_TO_CSV = args[2];
             }
         }
@@ -68,39 +68,39 @@ public class App {
             throws IOException {
         for (File f : listOfFiles) {
             if (f.isFile() && f.getName().toLowerCase().endsWith(".pdf")) {
-                String pdfText = Helper.getPDFText(f.getAbsolutePath());
-                parseTransfers(pdfText, transfers);
+                String text = Helper.getPDFReportText(f.getAbsolutePath());
+                parseTransfers(text, transfers);
             }
         }
     }
 
-    private static void parseTransfers(String pdfText, ArrayList<Transfer> transfers) {
+    private static void parseTransfers(String text, ArrayList<Transfer> transfers) {
         SimpleDateFormat dateFormat = new SimpleDateFormat(Helper.SIMPLE_DATE_FORMAT);
         DecimalFormat decimalFormat = new DecimalFormat("#.00");
         decimalFormat.setDecimalFormatSymbols(DecimalFormatSymbols.getInstance(Locale.GERMAN));
 
-        ArrayList<String> pdfTokens = new ArrayList<String>();
-        StringTokenizer pdfTokenizer = new StringTokenizer(pdfText, "\n");
-        while (pdfTokenizer.hasMoreTokens()) {
-            pdfTokens.add(pdfTokenizer.nextToken());
+        ArrayList<String> tokens = new ArrayList<String>();
+        StringTokenizer tokenizer = new StringTokenizer(text, "\n");
+        while (tokenizer.hasMoreTokens()) {
+            tokens.add(tokenizer.nextToken());
         }
 
         Transfer transfer = null;
         int year = 2000;
-        for (int i = 0; i < pdfTokens.size(); i++) {
-            String line = pdfTokens.get(i);
-            Pattern pattern = Pattern.compile(Helper.PDF_REGEX_TRANSFER_TYPES);
+        for (int i = 0; i < tokens.size(); i++) {
+            String line = tokens.get(i);
+            Pattern pattern = Pattern.compile(Helper.PDF_REPORT_REGEX_TRANSFER_TYPES);
             Matcher matcher = pattern.matcher(line);
 
-            if (line.startsWith(Helper.PDF_KONTOSTAND_ZUM_IN_TXT) && year == 2000) {
+            if (line.startsWith(Helper.PDF_REPORT_KONTOSTAND_ZUM_IN_TXT) && year == 2000) {
                 year = parseYear(year, line);
                 continue;
             }
             if (matcher.find()) {
                 try {
-                    transfer = parseBalanceAndDate(dateFormat, decimalFormat, pdfTokens, year, i);
+                    transfer = parseBalanceAndDate(dateFormat, decimalFormat, tokens, year, i);
                     transfers.add(transfer);
-                    parseNameAndBankIDAndPurpose(pdfTokens, transfer, i);
+                    parseNameAndBankIdAndPurpose(tokens, transfer, i);
                 } catch (ParseException e) {
                     e.printStackTrace();
                 }
@@ -129,14 +129,14 @@ public class App {
         return transfer;
     }
 
-    private static void parseNameAndBankIDAndPurpose(ArrayList<String> pdfTokens, Transfer transfer,
+    private static void parseNameAndBankIdAndPurpose(ArrayList<String> pdfTokens, Transfer transfer,
             int i) {
         if (Helper.bankIDExists(pdfTokens.get(i + 3))) {
             transfer.setName(pdfTokens.get(i + 2));
             transfer.setBankID(pdfTokens.get(i + 3));
 
             String purpose = pdfTokens.get(i + 4);
-            if (!purpose.startsWith(Helper.PDF_INTERIM_KONTOSTAND_ZUM_IN_TXT)) {
+            if (!purpose.startsWith(Helper.PDF_REPORT_INTERIM_KONTOSTAND_ZUM_IN_TXT)) {
                 transfer.setPurpose(purpose);
             }
         } else {
@@ -153,7 +153,7 @@ public class App {
     }
 
     private static void findRetourePosititions(ArrayList<Transfer> transfers) {
-        outerLoop: for (int i = transfers.size() - 1; i > 0; i--) {
+        outer: for (int i = transfers.size() - 1; i > 0; i--) {
             Transfer transfer = transfers.get(i);
             for (int j = i - 1; j >= 0; j--) {
                 Transfer prevTransfer = transfers.get(j);
@@ -171,23 +171,25 @@ public class App {
                         prevTransfer.setBalanced(true);
 
                         // Continue with next transfer
-                        continue outerLoop;
+                        continue outer;
                     }
                 }
             }
         }
     }
 
-    private static HashMap<String, DeliveryReceipt> parseDeliveryReceipts(File[] listOfJPEGFiles)
+    private static HashMap<String, DeliveryReceipt> parseDeliveryReceipts(File[] listOfFiles)
             throws IOException, InterruptedException {
         HashMap<String, DeliveryReceipt> receipts = new HashMap<String, DeliveryReceipt>();
-        for (File f : listOfJPEGFiles) {
-            if (f.isFile() && f.getName().toLowerCase().endsWith(".jpg")) {
-                String jpegText = Helper.getJPEGText(f.getAbsolutePath());
-                StringTokenizer jpegTokenizer = new StringTokenizer(jpegText, "\n");
+        for (File f : listOfFiles) {
+            if (f.isFile() && (f.getName().toLowerCase().endsWith(".jpg")
+                    || f.getName().toLowerCase().endsWith(".jpeg")
+                    || f.getName().toLowerCase().endsWith(".pdf"))) {
+                String text = Helper.getDeliveryReceiptText(f.getAbsolutePath());
+                StringTokenizer tokenizer = new StringTokenizer(text, "\n");
                 DeliveryReceipt receipt = null;
-                while (jpegTokenizer.hasMoreTokens()) {
-                    String token = jpegTokenizer.nextToken();
+                while (tokenizer.hasMoreTokens()) {
+                    String token = tokenizer.nextToken();
                     receipt = parseDeliveryReceipt(receipt, token);
                     if (receipt != null
                             && receipt.getRecipient() != null
@@ -196,6 +198,7 @@ public class App {
                             && receipt.getTrackingId() != null) {
                         if (!receipts.containsKey(receipt.getTrackingId())) {
                             receipts.put(receipt.getTrackingId(), receipt);
+                            receipt.setFilename(f.getName());
                         }
                     }
                 }
@@ -205,24 +208,20 @@ public class App {
     }
 
     private static DeliveryReceipt parseDeliveryReceipt(DeliveryReceipt receipt, String token) {
-        if (token.startsWith(Helper.JPEG_RECIPIENT_IN_TXT)) {
+        if (token.startsWith(Helper.DELIVERY_RECEIPT_RECIPIENT_IN_TXT)) {
             receipt = new DeliveryReceipt();
             String recipient = token.substring(token.indexOf("=") + 1, token.indexOf("}"));
             receipt.setRecipient(recipient);
-        }
-        if (token.startsWith(Helper.JPEG_SENDER_IN_TXT)) {
+        } else if (token.startsWith(Helper.DELIVERY_RECEIPT_SENDER_IN_TXT)) {
             String sender = token.substring(token.indexOf("=") + 1, token.indexOf("}"));
             receipt.setSender(sender);
-        }
-        if (token.startsWith(Helper.JPEG_DATE_IN_TXT)) {
+        } else if (token.startsWith(Helper.DELIVERY_RECEIPT_DATE_IN_TXT)) {
             String date = token.substring(token.indexOf("=") + 1, token.indexOf("}"));
             receipt.setDate(date);
-        }
-        if (token.startsWith(Helper.JPEG_TIME_IN_TXT)) {
+        } else if (token.startsWith(Helper.DELIVERY_RECEIPT_TIME_IN_TXT)) {
             String time = token.substring(token.indexOf("=") + 1, token.indexOf("}"));
             receipt.setTime(time);
-        }
-        if (token.startsWith(Helper.JPEG_TRACKING_ID_IN_TXT)) {
+        } else if (token.startsWith(Helper.DELIVERY_RECEIPT_TRACKING_ID_IN_TXT)) {
             String trackingId = token.substring(token.indexOf("=") + 1, token.indexOf("}"));
             if (Helper.trackingIDExists(trackingId)) {
                 receipt.setTrackingId(trackingId);
@@ -232,10 +231,10 @@ public class App {
     }
 
     private static void printTransfers(ArrayList<Transfer> transfers,
-            List<Transfer> transfersWithRetoure) {
+            List<Transfer> retoureTransfers) {
         printTransfers(transfers, false);
         System.out.println();
-        printTransfers(transfersWithRetoure, true);
+        printTransfers(retoureTransfers, true);
         System.out.println();
     }
 
@@ -271,7 +270,8 @@ public class App {
                 + Helper.padRight("Sender", Helper.SENDER_COL_WIDTH)
                 + Helper.padRight("Recipient", Helper.RECEPIENT_COL_WIDTH)
                 + Helper.padRight("Datetime", Helper.DATETIME_COL_WIDTH)
-                + Helper.padRight("Tracking Id", Helper.TRACKING_ID_COL_WIDTH));
+                + Helper.padRight("Tracking Id", Helper.TRACKING_ID_COL_WIDTH)
+                + Helper.padRight("Filename", Helper.FILENAME_COL_WIDTH));
 
         int counter = 1;
         for (DeliveryReceipt receipt : receipts) {
@@ -282,31 +282,19 @@ public class App {
         }
     }
 
-    private static void assignTrackingIDs(ArrayList<Transfer> transfers,
-            List<Transfer> transfersWithRetoure, ArrayList<DeliveryReceipt> labels) {
-        System.out.println();
-        System.out.println(
-                "Assign a tracking id to a retoure transfer or enter " + Helper.CONSOLE_COLOR_YELLOW
-                        + "g" + Helper.CONSOLE_COLOR_RESET
-                        + " for CSV generation or " + Helper.CONSOLE_COLOR_YELLOW + "s"
-                        + Helper.CONSOLE_COLOR_RESET + " to skip the retoure transfer.");
-
+    private static void assignTrackingIds(ArrayList<Transfer> transfers,
+            List<Transfer> retoureTransfers, ArrayList<DeliveryReceipt> receipts) {
+        printTrackingIdAssignmentDescr();
         Scanner scanner = new Scanner(System.in);
         HashSet<Integer> assignedNumbers = new HashSet<Integer>();
-        outer: for (Transfer transfer : transfersWithRetoure) {
+        outer: for (Transfer transfer : retoureTransfers) {
             boolean inputValid = false;
             while (!inputValid) {
-                System.out.print("Enter the " + Helper.CONSOLE_COLOR_YELLOW + "number"
-                        + Helper.CONSOLE_COLOR_RESET
-                        + " of the retoure shipment to assign its tracking id to retoure transfer "
-                        + Helper.CONSOLE_COLOR_CYAN + transfer.getPosition()
-                        + Helper.CONSOLE_COLOR_RESET
-                        + ": ");
-
+                promptForTrackingIdAssignment(transfer);
                 String input = scanner.next();
                 try {
                     int number = Integer.parseInt(input);
-                    DeliveryReceipt retoure = Helper.getRetoure(labels, number);
+                    DeliveryReceipt retoure = Helper.getDeliveryReceipt(receipts, number);
                     if (retoure != null && !assignedNumbers.contains(number)) {
                         // Assign the tracking id, i.e., the retoure, to the transfer
                         transfer.setDeliveryReceipt(retoure);
@@ -314,9 +302,8 @@ public class App {
                         assignedNumbers.add(number);
                         inputValid = true;
 
-                        if (assignedNumbers.size() == labels.size()) {
-                            // Skip further assignments, since all tracking ids are assigned
-                            break outer;
+                        if (assignedNumbers.size() == receipts.size()) {
+                            break outer;// Skip further assignments, all tracking ids are assigned
                         }
                     }
                 } catch (Exception e) {
@@ -330,6 +317,24 @@ public class App {
         }
         scanner.close();
         exportTransfers(transfers);
+    }
+
+    private static void printTrackingIdAssignmentDescr() {
+        System.out.println();
+        System.out.println(
+                "Assign a tracking id to a retoure transfer or enter " + Helper.CONSOLE_COLOR_YELLOW
+                        + "g" + Helper.CONSOLE_COLOR_RESET
+                        + " for CSV generation or " + Helper.CONSOLE_COLOR_YELLOW + "s"
+                        + Helper.CONSOLE_COLOR_RESET + " to skip the retoure transfer.");
+    }
+
+    private static void promptForTrackingIdAssignment(Transfer transfer) {
+        System.out.print("Enter the " + Helper.CONSOLE_COLOR_YELLOW + "number"
+                + Helper.CONSOLE_COLOR_RESET
+                + " of the retoure shipment to assign its tracking id to retoure transfer "
+                + Helper.CONSOLE_COLOR_CYAN + transfer.getPosition()
+                + Helper.CONSOLE_COLOR_RESET
+                + ": ");
     }
 
     private static void exportTransfers(ArrayList<Transfer> transfers) {
