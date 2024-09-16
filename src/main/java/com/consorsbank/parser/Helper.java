@@ -2,6 +2,8 @@ package com.consorsbank.parser;
 
 import java.io.File;
 import java.io.IOException;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -151,5 +153,27 @@ public class Helper {
             }
         }
         return null;
+    }
+
+    public static String getHash(String input) {
+        StringBuilder hexString = new StringBuilder();
+        try {
+            // Create a MessageDigest instance for MD5
+            MessageDigest md = MessageDigest.getInstance("MD5");
+
+            // Hash the input string
+            byte[] hashBytes = md.digest(input.getBytes());
+
+            // Convert the byte array to a hex string
+            for (byte b : hashBytes) {
+                String hex = Integer.toHexString(0xff & b);
+                if (hex.length() == 1)
+                    hexString.append('0');
+                hexString.append(hex);
+            }
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        }
+        return hexString.toString();
     }
 }

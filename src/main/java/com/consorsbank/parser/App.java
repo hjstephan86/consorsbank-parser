@@ -79,6 +79,7 @@ public class App {
         DecimalFormat decimalFormat = new DecimalFormat("#.00");
         decimalFormat.setDecimalFormatSymbols(DecimalFormatSymbols.getInstance(Locale.GERMAN));
 
+        int positionInMonth = 0;
         ArrayList<String> tokens = new ArrayList<String>();
         StringTokenizer tokenizer = new StringTokenizer(text, "\n");
         while (tokenizer.hasMoreTokens()) {
@@ -100,6 +101,8 @@ public class App {
                 try {
                     transfer = parseBalanceAndDate(dateFormat, decimalFormat, tokens, year, i);
                     transfers.add(transfer);
+                    positionInMonth++;
+                    transfer.setPositionInMonth(positionInMonth);
                     parseNameAndBankIdAndPurpose(tokens, transfer, i);
                 } catch (ParseException e) {
                     e.printStackTrace();
@@ -340,7 +343,8 @@ public class App {
     private static void exportTransfers(ArrayList<Transfer> transfers) {
         StringBuilder stringBuilder = new StringBuilder();
 
-        stringBuilder.append("Pos;Date;Balance;Retoure (Pos);BIC;IBAN;Name;Purpose;Tracking Id\n");
+        stringBuilder
+                .append("Hash;Pos;Date;Balance;Retoure (Pos);BIC;IBAN;Name;Purpose;Tracking Id\n");
         for (Transfer transfer : transfers) {
             stringBuilder.append(transfer.toCSVString() + "\n");
         }

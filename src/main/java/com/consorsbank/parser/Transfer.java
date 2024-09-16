@@ -7,7 +7,15 @@ import java.util.Date;
 
 public class Transfer implements Comparable<Transfer> {
 
+    /**
+     * The absolute position of all transfers
+     */
     private int position;
+
+    /**
+     * The position of all transfers of this month, see {@link #date}
+     */
+    private int positionInMonth;
     private Date date;
     private BalanceNumber balanceNumber;
 
@@ -97,7 +105,8 @@ public class Transfer implements Comparable<Transfer> {
     }
 
     public String toCSVString() {
-        return this.position
+        return this.getHash()
+                + ";" + this.position
                 + ";" + this.dateFormat.format(this.date)
                 + ";" + this.balanceNumber.toString()
                 + ";" + this.retourePosition
@@ -105,7 +114,7 @@ public class Transfer implements Comparable<Transfer> {
                 + ";" + this.IBAN
                 + ";" + this.name
                 + ";" + this.purpose
-                + ";" + this.getTrackingID();
+                + ";" + this.getTrackingId();
     }
 
     @Override
@@ -136,7 +145,7 @@ public class Transfer implements Comparable<Transfer> {
         return retourePosition;
     }
 
-    private String getTrackingID() {
+    private String getTrackingId() {
         return (deliveryReceipt != null) ? deliveryReceipt.getTrackingId() : "";
     }
 
@@ -146,5 +155,24 @@ public class Transfer implements Comparable<Transfer> {
 
     public void setDeliveryReceipt(DeliveryReceipt deliveryReceipt) {
         this.deliveryReceipt = deliveryReceipt;
+    }
+
+    public String getHash() {
+        String input = String.valueOf(this.positionInMonth)
+                + this.date
+                + String.valueOf(this.balanceNumber.getValue())
+                + this.BIC
+                + this.IBAN
+                + this.name
+                + this.purpose;
+        return Helper.getHash(input);
+    }
+
+    public int getPositionInMonth() {
+        return positionInMonth;
+    }
+
+    public void setPositionInMonth(int positionInMonth) {
+        this.positionInMonth = positionInMonth;
     }
 }

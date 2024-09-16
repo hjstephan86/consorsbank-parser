@@ -12,7 +12,7 @@ public class AppTest {
     public void testMain() {
         int expectedEntriesCount = 1554;
         String expectedLastEntry =
-                "1554;30.08.2024;500,00;0;<SPBIDE3B>;DE72480501610150252765;DAMARIS EPP;Erbe;";
+                "b000b9059601524df6d27601c1e54e16;1554;30.08.2024;500,00;0;<SPBIDE3B>;DE72480501610150252765;DAMARIS EPP;Erbe;";
 
         String pathToPDFReports = "/home/stephan/Downloads/Kontobewegungen/Test/";
         String pathToDeliveryReceipts = "/home/stephan/Downloads/Kontobewegungen/Test/Retoure/";
@@ -51,7 +51,7 @@ public class AppTest {
     public void testMainGenerate() {
         int expectedEntriesCount = 1554;
         String expectedLastEntry =
-                "1554;30.08.2024;500,00;0;<SPBIDE3B>;DE72480501610150252765;DAMARIS EPP;Erbe;";
+                "b000b9059601524df6d27601c1e54e16;1554;30.08.2024;500,00;0;<SPBIDE3B>;DE72480501610150252765;DAMARIS EPP;Erbe;";
 
         String pathToPDFReports = "/home/stephan/Downloads/Kontobewegungen/Test/";
         String pathToDeliveryReceipts = "/home/stephan/Downloads/Kontobewegungen/Test/Retoure/";
