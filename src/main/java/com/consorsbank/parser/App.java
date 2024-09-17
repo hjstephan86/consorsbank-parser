@@ -1,6 +1,8 @@
 package com.consorsbank.parser;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.text.DecimalFormat;
@@ -33,10 +35,16 @@ public class App {
         parseTransfers(listOfPDFReportFiles, transfers);
 
         Collections.sort(transfers);
-        setPosition(transfers);
+        HashMap<String, Transfer> transferMap = new HashMap<String, Transfer>();
+        setPosition(transfers, transferMap);
         findRetourePosititions(transfers);
+
+        HashSet<String> existingTrackingIds = new HashSet<String>();
+        parseForExsistingTrackingIds(transferMap, existingTrackingIds);
         List<Transfer> retoureTransfers =
-                transfers.stream().filter(transfer -> transfer.getRetourePosition() > 0)
+                transfers.stream()
+                        .filter(transfer -> transfer.getRetourePosition() > 0
+                                && transfer.getExistingTrackingId() == null)
                         .collect(Collectors.toList());
 
         folder = new File(Helper.PATH_TO_DELIVERY_RECEIPTS);
@@ -46,21 +54,55 @@ public class App {
         Collections.sort(receipts);
 
         printTransfers(transfers, retoureTransfers);
-        printReceipts(receipts);
+        printReceipts(receipts, existingTrackingIds);
         assignTrackingIds(transfers, retoureTransfers, receipts);
+    }
+
+    private static void parseForExsistingTrackingIds(HashMap<String, Transfer> transferMap,
+            HashSet<String> existingTrackingIds) {
+        try (BufferedReader br = new BufferedReader(new FileReader(Helper.PATH_TO_CSV_IMPORT))) {
+            String line;
+            while ((line = br.readLine()) != null) {
+                String[] transferArr = line.split(";");
+                String hashFromCSV = transferArr[0];
+                if (transferArr.length == 10) {
+                    String existingTrackingId = transferArr[9];
+                    if (Helper.trackingIdIsValid(existingTrackingId)
+                            && transferMap.containsKey(hashFromCSV)) {
+                        Transfer transfer = transferMap.get(hashFromCSV);
+                        transfer.setExistingTrackingId(existingTrackingId);
+                        existingTrackingIds.add(existingTrackingId);
+                    }
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     private static void parseArguments(String[] args) {
         if (args.length == 3) {
-            File pathToPDFReports = new File(args[0]);
-            File pathToRetoureLabels = new File(args[1]);
-            if (pathToPDFReports.exists() && pathToPDFReports.isDirectory()
-                    && pathToRetoureLabels.exists() && pathToRetoureLabels.isDirectory()
-                    && args[2].toLowerCase().endsWith(".csv")) {
-                Helper.PATH_TO_PDF_REPORTS = args[0];
-                Helper.PATH_TO_DELIVERY_RECEIPTS = args[1];
-                Helper.PATH_TO_CSV = args[2];
+            parseRequiredArguments(args);
+        }
+        if (args.length == 4) {
+            parseRequiredArguments(args);
+            File pathToCSVImport = new File(args[3]);
+            if (pathToCSVImport.exists() && pathToCSVImport.isFile()
+                    && pathToCSVImport.getName().toLowerCase().endsWith(".csv")) {
+                Helper.PATH_TO_CSV_IMPORT = pathToCSVImport.getAbsolutePath();
             }
+        }
+    }
+
+    private static void parseRequiredArguments(String[] args) {
+        File pathToPDFReports = new File(args[0]);
+        File pathToDeliveryReceipts = new File(args[1]);
+        if (pathToPDFReports.exists() && pathToPDFReports.isDirectory()
+                && pathToDeliveryReceipts.exists() && pathToDeliveryReceipts.isDirectory()
+                && args[2].toLowerCase().endsWith(".csv")) {
+            Helper.PATH_TO_PDF_REPORTS = args[0];
+            Helper.PATH_TO_DELIVERY_RECEIPTS = args[1];
+            Helper.PATH_TO_CSV_EXPORT = args[2];
         }
     }
 
@@ -134,7 +176,7 @@ public class App {
 
     private static void parseNameAndBankIdAndPurpose(ArrayList<String> pdfTokens, Transfer transfer,
             int i) {
-        if (Helper.bankIDExists(pdfTokens.get(i + 3))) {
+        if (Helper.bankIdValid(pdfTokens.get(i + 3))) {
             transfer.setName(pdfTokens.get(i + 2));
             transfer.setBankID(pdfTokens.get(i + 3));
 
@@ -148,10 +190,13 @@ public class App {
         }
     }
 
-    private static void setPosition(ArrayList<Transfer> transfers) {
+    private static void setPosition(ArrayList<Transfer> transfers,
+            HashMap<String, Transfer> transferMap) {
         for (int i = 0; i < transfers.size(); i++) {
             Transfer transfer = transfers.get(i);
             transfer.setPosition(i + 1);
+            transfer.generateHash();
+            transferMap.put(transfer.getHash(), transfer);
         }
     }
 
@@ -226,7 +271,7 @@ public class App {
             receipt.setTime(time);
         } else if (token.startsWith(Helper.DELIVERY_RECEIPT_TRACKING_ID_IN_TXT)) {
             String trackingId = token.substring(token.indexOf("=") + 1, token.indexOf("}"));
-            if (Helper.trackingIDExists(trackingId)) {
+            if (Helper.trackingIdIsValid(trackingId)) {
                 receipt.setTrackingId(trackingId);
             }
         }
@@ -268,7 +313,8 @@ public class App {
         System.out.println("Total sum: " + decimalFormat.format(sum));
     }
 
-    private static void printReceipts(ArrayList<DeliveryReceipt> receipts) {
+    private static void printReceipts(ArrayList<DeliveryReceipt> receipts,
+            HashSet<String> existingTrackingIds) {
         System.out.println(Helper.padRight("", Helper.EMPTY_COL_WIDTH)
                 + Helper.padRight("Sender", Helper.SENDER_COL_WIDTH)
                 + Helper.padRight("Recipient", Helper.RECEPIENT_COL_WIDTH)
@@ -278,10 +324,12 @@ public class App {
 
         int counter = 1;
         for (DeliveryReceipt receipt : receipts) {
-            System.out.println(Helper.CONSOLE_COLOR_YELLOW
-                    + Helper.padRight(String.valueOf(counter), Helper.EMPTY_COL_WIDTH)
-                    + Helper.CONSOLE_COLOR_RESET + receipt.toPaddedString());
-            counter++;
+            if (!existingTrackingIds.contains(receipt.getTrackingId())) {
+                System.out.println(Helper.CONSOLE_COLOR_YELLOW
+                        + Helper.padRight(String.valueOf(counter), Helper.EMPTY_COL_WIDTH)
+                        + Helper.CONSOLE_COLOR_RESET + receipt.toPaddedString());
+                counter++;
+            }
         }
     }
 
@@ -297,10 +345,10 @@ public class App {
                 String input = scanner.next();
                 try {
                     int number = Integer.parseInt(input);
-                    DeliveryReceipt retoure = Helper.getDeliveryReceipt(receipts, number);
-                    if (retoure != null && !assignedNumbers.contains(number)) {
+                    DeliveryReceipt receipt = Helper.getDeliveryReceipt(receipts, number);
+                    if (receipt != null && !assignedNumbers.contains(number)) {
                         // Assign the tracking id, i.e., the retoure, to the transfer
-                        transfer.setDeliveryReceipt(retoure);
+                        transfer.setDeliveryReceipt(receipt);
                         // An assigned tracking id is not allowed to be assigned twice
                         assignedNumbers.add(number);
                         inputValid = true;
@@ -350,15 +398,17 @@ public class App {
         }
 
         try {
-            Helper.PATH_TO_CSV = Helper.PATH_TO_CSV.replace("%DATETIME%",
+            Helper.PATH_TO_CSV_EXPORT = Helper.PATH_TO_CSV_EXPORT.replace("%DATETIME%",
                     new SimpleDateFormat("yyyy-MM-dd_HH-mm-ss")
                             .format(Calendar.getInstance().getTime()));
-            FileWriter writer = new FileWriter(Helper.PATH_TO_CSV);
+            FileWriter writer = new FileWriter(Helper.PATH_TO_CSV_EXPORT);
             writer.write(stringBuilder.toString());
             writer.close();
-            System.out.println("Successfully exported transfers to " + Helper.PATH_TO_CSV + ".");
+            System.out.println(
+                    "Successfully exported transfers to " + Helper.PATH_TO_CSV_EXPORT + ".");
         } catch (IOException e) {
-            System.out.println("An error occurred while writing to " + Helper.PATH_TO_CSV + ".");
+            System.out.println(
+                    "An error occurred while writing to " + Helper.PATH_TO_CSV_EXPORT + ".");
             e.printStackTrace();
         }
     }

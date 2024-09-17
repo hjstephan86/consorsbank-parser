@@ -23,8 +23,10 @@ public class Helper {
     public static String PATH_TO_PDF_REPORTS = "/home/stephan/Downloads/Kontobewegungen/230583809/";
     public static String PATH_TO_DELIVERY_RECEIPTS =
             "/home/stephan/Downloads/Kontobewegungen/Retoure/";
-    public static String PATH_TO_CSV =
+    public static String PATH_TO_CSV_EXPORT =
             "/home/stephan/Downloads/Kontobewegungen/230583809/Transfers-%DATETIME%.csv";
+    public static String PATH_TO_CSV_IMPORT =
+            "/home/stephan/Downloads/Kontobewegungen/230583809/Transfers-2024-09-14_18-29-11.csv";
 
     public static final String SIMPLE_DATE_FORMAT = "dd.MM.yyyy";
     public static final String DATETIME_FORMAT_READ = "yyyy-MM-dd HH:mm:ss";
@@ -101,17 +103,13 @@ public class Helper {
         return response.toString();
     }
 
-    public static boolean bankIDExists(String bankID) {
-        // We expect a bank id like "<WELADED1WDB> DE33478535200003845849"
-        // or "VISA 58525010 Paderborn"
-        // or "girocard"
-
-        String[] bankIDarr = bankID.split(" ");
-        if (bankIDarr.length > 1) {
+    public static boolean bankIdValid(String bankId) {
+        String[] bankIdarr = bankId.split(" ");
+        if (bankIdarr.length > 1) {
             String bicPattern = "^[A-Z]{4}[A-Z]{2}[A-Z0-9]{2}([A-Z0-9]{3})?$";
             Pattern pattern = Pattern.compile(bicPattern);
 
-            String bic = bankIDarr[0];
+            String bic = bankIdarr[0];
             bic = bic.replace("<", "").replace(">", "");
             Matcher matcher = pattern.matcher(bic);
 
@@ -128,15 +126,10 @@ public class Helper {
         return false;
     }
 
-    public static boolean trackingIDExists(String trackingID) {
-        // 20 to 39 characters
-        String regex = "\\b(\\d{10,39})\\b";
-
-        // Pattern und Matcher verwenden
-        Pattern pattern = Pattern.compile(regex);
-        Matcher matcher = pattern.matcher(trackingID);
-
-        return matcher.matches();
+    public static boolean trackingIdIsValid(String trackingId) {
+        // Start optionally with "JD" or "JJD" followed by 10 to 20 digits
+        String regex = "^(JD|JJD)?[0-9]{10,20}$";
+        return trackingId.matches(regex);
     }
 
     public static DeliveryReceipt getDeliveryReceipt(ArrayList<DeliveryReceipt> receipts,
