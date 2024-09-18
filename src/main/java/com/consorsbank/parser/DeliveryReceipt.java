@@ -12,6 +12,7 @@ public class DeliveryReceipt implements Comparable<DeliveryReceipt> {
     private LocalDateTime dateTime;
     private String trackingId;
     private String filename;
+    private boolean assigned;
 
     private DateTimeFormatter readFormat;
     private DateTimeFormatter writeFormat;
@@ -52,12 +53,16 @@ public class DeliveryReceipt implements Comparable<DeliveryReceipt> {
     public void setTime(String time) {
         this.time = time;
         String dateTime = this.date + " " + this.time;
-        LocalDateTime localDateTime = LocalDateTime.parse(dateTime, readFormat);
-        this.dateTime = localDateTime;
+        this.dateTime = LocalDateTime.parse(dateTime, readFormat);
     }
 
     public void setDate(String date) {
         this.date = date;
+    }
+
+    public void setDateTime(String dateTime) {
+        // We use the write format here
+        this.dateTime = LocalDateTime.parse(dateTime, writeFormat);
     }
 
     @Override
@@ -92,11 +97,28 @@ public class DeliveryReceipt implements Comparable<DeliveryReceipt> {
                 + Helper.padRight(this.filename, Helper.FILENAME_COL_WIDTH);
     }
 
+    public String toCSVString() {
+        return (!this.sender.toLowerCase().equals("null") ? this.sender
+                : Helper.DELIVERY_RECEIPT_DEFAULT_SENDER)
+                + ";" + (!this.recipient.toLowerCase().equals("null") ? this.recipient : " ")
+                + ";" + (this.dateTime != null ? this.writeFormat.format(this.dateTime) : " ")
+                + ";" + this.trackingId
+                + ";" + this.filename;
+    }
+
     public String getFilename() {
         return filename;
     }
 
     public void setFilename(String filename) {
         this.filename = filename;
+    }
+
+    public boolean isAssigned() {
+        return assigned;
+    }
+
+    public void setAssigned(boolean assigned) {
+        this.assigned = assigned;
     }
 }

@@ -23,11 +23,12 @@ import java.util.StringTokenizer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class App {
 
     public static void main(String[] args) throws Exception {
-        parseArguments(args);
+        parseArgs(args);
 
         File folder = new File(Helper.PATH_TO_PDF_REPORTS);
         File[] listOfPDFReportFiles = folder.listFiles();
@@ -47,62 +48,95 @@ public class App {
                                 && transfer.getExistingTrackingId() == null)
                         .collect(Collectors.toList());
 
+        ArrayList<DeliveryReceipt> existingReceipts = parseDeliveryReceipts();
         folder = new File(Helper.PATH_TO_DELIVERY_RECEIPTS);
         File[] listOfReceiptFiles = folder.listFiles();
+        listOfReceiptFiles = removeExistingDeliveryReceipts(listOfReceiptFiles, existingReceipts);
         HashMap<String, DeliveryReceipt> receiptMap = parseDeliveryReceipts(listOfReceiptFiles);
         ArrayList<DeliveryReceipt> receipts = new ArrayList<DeliveryReceipt>(receiptMap.values());
         Collections.sort(receipts);
 
         printTransfers(transfers, retoureTransfers);
-        printReceipts(receipts, existingTrackingIds);
+        List<DeliveryReceipt> allReceipts =
+                Stream.concat(receipts.stream(), existingReceipts.stream())
+                        .collect(Collectors.toList());
+        printReceipts(allReceipts, existingTrackingIds);
         assignTrackingIds(transfers, retoureTransfers, receipts);
     }
 
-    private static void parseForExsistingTrackingIds(HashMap<String, Transfer> transferMap,
-            HashSet<String> existingTrackingIds) {
-        try (BufferedReader br = new BufferedReader(new FileReader(Helper.PATH_TO_CSV_IMPORT))) {
-            String line;
-            while ((line = br.readLine()) != null) {
-                String[] transferArr = line.split(";");
-                String hashFromCSV = transferArr[0];
-                if (transferArr.length == 10) {
-                    String existingTrackingId = transferArr[9];
-                    if (Helper.trackingIdIsValid(existingTrackingId)
-                            && transferMap.containsKey(hashFromCSV)) {
-                        Transfer transfer = transferMap.get(hashFromCSV);
-                        transfer.setExistingTrackingId(existingTrackingId);
-                        existingTrackingIds.add(existingTrackingId);
-                    }
-                }
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
+    private static void parseArgs(String[] args) {
+        switch (args.length) {
+            case 2:
+                parseRequiredArgs(args);
+                break;
+            case 3:
+                parseRequiredArgs(args);
+                parseArgTransferExport(args);
+                break;
+            case 4:
+                parseRequiredArgs(args);
+                parseArgTransferExport(args);
+                parseArgTransferImport(args);
+                break;
+            case 5:
+                parseRequiredArgs(args);
+                parseArgTransferExport(args);
+                parseArgTransferImport(args);
+                parseArgReceiptsImport(args);
+                break;
+            case 6:
+                parseRequiredArgs(args);
+                parseArgTransferExport(args);
+                parseArgTransferImport(args);
+                parseArgReceiptsImport(args);
+                parseArgReceiptsExport(args);
+                break;
+            default:
+                break;
         }
     }
 
-    private static void parseArguments(String[] args) {
-        if (args.length == 3) {
-            parseRequiredArguments(args);
-        }
-        if (args.length == 4) {
-            parseRequiredArguments(args);
-            File pathToCSVImport = new File(args[3]);
-            if (pathToCSVImport.exists() && pathToCSVImport.isFile()
-                    && pathToCSVImport.getName().toLowerCase().endsWith(".csv")) {
-                Helper.PATH_TO_CSV_IMPORT = pathToCSVImport.getAbsolutePath();
-            }
-        }
-    }
-
-    private static void parseRequiredArguments(String[] args) {
+    private static void parseRequiredArgs(String[] args) {
         File pathToPDFReports = new File(args[0]);
         File pathToDeliveryReceipts = new File(args[1]);
         if (pathToPDFReports.exists() && pathToPDFReports.isDirectory()
-                && pathToDeliveryReceipts.exists() && pathToDeliveryReceipts.isDirectory()
-                && args[2].toLowerCase().endsWith(".csv")) {
+                && pathToDeliveryReceipts.exists() && pathToDeliveryReceipts.isDirectory()) {
             Helper.PATH_TO_PDF_REPORTS = args[0];
             Helper.PATH_TO_DELIVERY_RECEIPTS = args[1];
-            Helper.PATH_TO_CSV_EXPORT = args[2];
+        }
+    }
+
+    private static void parseArgTransferExport(String[] args) {
+        File pathToTransfersExport = new File(args[2]);
+        if (pathToTransfersExport.exists() && pathToTransfersExport.isFile()
+                && pathToTransfersExport.getName().toLowerCase().endsWith(".csv")) {
+            Helper.PATH_TO_TRANSFERS_EXPORT = pathToTransfersExport.getAbsolutePath();
+        }
+    }
+
+    private static void parseArgTransferImport(String[] args) {
+        File pathToTransfersImport = new File(args[3]);
+        if (pathToTransfersImport.exists() && pathToTransfersImport.isFile()
+                && pathToTransfersImport.getName().toLowerCase().endsWith(".csv")) {
+            Helper.PATH_TO_TRANSFERS_IMPORT = pathToTransfersImport.getAbsolutePath();
+        }
+    }
+
+    private static void parseArgReceiptsImport(String[] args) {
+        File pathToDeliveryReceiptsImport = new File(args[4]);
+        if (pathToDeliveryReceiptsImport.exists() && pathToDeliveryReceiptsImport.isFile()
+                && pathToDeliveryReceiptsImport.getName().toLowerCase().endsWith(".csv")) {
+            Helper.PATH_TO_DELIVERY_RECEIPTS_IMPORT =
+                    pathToDeliveryReceiptsImport.getAbsolutePath();
+        }
+    }
+
+    private static void parseArgReceiptsExport(String[] args) {
+        File pathToDeliveryReceiptsExport = new File(args[5]);
+        if (pathToDeliveryReceiptsExport.exists() && pathToDeliveryReceiptsExport.isFile()
+                && pathToDeliveryReceiptsExport.getName().toLowerCase().endsWith(".csv")) {
+            Helper.PATH_TO_DELIVERY_RECEIPTS_EXPORT =
+                    pathToDeliveryReceiptsExport.getAbsolutePath();
         }
     }
 
@@ -226,9 +260,48 @@ public class App {
         }
     }
 
+    private static void parseForExsistingTrackingIds(HashMap<String, Transfer> transferMap,
+            HashSet<String> existingTrackingIds) {
+        try (BufferedReader br =
+                new BufferedReader(new FileReader(Helper.PATH_TO_TRANSFERS_IMPORT))) {
+            String line;
+            while ((line = br.readLine()) != null) {
+                String[] transferArr = line.split(";");
+                String hashFromCSV = transferArr[0];
+                if (transferArr.length == 10) {
+                    String existingTrackingId = transferArr[9];
+                    if (Helper.trackingIdIsValid(existingTrackingId)
+                            && transferMap.containsKey(hashFromCSV)) {
+                        Transfer transfer = transferMap.get(hashFromCSV);
+                        transfer.setExistingTrackingId(existingTrackingId);
+                        existingTrackingIds.add(existingTrackingId);
+                    }
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private static File[] removeExistingDeliveryReceipts(File[] listOfReceiptFiles,
+            ArrayList<DeliveryReceipt> existingReceipts) {
+        ArrayList<File> listOfRemainingReceiptFiles = new ArrayList<File>();
+        HashSet<String> existingDeliveryReceiptFilenames = new HashSet<String>();
+        for (DeliveryReceipt receipt : existingReceipts) {
+            existingDeliveryReceiptFilenames.add(receipt.getFilename());
+        }
+        for (int i = 0; i < listOfReceiptFiles.length; i++) {
+            if (listOfReceiptFiles[i].isFile() && !existingDeliveryReceiptFilenames
+                    .contains(listOfReceiptFiles[i].getName())) {
+                listOfRemainingReceiptFiles.add(listOfReceiptFiles[i]);
+            }
+        }
+        return listOfRemainingReceiptFiles.stream().toArray(File[]::new);
+    }
+
     private static HashMap<String, DeliveryReceipt> parseDeliveryReceipts(File[] listOfFiles)
             throws IOException, InterruptedException {
-        HashMap<String, DeliveryReceipt> receipts = new HashMap<String, DeliveryReceipt>();
+        HashMap<String, DeliveryReceipt> receiptMap = new HashMap<String, DeliveryReceipt>();
         for (File f : listOfFiles) {
             if (f.isFile() && (f.getName().toLowerCase().endsWith(".jpg")
                     || f.getName().toLowerCase().endsWith(".jpeg")
@@ -244,13 +317,37 @@ public class App {
                             && receipt.getSender() != null
                             && receipt.getDateTime() != null
                             && receipt.getTrackingId() != null) {
-                        if (!receipts.containsKey(receipt.getTrackingId())) {
-                            receipts.put(receipt.getTrackingId(), receipt);
+                        if (!receiptMap.containsKey(receipt.getTrackingId())) {
+                            receiptMap.put(receipt.getTrackingId(), receipt);
                             receipt.setFilename(f.getName());
                         }
                     }
                 }
             }
+        }
+        return receiptMap;
+    }
+
+    private static ArrayList<DeliveryReceipt> parseDeliveryReceipts() {
+        ArrayList<DeliveryReceipt> receipts = new ArrayList<DeliveryReceipt>();
+        try (BufferedReader br =
+                new BufferedReader(new FileReader(Helper.PATH_TO_DELIVERY_RECEIPTS_IMPORT))) {
+            String line;
+            while ((line = br.readLine()) != null) {
+                String[] receiptArr = line.split(";");
+                String trackingId = receiptArr[3];
+                if (receiptArr.length == 5 && Helper.trackingIdIsValid(trackingId)) {
+                    DeliveryReceipt receipt = new DeliveryReceipt();
+                    receipt.setSender(receiptArr[0]);
+                    receipt.setRecipient(receiptArr[1]);
+                    receipt.setDateTime(receiptArr[2]);
+                    receipt.setTrackingId(trackingId);
+                    receipt.setFilename(receiptArr[4]);
+                    receipts.add(receipt);
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
         }
         return receipts;
     }
@@ -313,7 +410,7 @@ public class App {
         System.out.println("Total sum: " + decimalFormat.format(sum));
     }
 
-    private static void printReceipts(ArrayList<DeliveryReceipt> receipts,
+    private static void printReceipts(List<DeliveryReceipt> receipts,
             HashSet<String> existingTrackingIds) {
         System.out.println(Helper.padRight("", Helper.EMPTY_COL_WIDTH)
                 + Helper.padRight("Sender", Helper.SENDER_COL_WIDTH)
@@ -349,6 +446,7 @@ public class App {
                     if (receipt != null && !assignedNumbers.contains(number)) {
                         // Assign the tracking id, i.e., the retoure, to the transfer
                         transfer.setDeliveryReceipt(receipt);
+                        receipt.setAssigned(true);
                         // An assigned tracking id is not allowed to be assigned twice
                         assignedNumbers.add(number);
                         inputValid = true;
@@ -367,6 +465,7 @@ public class App {
             }
         }
         scanner.close();
+        exportUnassignedDeliveryReceipts(receipts);
         exportTransfers(transfers);
     }
 
@@ -388,27 +487,42 @@ public class App {
                 + ": ");
     }
 
+    private static void exportUnassignedDeliveryReceipts(ArrayList<DeliveryReceipt> receipts) {
+        StringBuilder stringBuilder = new StringBuilder();
+        for (DeliveryReceipt receipt : receipts) {
+            if (!receipt.isAssigned()) {
+                stringBuilder.append(receipt.toCSVString() + "\n");
+            }
+        }
+        String filename = Helper.PATH_TO_DELIVERY_RECEIPTS_IMPORT.replace("%DATETIME%",
+                new SimpleDateFormat(Helper.SIMPLE_DATE_FORMAT_TIME)
+                        .format(Calendar.getInstance().getTime()));
+        generateCSV(stringBuilder, filename);
+    }
+
     private static void exportTransfers(ArrayList<Transfer> transfers) {
         StringBuilder stringBuilder = new StringBuilder();
-
         stringBuilder
                 .append("Hash;Pos;Date;Balance;Retoure (Pos);BIC;IBAN;Name;Purpose;Tracking Id\n");
         for (Transfer transfer : transfers) {
             stringBuilder.append(transfer.toCSVString() + "\n");
         }
+        String filename = Helper.PATH_TO_TRANSFERS_EXPORT.replace("%DATETIME%",
+                new SimpleDateFormat(Helper.SIMPLE_DATE_FORMAT_TIME)
+                        .format(Calendar.getInstance().getTime()));
+        generateCSV(stringBuilder, filename);
+    }
 
+    private static void generateCSV(StringBuilder stringBuilder, String filename) {
         try {
-            Helper.PATH_TO_CSV_EXPORT = Helper.PATH_TO_CSV_EXPORT.replace("%DATETIME%",
-                    new SimpleDateFormat("yyyy-MM-dd_HH-mm-ss")
-                            .format(Calendar.getInstance().getTime()));
-            FileWriter writer = new FileWriter(Helper.PATH_TO_CSV_EXPORT);
+            FileWriter writer = new FileWriter(filename);
             writer.write(stringBuilder.toString());
             writer.close();
             System.out.println(
-                    "Successfully exported transfers to " + Helper.PATH_TO_CSV_EXPORT + ".");
+                    "Successfully exported to " + filename + ".");
         } catch (IOException e) {
             System.out.println(
-                    "An error occurred while writing to " + Helper.PATH_TO_CSV_EXPORT + ".");
+                    "An error occurred while writing to " + filename + ".");
             e.printStackTrace();
         }
     }

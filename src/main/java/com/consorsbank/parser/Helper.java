@@ -18,17 +18,21 @@ import com.mindee.product.generated.GeneratedV1;
 
 public class Helper {
 
-    public static String MINDEE_API_KEY = "";
 
     public static String PATH_TO_PDF_REPORTS = "/home/stephan/Downloads/Kontobewegungen/230583809/";
     public static String PATH_TO_DELIVERY_RECEIPTS =
             "/home/stephan/Downloads/Kontobewegungen/Retoure/";
-    public static String PATH_TO_CSV_EXPORT =
+    public static String PATH_TO_TRANSFERS_EXPORT =
             "/home/stephan/Downloads/Kontobewegungen/230583809/Transfers-%DATETIME%.csv";
-    public static String PATH_TO_CSV_IMPORT =
-            "/home/stephan/Downloads/Kontobewegungen/230583809/Transfers-2024-09-14_18-29-11.csv";
+    public static String PATH_TO_TRANSFERS_IMPORT =
+            "/home/stephan/Downloads/Kontobewegungen/230583809/Transfers-2024-09-18_18-30-13.csv";
+    public static String PATH_TO_DELIVERY_RECEIPTS_EXPORT =
+            "/home/stephan/Downloads/Kontobewegungen/230583809/Receipts-%DATETIME%.csv";
+    public static String PATH_TO_DELIVERY_RECEIPTS_IMPORT =
+            "/home/stephan/Downloads/Kontobewegungen/230583809/Receipts-2024-09-18_18-30-13.csv";
 
     public static final String SIMPLE_DATE_FORMAT = "dd.MM.yyyy";
+    public static final String SIMPLE_DATE_FORMAT_TIME = "yyyy-MM-dd_HH-mm-ss";
     public static final String DATETIME_FORMAT_READ = "yyyy-MM-dd HH:mm:ss";
     public static final String DATETIME_FORMAT_WRITE = "dd.MM.yyyy HH:mm";
 
@@ -36,6 +40,11 @@ public class Helper {
             "GEHALT/RENTE|EURO-UEBERW.|LASTSCHRIFT|DAUERAUFTRAG|GIROCARD|GEBUEHREN";
     public static final String PDF_REPORT_KONTOSTAND_ZUM_IN_TXT = "Kontostand zum ";
     public static final String PDF_REPORT_INTERIM_KONTOSTAND_ZUM_IN_TXT = "*** Kontostand zum ";
+
+    public static final String MINDEE_API_KEY = "";
+    public static final String MINDEE_API_ENDPOINT_NAME = "trackinglabel";
+    public static final String MINDEE_API_ACCOUNT_NAME = "hjstephan86";
+    public static final String MINDEE_API_VERSION = "1";
 
     public static final String DELIVERY_RECEIPT_DEFAULT_SENDER = "Deutsche Post AG";
     public static final String DELIVERY_RECEIPT_RECIPIENT_IN_TXT = ":recipient_name: [{value=";
@@ -91,9 +100,9 @@ public class Helper {
         MindeeClient mindeeClient = new MindeeClient(Helper.MINDEE_API_KEY);
         LocalInputSource inputSource = new LocalInputSource(new File(filename));
         Endpoint endpoint = new Endpoint(
-                "trackinglabel",
-                "hjstephan86",
-                "1");
+                Helper.MINDEE_API_ENDPOINT_NAME,
+                Helper.MINDEE_API_ACCOUNT_NAME,
+                Helper.MINDEE_API_VERSION);
 
         AsyncPredictResponse<GeneratedV1> response = mindeeClient.enqueueAndParse(
                 GeneratedV1.class,
