@@ -17,15 +17,13 @@ import com.mindee.parsing.common.AsyncPredictResponse;
 import com.mindee.product.generated.GeneratedV1;
 
 public class Helper {
-
-
     public static String PATH_TO_PDF_REPORTS = "/home/stephan/Downloads/Kontobewegungen/230583809/";
     public static String PATH_TO_DELIVERY_RECEIPTS =
             "/home/stephan/Downloads/Kontobewegungen/Retoure/";
     public static String PATH_TO_TRANSFERS_EXPORT =
             "/home/stephan/Downloads/Kontobewegungen/230583809/Transfers-%DATETIME%.csv";
     public static String PATH_TO_TRANSFERS_IMPORT =
-            "/home/stephan/Downloads/Kontobewegungen/230583809/Transfers-2024-09-18_18-30-13.csv";
+            "/home/stephan/Downloads/Kontobewegungen/230583809/Transfers-2024-09-19_09-54-21.csv";
     public static String PATH_TO_DELIVERY_RECEIPTS_EXPORT =
             "/home/stephan/Downloads/Kontobewegungen/230583809/Receipts-%DATETIME%.csv";
     public static String PATH_TO_DELIVERY_RECEIPTS_IMPORT =
@@ -177,5 +175,16 @@ public class Helper {
             e.printStackTrace();
         }
         return hexString.toString();
+    }
+
+    public static boolean purposeMatches(String purpose, String prevPurpose) {
+        // We expect a purpose like "304-1021983-4381103 Amazon.de SSROA"
+        String[] purposeArr = purpose.split(" ");
+        String[] prevPurposeArr = prevPurpose.split(" ");
+        if (purposeArr.length > 0 && prevPurposeArr.length > 0
+                && purposeArr[0].equals(prevPurposeArr[0])) {
+            return true;
+        }
+        return false;
     }
 }

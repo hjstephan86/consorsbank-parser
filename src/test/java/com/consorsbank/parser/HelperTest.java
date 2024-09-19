@@ -77,4 +77,18 @@ public class HelperTest {
         trackingId = "JJD2334920001";
         assertTrue(Helper.trackingIdIsValid(trackingId));
     }
+
+    @Test
+    public void testPurposeMatches() {
+        String purpose = "302-8845287-5188355 Amazon.de SSROA";
+        String prevPurpose = "302-8845287-5188355 AMZ Amazon.de 1";
+        assertTrue(Helper.purposeMatches(purpose, prevPurpose));
+
+        prevPurpose = "302-8845287-5188357 AMZ Amazon.de 1";
+        assertFalse(Helper.purposeMatches(purpose, prevPurpose));
+
+        purpose = "305-1103929-6143535 AMZN Mktp DE 3E";
+        prevPurpose = "303-8151108-6247541 AMZN Mktp DE 48";
+        assertFalse(Helper.purposeMatches(purpose, prevPurpose));
+    }
 }

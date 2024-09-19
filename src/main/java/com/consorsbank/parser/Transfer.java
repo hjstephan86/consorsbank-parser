@@ -127,6 +127,10 @@ public class Transfer implements Comparable<Transfer> {
             return this.getDate().before(o.getDate()) ? -1 : 1;
     }
 
+    public String getPurpose() {
+        return this.purpose;
+    }
+
     public void setPurpose(String purpose) {
         this.purpose = purpose;
     }

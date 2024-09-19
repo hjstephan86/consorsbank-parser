@@ -246,13 +246,19 @@ public class App {
                     double prevBalanceValue = prevTransfer.getBalanceNumber().getValue();
 
                     double epsilon = 1e-9;
+                    double cent = 0.01;
                     if (balanceValue > 0 && prevBalanceValue < 0
                             && Math.abs(balanceValue - Math.abs(prevBalanceValue)) < epsilon
                             && transfer.getName().equals(prevTransfer.getName())) {
                         transfer.setRetourePosition(prevTransfer.getPosition());
                         prevTransfer.setBalanced(true);
-
-                        // Continue with next transfer
+                        continue outer;
+                    } else if (balanceValue > 0 && prevBalanceValue < 0
+                            && (Math.abs(prevBalanceValue) - balanceValue) >= cent
+                            && transfer.getName().equals(prevTransfer.getName())
+                            && Helper.purposeMatches(transfer.getPurpose(),
+                                    prevTransfer.getPurpose())) {
+                        transfer.setRetourePosition(prevTransfer.getPosition());
                         continue outer;
                     }
                 }
