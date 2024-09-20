@@ -4,25 +4,28 @@ import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.Date;
+import java.util.LinkedHashMap;
 
 public class Transfer implements Comparable<Transfer> {
 
     /**
-     * The absolute position of all transfers
+     * The absolute position of this transfer
      */
     private int position;
 
     /**
-     * The position of all transfers of this month, see {@link #date}
+     * The position of this transfer of this month, see {@link #date}
      */
     private int positionInMonth;
     private Date date;
     private BalanceNumber balanceNumber;
 
     /**
-     * The position of the transfer for which this transfer is a retoure
+     * The outgoing retoure transfer, i.e., the transfer to which this retoure transfer points to.
      */
-    private int retourePosition;
+    private Transfer outgoingRetoureTransfer;
+
+    private LinkedHashMap<String, Transfer> incomingTransfers;
 
     /**
      * True iff this transfer is balanced by a subsequent retour transfer
@@ -49,6 +52,7 @@ public class Transfer implements Comparable<Transfer> {
         this.purpose = "";
 
         this.dateFormat = new SimpleDateFormat(Helper.SIMPLE_DATE_FORMAT);
+        this.incomingTransfers = new LinkedHashMap<String, Transfer>();
     }
 
     public int getPosition() {
@@ -96,7 +100,11 @@ public class Transfer implements Comparable<Transfer> {
     public String toPaddedString() {
         return Helper.padRight(dateFormat.format(this.date), Helper.DATE_COL_WIDTH)
                 + Helper.padRight(this.balanceNumber.toString(), Helper.BALANCE_COL_WIDTH)
-                + Helper.padRight(String.valueOf(this.retourePosition), Helper.RETOURE_COL_WIDTH)
+                + Helper.padRight(
+                        String.valueOf(this.outgoingRetoureTransfer != null
+                                ? this.outgoingRetoureTransfer.getPosition()
+                                : ""),
+                        Helper.RETOURE_COL_WIDTH)
                 + Helper.padRight(this.BIC, Helper.BIC_COL_WIDTH)
                 + Helper.padRight(this.IBAN, Helper.IBAN_COL_WIDTH)
                 + Helper.padRight(
@@ -111,7 +119,9 @@ public class Transfer implements Comparable<Transfer> {
                 + ";" + this.position
                 + ";" + this.dateFormat.format(this.date)
                 + ";" + this.balanceNumber.toString()
-                + ";" + this.retourePosition
+                + ";"
+                + (this.outgoingRetoureTransfer != null ? this.outgoingRetoureTransfer.getPosition()
+                        : "")
                 + ";" + this.BIC
                 + ";" + this.IBAN
                 + ";" + this.name
@@ -143,12 +153,16 @@ public class Transfer implements Comparable<Transfer> {
         this.isBalanced = isBalanced;
     }
 
-    public void setRetourePosition(int retoure) {
-        this.retourePosition = retoure;
+    public void setOutgoingRetoureTransfer(Transfer transfer) {
+        this.outgoingRetoureTransfer = transfer;
     }
 
-    public int getRetourePosition() {
-        return retourePosition;
+    public Transfer getOutgoingRetoureTransfer() {
+        return outgoingRetoureTransfer;
+    }
+
+    public LinkedHashMap<String, Transfer> getIncomingTransfers() {
+        return incomingTransfers;
     }
 
     private String getTrackingId() {

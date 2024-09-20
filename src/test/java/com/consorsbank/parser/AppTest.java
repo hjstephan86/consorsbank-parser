@@ -10,18 +10,24 @@ public class AppTest {
 
     @Test
     public void testMain() {
-        int expectedEntriesCount = 1554;
-        String expectedLastEntry =
-                "b000b9059601524df6d27601c1e54e16;1554;30.08.2024;500,00;0;<SPBIDE3B>;DE72480501610150252765;DAMARIS EPP;Erbe;";
-
         String pathToPDFReports = "/home/stephan/Downloads/Kontobewegungen/Test/";
         String pathToDeliveryReceipts = "/home/stephan/Downloads/Kontobewegungen/Test/Retoure/";
         String pathToTransfersExport =
-                "/home/stephan/Downloads/Kontobewegungen/Test/Transfers-2024-08-15_17-27-53.csv";
+                "/home/stephan/Downloads/Kontobewegungen/Test/Transfers-2024-09-22_10-55-49.csv";
+        String pathToTransfersImport =
+                "/home/stephan/Downloads/Kontobewegungen/Test/Transfers-2024-09-22_10-55-49.csv";
+        String pathToReceiptsExport =
+                "/home/stephan/Downloads/Kontobewegungen/Test/Receipts-%DATETIME%.csv";
+        String pathToReceiptsImport =
+                "/home/stephan/Downloads/Kontobewegungen/Test/Receipts-2024-09-23_16-07-12.csv";
+        String[] arguments = {pathToPDFReports, pathToDeliveryReceipts, pathToTransfersExport,
+                pathToTransfersImport, pathToReceiptsExport, pathToReceiptsImport};
 
-        String[] arguments = {pathToPDFReports, pathToDeliveryReceipts, pathToTransfersExport};
+        int expectedEntriesCount = 1554;
+        String expectedLastEntry =
+                "b000b9059601524df6d27601c1e54e16;1554;30.08.2024;500;;<SPBIDE3B>;DE72480501610150252765;DAMARIS EPP;Erbe;";
+
         try {
-
             String simulatedInput = "1";
             ByteArrayInputStream in = new ByteArrayInputStream(simulatedInput.getBytes());
             System.setIn(in);
@@ -49,18 +55,24 @@ public class AppTest {
 
     @Test
     public void testMainGenerate() {
-        int expectedEntriesCount = 1554;
-        String expectedLastEntry =
-                "b000b9059601524df6d27601c1e54e16;1554;30.08.2024;500,00;0;<SPBIDE3B>;DE72480501610150252765;DAMARIS EPP;Erbe;";
-
         String pathToPDFReports = "/home/stephan/Downloads/Kontobewegungen/Test/";
         String pathToDeliveryReceipts = "/home/stephan/Downloads/Kontobewegungen/Test/Retoure/";
         String pathToTransfersExport =
-                "/home/stephan/Downloads/Kontobewegungen/Test/Transfers-2024-08-15_17-27-53.csv";
+                "/home/stephan/Downloads/Kontobewegungen/Test/Transfers-2024-09-22_10-55-49.csv";
+        String pathToTransfersImport =
+                "/home/stephan/Downloads/Kontobewegungen/Test/Transfers-2024-09-22_10-55-49.csv";
+        String pathToReceiptsExport =
+                "/home/stephan/Downloads/Kontobewegungen/Test/Receipts-%DATETIME%.csv";
+        String pathToReceiptsImport =
+                "/home/stephan/Downloads/Kontobewegungen/Test/Receipts-2024-09-23_16-07-12.csv";
+        String[] arguments = {pathToPDFReports, pathToDeliveryReceipts, pathToTransfersExport,
+                pathToTransfersImport, pathToReceiptsExport, pathToReceiptsImport};
 
-        String[] arguments = {pathToPDFReports, pathToDeliveryReceipts, pathToTransfersExport};
+        int expectedEntriesCount = 1554;
+        String expectedLastEntry =
+                "b000b9059601524df6d27601c1e54e16;1554;30.08.2024;500;;<SPBIDE3B>;DE72480501610150252765;DAMARIS EPP;Erbe;";
+
         try {
-
             String simulatedInput = "g";
             ByteArrayInputStream in = new ByteArrayInputStream(simulatedInput.getBytes());
             System.setIn(in);
@@ -88,23 +100,24 @@ public class AppTest {
 
     @Test
     public void testMainParseForExistingTrackingIds() {
+        String pathToPDFReports = "/home/stephan/Downloads/Kontobewegungen/Test/";
+        String pathToDeliveryReceipts = "/home/stephan/Downloads/Kontobewegungen/Test/Retoure/";
+        String pathToTransfersExport =
+                "/home/stephan/Downloads/Kontobewegungen/Test/Transfers-2024-09-22_10-55-49.csv";
+        String pathToTransfersImport =
+                "/home/stephan/Downloads/Kontobewegungen/Test/Transfers-2024-09-22_10-55-49.csv";
+        String pathToReceiptsExport =
+                "/home/stephan/Downloads/Kontobewegungen/Test/Receipts-%DATETIME%.csv";
+        String pathToReceiptsImport =
+                "/home/stephan/Downloads/Kontobewegungen/Test/Receipts-2024-09-23_16-07-12.csv";
+        String[] arguments = {pathToPDFReports, pathToDeliveryReceipts, pathToTransfersExport,
+                pathToTransfersImport, pathToReceiptsExport, pathToReceiptsImport};
+
         int expectedEntriesCount = 1554;
         String expectedLastEntry =
-                "b000b9059601524df6d27601c1e54e16;1554;30.08.2024;500,00;0;<SPBIDE3B>;DE72480501610150252765;DAMARIS EPP;Erbe;";
+                "b000b9059601524df6d27601c1e54e16;1554;30.08.2024;500;;<SPBIDE3B>;DE72480501610150252765;DAMARIS EPP;Erbe;";
 
-        String pathToPDFReports = "/home/stephan/Downloads/Kontobewegungen/Test/";
-        String pathToDeliveryReceipts =
-                "/home/stephan/Downloads/Kontobewegungen/Test/Retoure/";
-        String pathToTransfersExport =
-                "/home/stephan/Downloads/Kontobewegungen/Test/Transfers-2024-08-15_17-27-53.csv";
-        String pathToTransfersImport =
-                "/home/stephan/Downloads/Kontobewegungen/Test/Transfers-2024-08-15_17-27-55.csv";
-
-        String[] arguments =
-                {pathToPDFReports, pathToDeliveryReceipts, pathToTransfersExport,
-                        pathToTransfersImport};
         try {
-
             String simulatedInput = "g";
             ByteArrayInputStream in = new ByteArrayInputStream(simulatedInput.getBytes());
             System.setIn(in);
@@ -132,25 +145,24 @@ public class AppTest {
 
     @Test
     public void testMainRemoveExistingDeliveryReceipts() {
+        String pathToPDFReports = "/home/stephan/Downloads/Kontobewegungen/Test/";
+        String pathToDeliveryReceipts = "/home/stephan/Downloads/Kontobewegungen/Test/Retoure/";
+        String pathToTransfersExport =
+                "/home/stephan/Downloads/Kontobewegungen/Test/Transfers-2024-09-22_10-55-49.csv";
+        String pathToTransfersImport =
+                "/home/stephan/Downloads/Kontobewegungen/Test/Transfers-2024-09-22_10-55-49.csv";
+        String pathToReceiptsExport =
+                "/home/stephan/Downloads/Kontobewegungen/Test/Receipts-%DATETIME%.csv";
+        String pathToReceiptsImport =
+                "/home/stephan/Downloads/Kontobewegungen/Test/Receipts-2024-09-23_16-07-12.csv";
+        String[] arguments = {pathToPDFReports, pathToDeliveryReceipts, pathToTransfersExport,
+                pathToTransfersImport, pathToReceiptsExport, pathToReceiptsImport};
+
         int expectedEntriesCount = 1554;
         String expectedLastEntry =
-                "b000b9059601524df6d27601c1e54e16;1554;30.08.2024;500,00;0;<SPBIDE3B>;DE72480501610150252765;DAMARIS EPP;Erbe;";
+                "b000b9059601524df6d27601c1e54e16;1554;30.08.2024;500;;<SPBIDE3B>;DE72480501610150252765;DAMARIS EPP;Erbe;";
 
-        String pathToPDFReports = "/home/stephan/Downloads/Kontobewegungen/Test/";
-        String pathToDeliveryReceipts =
-                "/home/stephan/Downloads/Kontobewegungen/Test/Retoure/";
-        String pathToTransfersExport =
-                "/home/stephan/Downloads/Kontobewegungen/Test/Transfers-2024-08-15_17-27-53.csv";
-        String pathToTransfersImport =
-                "/home/stephan/Downloads/Kontobewegungen/Test/Transfers-2024-08-15_17-27-55.csv";
-        String pathToDeliveryReceiptsImport =
-                "/home/stephan/Downloads/Kontobewegungen/Test/Receipts-2024-09-18_18-52-30.csv";
-
-        String[] arguments =
-                {pathToPDFReports, pathToDeliveryReceipts, pathToTransfersExport,
-                        pathToTransfersImport, pathToDeliveryReceiptsImport};
         try {
-
             String simulatedInput = "g";
             ByteArrayInputStream in = new ByteArrayInputStream(simulatedInput.getBytes());
             System.setIn(in);

@@ -9,13 +9,12 @@ import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Scanner;
@@ -36,15 +35,15 @@ public class App {
         parseTransfers(listOfPDFReportFiles, transfers);
 
         Collections.sort(transfers);
-        HashMap<String, Transfer> transferMap = new HashMap<String, Transfer>();
-        setPosition(transfers, transferMap);
-        findRetourePosititions(transfers);
+        LinkedHashMap<String, Transfer> transferMap = setPosition(transfers);
+        com.consorsbank.parser.retoure.Helper.findRetoureTransfers(transfers);
+        com.consorsbank.parser.retoure.Helper.packageRetoureTransfers(transfers, transferMap);
 
         HashSet<String> existingTrackingIds = new HashSet<String>();
         parseForExsistingTrackingIds(transferMap, existingTrackingIds);
         List<Transfer> retoureTransfers =
                 transfers.stream()
-                        .filter(transfer -> transfer.getRetourePosition() > 0
+                        .filter(transfer -> transfer.getOutgoingRetoureTransfer() != null
                                 && transfer.getExistingTrackingId() == null)
                         .collect(Collectors.toList());
 
@@ -61,42 +60,42 @@ public class App {
                 Stream.concat(receipts.stream(), existingReceipts.stream())
                         .collect(Collectors.toList());
         printReceipts(allReceipts, existingTrackingIds);
-        assignTrackingIds(transfers, retoureTransfers, receipts);
+        assignTrackingIds(transfers, retoureTransfers, allReceipts);
     }
 
     private static void parseArgs(String[] args) {
         switch (args.length) {
             case 2:
-                parseRequiredArgs(args);
+                parsePDFsAndReceiptsPathsArgs(args);
                 break;
             case 3:
-                parseRequiredArgs(args);
+                parsePDFsAndReceiptsPathsArgs(args);
                 parseArgTransferExport(args);
                 break;
             case 4:
-                parseRequiredArgs(args);
+                parsePDFsAndReceiptsPathsArgs(args);
                 parseArgTransferExport(args);
                 parseArgTransferImport(args);
                 break;
             case 5:
-                parseRequiredArgs(args);
+                parsePDFsAndReceiptsPathsArgs(args);
                 parseArgTransferExport(args);
                 parseArgTransferImport(args);
-                parseArgReceiptsImport(args);
+                parseArgReceiptsExport(args);
                 break;
             case 6:
-                parseRequiredArgs(args);
+                parsePDFsAndReceiptsPathsArgs(args);
                 parseArgTransferExport(args);
                 parseArgTransferImport(args);
-                parseArgReceiptsImport(args);
                 parseArgReceiptsExport(args);
+                parseArgReceiptsImport(args);
                 break;
             default:
                 break;
         }
     }
 
-    private static void parseRequiredArgs(String[] args) {
+    private static void parsePDFsAndReceiptsPathsArgs(String[] args) {
         File pathToPDFReports = new File(args[0]);
         File pathToDeliveryReceipts = new File(args[1]);
         if (pathToPDFReports.exists() && pathToPDFReports.isDirectory()
@@ -108,8 +107,7 @@ public class App {
 
     private static void parseArgTransferExport(String[] args) {
         File pathToTransfersExport = new File(args[2]);
-        if (pathToTransfersExport.exists() && pathToTransfersExport.isFile()
-                && pathToTransfersExport.getName().toLowerCase().endsWith(".csv")) {
+        if (pathToTransfersExport.getName().toLowerCase().endsWith(".csv")) {
             Helper.PATH_TO_TRANSFERS_EXPORT = pathToTransfersExport.getAbsolutePath();
         }
     }
@@ -122,21 +120,20 @@ public class App {
         }
     }
 
+    private static void parseArgReceiptsExport(String[] args) {
+        File pathToDeliveryReceiptsExport = new File(args[4]);
+        if (pathToDeliveryReceiptsExport.getName().toLowerCase().endsWith(".csv")) {
+            Helper.PATH_TO_DELIVERY_RECEIPTS_EXPORT =
+                    pathToDeliveryReceiptsExport.getAbsolutePath();
+        }
+    }
+
     private static void parseArgReceiptsImport(String[] args) {
-        File pathToDeliveryReceiptsImport = new File(args[4]);
+        File pathToDeliveryReceiptsImport = new File(args[5]);
         if (pathToDeliveryReceiptsImport.exists() && pathToDeliveryReceiptsImport.isFile()
                 && pathToDeliveryReceiptsImport.getName().toLowerCase().endsWith(".csv")) {
             Helper.PATH_TO_DELIVERY_RECEIPTS_IMPORT =
                     pathToDeliveryReceiptsImport.getAbsolutePath();
-        }
-    }
-
-    private static void parseArgReceiptsExport(String[] args) {
-        File pathToDeliveryReceiptsExport = new File(args[5]);
-        if (pathToDeliveryReceiptsExport.exists() && pathToDeliveryReceiptsExport.isFile()
-                && pathToDeliveryReceiptsExport.getName().toLowerCase().endsWith(".csv")) {
-            Helper.PATH_TO_DELIVERY_RECEIPTS_EXPORT =
-                    pathToDeliveryReceiptsExport.getAbsolutePath();
         }
     }
 
@@ -152,7 +149,7 @@ public class App {
 
     private static void parseTransfers(String text, ArrayList<Transfer> transfers) {
         SimpleDateFormat dateFormat = new SimpleDateFormat(Helper.SIMPLE_DATE_FORMAT);
-        DecimalFormat decimalFormat = new DecimalFormat("#.00");
+        DecimalFormat decimalFormat = new DecimalFormat();
         decimalFormat.setDecimalFormatSymbols(DecimalFormatSymbols.getInstance(Locale.GERMAN));
 
         int positionInMonth = 0;
@@ -175,11 +172,12 @@ public class App {
             }
             if (matcher.find()) {
                 try {
-                    transfer = parseBalanceAndDate(dateFormat, decimalFormat, tokens, year, i);
+                    transfer =
+                            Helper.parseBalanceAndDate(dateFormat, decimalFormat, tokens, year, i);
                     transfers.add(transfer);
                     positionInMonth++;
                     transfer.setPositionInMonth(positionInMonth);
-                    parseNameAndBankIdAndPurpose(tokens, transfer, i);
+                    Helper.parseNameAndBankIdAndPurpose(tokens, transfer, i);
                 } catch (ParseException e) {
                     e.printStackTrace();
                 }
@@ -194,79 +192,18 @@ public class App {
         return year;
     }
 
-    private static Transfer parseBalanceAndDate(SimpleDateFormat dateFormat,
-            DecimalFormat decimalFormat, ArrayList<String> pdfTokens, int year, int i)
-            throws ParseException {
-        String[] splittedLine = pdfTokens.get(i + 1).split(" ");
-        Date date = dateFormat.parse(splittedLine[0] + year);
-        Number number = decimalFormat.parse(splittedLine[3]);
-
-        char sign = splittedLine[3].charAt(splittedLine[3].length() - 1);
-        BalanceNumber balanceNumber = new BalanceNumber(number, sign, decimalFormat);
-
-        Transfer transfer = new Transfer(balanceNumber, date);
-        return transfer;
-    }
-
-    private static void parseNameAndBankIdAndPurpose(ArrayList<String> pdfTokens, Transfer transfer,
-            int i) {
-        if (Helper.bankIdValid(pdfTokens.get(i + 3))) {
-            transfer.setName(pdfTokens.get(i + 2));
-            transfer.setBankID(pdfTokens.get(i + 3));
-
-            String purpose = pdfTokens.get(i + 4);
-            if (!purpose.startsWith(Helper.PDF_REPORT_INTERIM_KONTOSTAND_ZUM_IN_TXT)) {
-                transfer.setPurpose(purpose);
-            }
-        } else {
-            String purpose = pdfTokens.get(i + 2) + " " + pdfTokens.get(i + 3);
-            transfer.setPurpose(purpose);
-        }
-    }
-
-    private static void setPosition(ArrayList<Transfer> transfers,
-            HashMap<String, Transfer> transferMap) {
+    private static LinkedHashMap<String, Transfer> setPosition(ArrayList<Transfer> transfers) {
+        LinkedHashMap<String, Transfer> transferMap = new LinkedHashMap<String, Transfer>();
         for (int i = 0; i < transfers.size(); i++) {
             Transfer transfer = transfers.get(i);
             transfer.setPosition(i + 1);
             transfer.generateHash();
             transferMap.put(transfer.getHash(), transfer);
         }
+        return transferMap;
     }
 
-    private static void findRetourePosititions(ArrayList<Transfer> transfers) {
-        outer: for (int i = transfers.size() - 1; i > 0; i--) {
-            Transfer transfer = transfers.get(i);
-            for (int j = i - 1; j >= 0; j--) {
-                Transfer prevTransfer = transfers.get(j);
-                long daysBetween = ChronoUnit.DAYS.between(prevTransfer.getLocalDate(),
-                        transfer.getLocalDate());
-                if (daysBetween <= Helper.RETOURE_LIMIT_DAYS && !prevTransfer.isBalanced()) {
-                    double balanceValue = transfer.getBalanceNumber().getValue();
-                    double prevBalanceValue = prevTransfer.getBalanceNumber().getValue();
-
-                    double epsilon = 1e-9;
-                    double cent = 0.01;
-                    if (balanceValue > 0 && prevBalanceValue < 0
-                            && Math.abs(balanceValue - Math.abs(prevBalanceValue)) < epsilon
-                            && transfer.getName().equals(prevTransfer.getName())) {
-                        transfer.setRetourePosition(prevTransfer.getPosition());
-                        prevTransfer.setBalanced(true);
-                        continue outer;
-                    } else if (balanceValue > 0 && prevBalanceValue < 0
-                            && (Math.abs(prevBalanceValue) - balanceValue) >= cent
-                            && transfer.getName().equals(prevTransfer.getName())
-                            && Helper.purposeMatches(transfer.getPurpose(),
-                                    prevTransfer.getPurpose())) {
-                        transfer.setRetourePosition(prevTransfer.getPosition());
-                        continue outer;
-                    }
-                }
-            }
-        }
-    }
-
-    private static void parseForExsistingTrackingIds(HashMap<String, Transfer> transferMap,
+    private static void parseForExsistingTrackingIds(LinkedHashMap<String, Transfer> transferMap,
             HashSet<String> existingTrackingIds) {
         try (BufferedReader br =
                 new BufferedReader(new FileReader(Helper.PATH_TO_TRANSFERS_IMPORT))) {
@@ -437,7 +374,7 @@ public class App {
     }
 
     private static void assignTrackingIds(ArrayList<Transfer> transfers,
-            List<Transfer> retoureTransfers, ArrayList<DeliveryReceipt> receipts) {
+            List<Transfer> retoureTransfers, List<DeliveryReceipt> receipts) {
         printTrackingIdAssignmentDescr();
         Scanner scanner = new Scanner(System.in);
         HashSet<Integer> assignedNumbers = new HashSet<Integer>();
@@ -450,10 +387,12 @@ public class App {
                     int number = Integer.parseInt(input);
                     DeliveryReceipt receipt = Helper.getDeliveryReceipt(receipts, number);
                     if (receipt != null && !assignedNumbers.contains(number)) {
-                        // Assign the tracking id, i.e., the retoure, to the transfer
+                        // Assign the tracking id to the retoure transfer
                         transfer.setDeliveryReceipt(receipt);
                         receipt.setAssigned(true);
                         // An assigned tracking id is not allowed to be assigned twice
+                        // Therefore, add it to the set of assigned numbers
+                        // Notice, a number represents a tracking id
                         assignedNumbers.add(number);
                         inputValid = true;
 
@@ -487,20 +426,20 @@ public class App {
     private static void promptForTrackingIdAssignment(Transfer transfer) {
         System.out.print("Enter the " + Helper.CONSOLE_COLOR_YELLOW + "number"
                 + Helper.CONSOLE_COLOR_RESET
-                + " of the retoure shipment to assign its tracking id to retoure transfer "
+                + " of the delivery receipt to assign its tracking id to retoure transfer "
                 + Helper.CONSOLE_COLOR_CYAN + transfer.getPosition()
                 + Helper.CONSOLE_COLOR_RESET
                 + ": ");
     }
 
-    private static void exportUnassignedDeliveryReceipts(ArrayList<DeliveryReceipt> receipts) {
+    private static void exportUnassignedDeliveryReceipts(List<DeliveryReceipt> receipts) {
         StringBuilder stringBuilder = new StringBuilder();
         for (DeliveryReceipt receipt : receipts) {
             if (!receipt.isAssigned()) {
                 stringBuilder.append(receipt.toCSVString() + "\n");
             }
         }
-        String filename = Helper.PATH_TO_DELIVERY_RECEIPTS_IMPORT.replace("%DATETIME%",
+        String filename = Helper.PATH_TO_DELIVERY_RECEIPTS_EXPORT.replace("%DATETIME%",
                 new SimpleDateFormat(Helper.SIMPLE_DATE_FORMAT_TIME)
                         .format(Calendar.getInstance().getTime()));
         generateCSV(stringBuilder, filename);

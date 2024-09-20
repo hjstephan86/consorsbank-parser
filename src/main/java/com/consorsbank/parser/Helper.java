@@ -4,7 +4,12 @@ import java.io.File;
 import java.io.IOException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.text.DecimalFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.apache.pdfbox.Loader;
@@ -17,17 +22,18 @@ import com.mindee.parsing.common.AsyncPredictResponse;
 import com.mindee.product.generated.GeneratedV1;
 
 public class Helper {
+
     public static String PATH_TO_PDF_REPORTS = "/home/stephan/Downloads/Kontobewegungen/230583809/";
     public static String PATH_TO_DELIVERY_RECEIPTS =
             "/home/stephan/Downloads/Kontobewegungen/Retoure/";
     public static String PATH_TO_TRANSFERS_EXPORT =
             "/home/stephan/Downloads/Kontobewegungen/230583809/Transfers-%DATETIME%.csv";
     public static String PATH_TO_TRANSFERS_IMPORT =
-            "/home/stephan/Downloads/Kontobewegungen/230583809/Transfers-2024-09-19_09-54-21.csv";
+            "/home/stephan/Downloads/Kontobewegungen/230583809/Transfers-2024-09-22_10-17-23";
     public static String PATH_TO_DELIVERY_RECEIPTS_EXPORT =
             "/home/stephan/Downloads/Kontobewegungen/230583809/Receipts-%DATETIME%.csv";
     public static String PATH_TO_DELIVERY_RECEIPTS_IMPORT =
-            "/home/stephan/Downloads/Kontobewegungen/230583809/Receipts-2024-09-18_18-30-13.csv";
+            "/home/stephan/Downloads/Kontobewegungen/230583809/Receipts-2024-09-23_16-07-12.csv";
 
     public static final String SIMPLE_DATE_FORMAT = "dd.MM.yyyy";
     public static final String SIMPLE_DATE_FORMAT_TIME = "yyyy-MM-dd_HH-mm-ss";
@@ -38,6 +44,9 @@ public class Helper {
             "GEHALT/RENTE|EURO-UEBERW.|LASTSCHRIFT|DAUERAUFTRAG|GIROCARD|GEBUEHREN";
     public static final String PDF_REPORT_KONTOSTAND_ZUM_IN_TXT = "Kontostand zum ";
     public static final String PDF_REPORT_INTERIM_KONTOSTAND_ZUM_IN_TXT = "*** Kontostand zum ";
+
+    public static final String CUSTOMER_NAME_AMAZON = "AMAZON";
+    public static final String CUSTOMER_NAME_ZALANDO = "ZALANDO";
 
     public static final String MINDEE_API_KEY = "";
     public static final String MINDEE_API_ENDPOINT_NAME = "trackinglabel";
@@ -50,6 +59,9 @@ public class Helper {
     public static final String DELIVERY_RECEIPT_DATE_IN_TXT = ":shipment_date: [{value=";
     public static final String DELIVERY_RECEIPT_TIME_IN_TXT = ":shipment_time: [{value=";
     public static final String DELIVERY_RECEIPT_TRACKING_ID_IN_TXT = ":tracking_number: [{value=";
+
+    public static final double EPSILON = 1e-9;
+    public static final double CENT = 0.01;
 
     public static final int RETOURE_LIMIT_DAYS = 100;
 
@@ -110,6 +122,36 @@ public class Helper {
         return response.toString();
     }
 
+    public static Transfer parseBalanceAndDate(SimpleDateFormat dateFormat,
+            DecimalFormat decimalFormat, ArrayList<String> pdfTokens, int year, int i)
+            throws ParseException {
+        String[] splittedLine = pdfTokens.get(i + 1).split(" ");
+        Date date = dateFormat.parse(splittedLine[0] + year);
+        Number number = decimalFormat.parse(splittedLine[3]);
+
+        char sign = splittedLine[3].charAt(splittedLine[3].length() - 1);
+        BalanceNumber balanceNumber = new BalanceNumber(number, sign, decimalFormat);
+
+        Transfer transfer = new Transfer(balanceNumber, date);
+        return transfer;
+    }
+
+    public static void parseNameAndBankIdAndPurpose(ArrayList<String> pdfTokens, Transfer transfer,
+            int i) {
+        if (bankIdValid(pdfTokens.get(i + 3))) {
+            transfer.setName(pdfTokens.get(i + 2));
+            transfer.setBankID(pdfTokens.get(i + 3));
+
+            String purpose = pdfTokens.get(i + 4);
+            if (!purpose.startsWith(PDF_REPORT_INTERIM_KONTOSTAND_ZUM_IN_TXT)) {
+                transfer.setPurpose(purpose);
+            }
+        } else {
+            String purpose = pdfTokens.get(i + 2) + " " + pdfTokens.get(i + 3);
+            transfer.setPurpose(purpose);
+        }
+    }
+
     public static boolean bankIdValid(String bankId) {
         String[] bankIdarr = bankId.split(" ");
         if (bankIdarr.length > 1) {
@@ -139,7 +181,7 @@ public class Helper {
         return trackingId.matches(regex);
     }
 
-    public static DeliveryReceipt getDeliveryReceipt(ArrayList<DeliveryReceipt> receipts,
+    public static DeliveryReceipt getDeliveryReceipt(List<DeliveryReceipt> receipts,
             int number) {
         if (receipts.size() == 0)
             return null;
@@ -175,16 +217,5 @@ public class Helper {
             e.printStackTrace();
         }
         return hexString.toString();
-    }
-
-    public static boolean purposeMatches(String purpose, String prevPurpose) {
-        // We expect a purpose like "304-1021983-4381103 Amazon.de SSROA"
-        String[] purposeArr = purpose.split(" ");
-        String[] prevPurposeArr = prevPurpose.split(" ");
-        if (purposeArr.length > 0 && prevPurposeArr.length > 0
-                && purposeArr[0].equals(prevPurposeArr[0])) {
-            return true;
-        }
-        return false;
     }
 }
