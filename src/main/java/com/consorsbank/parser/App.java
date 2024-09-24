@@ -415,7 +415,7 @@ public class App {
         }
         scanner.close();
         if (!quit) {
-            exportUnassignedDeliveryReceipts(receipts);
+            exportDeliveryReceipts(receipts);
             exportTransfers(transfers);
         }
     }
@@ -439,12 +439,10 @@ public class App {
                 + ": ");
     }
 
-    private static void exportUnassignedDeliveryReceipts(List<DeliveryReceipt> receipts) {
+    private static void exportDeliveryReceipts(List<DeliveryReceipt> receipts) {
         StringBuilder stringBuilder = new StringBuilder();
         for (DeliveryReceipt receipt : receipts) {
-            if (!receipt.isAssigned()) {
-                stringBuilder.append(receipt.toCSVString() + "\n");
-            }
+            stringBuilder.append(receipt.toCSVString() + "\n");
         }
         String filename = Helper.PATH_TO_DELIVERY_RECEIPTS_EXPORT.replace("%DATETIME%",
                 new SimpleDateFormat(Helper.SIMPLE_DATE_FORMAT_TIME)
