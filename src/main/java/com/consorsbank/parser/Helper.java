@@ -130,7 +130,7 @@ public class Helper {
         Number number = decimalFormat.parse(splittedLine[3]);
 
         char sign = splittedLine[3].charAt(splittedLine[3].length() - 1);
-        BalanceNumber balanceNumber = new BalanceNumber(number, sign, decimalFormat);
+        BalanceNumber balanceNumber = new BalanceNumber(number, sign);
 
         Transfer transfer = new Transfer(balanceNumber, date);
         return transfer;

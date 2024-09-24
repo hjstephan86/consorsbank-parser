@@ -378,6 +378,7 @@ public class App {
         printTrackingIdAssignmentDescr();
         Scanner scanner = new Scanner(System.in);
         HashSet<Integer> assignedNumbers = new HashSet<Integer>();
+        boolean quit = false;
         outer: for (Transfer transfer : retoureTransfers) {
             boolean inputValid = false;
             while (!inputValid) {
@@ -405,13 +406,18 @@ public class App {
                         continue outer;
                     } else if (input.equals("g")) {
                         break outer;
+                    } else if (input.equals("q")) {
+                        quit = true;
+                        break outer;
                     }
                 }
             }
         }
         scanner.close();
-        exportUnassignedDeliveryReceipts(receipts);
-        exportTransfers(transfers);
+        if (!quit) {
+            exportUnassignedDeliveryReceipts(receipts);
+            exportTransfers(transfers);
+        }
     }
 
     private static void printTrackingIdAssignmentDescr() {
@@ -420,7 +426,8 @@ public class App {
                 "Assign a tracking id to a retoure transfer or enter " + Helper.CONSOLE_COLOR_YELLOW
                         + "g" + Helper.CONSOLE_COLOR_RESET
                         + " for CSV generation or " + Helper.CONSOLE_COLOR_YELLOW + "s"
-                        + Helper.CONSOLE_COLOR_RESET + " to skip the retoure transfer.");
+                        + Helper.CONSOLE_COLOR_RESET
+                        + " to skip the retoure transfer or q to quit.");
     }
 
     private static void promptForTrackingIdAssignment(Transfer transfer) {

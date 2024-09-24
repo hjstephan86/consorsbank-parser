@@ -1,6 +1,8 @@
 package com.consorsbank.parser;
 
 import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
+import java.util.Locale;
 
 public class BalanceNumber {
 
@@ -8,14 +10,15 @@ public class BalanceNumber {
     private char sign;
     private DecimalFormat decimalFormat;
 
-    public BalanceNumber(Number number, char sign, DecimalFormat decimalFormat) {
+    public BalanceNumber(Number number, char sign) {
         this.number = number;
         if (sign == '+' || sign == '-') {
             this.sign = sign;
         } else {
             throw new IllegalArgumentException("Sign must be either '+' or '-'");
         }
-        this.decimalFormat = decimalFormat;
+        this.decimalFormat = new DecimalFormat("#.00");
+        this.decimalFormat.setDecimalFormatSymbols(DecimalFormatSymbols.getInstance(Locale.GERMAN));
     }
 
     /***

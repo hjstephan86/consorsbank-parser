@@ -99,7 +99,8 @@ public class Transfer implements Comparable<Transfer> {
 
     public String toPaddedString() {
         return Helper.padRight(dateFormat.format(this.date), Helper.DATE_COL_WIDTH)
-                + Helper.padRight(this.balanceNumber.toString(), Helper.BALANCE_COL_WIDTH)
+                + Helper.padRight(String.format("%12.2f", this.balanceNumber.getValue()),
+                        Helper.BALANCE_COL_WIDTH)
                 + Helper.padRight(
                         String.valueOf(this.outgoingRetoureTransfer != null
                                 ? this.outgoingRetoureTransfer.getPosition()

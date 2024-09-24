@@ -142,13 +142,12 @@ public class HelperTest {
     }
 
     private Transfer createTransfer(String name, double value, int day, char sign, String purpose) {
-        DecimalFormat decimalFormat = new DecimalFormat("#.00");
         Calendar calendar = Calendar.getInstance();
-
         calendar.set(2024, Calendar.DECEMBER, day, 0, 0, 0);
+
         Date date = calendar.getTime();
         Number number = value;
-        BalanceNumber balanceNumber = new BalanceNumber(number, sign, decimalFormat);
+        BalanceNumber balanceNumber = new BalanceNumber(number, sign);
         Transfer t = new Transfer(balanceNumber, date);
         t.setName(name);
         t.setPurpose(purpose);

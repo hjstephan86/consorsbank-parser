@@ -17,7 +17,7 @@ public class BalanceNumberTest {
         Number number = decimalFormat.parse(strNumber);
         char sign = strNumber.charAt(strNumber.length() - 1);
 
-        BalanceNumber balanceNumber = new BalanceNumber(number, sign, decimalFormat);
+        BalanceNumber balanceNumber = new BalanceNumber(number, sign);
         double expectedValue = 1243.53;
 
         assert (balanceNumber.getValue() == expectedValue);
@@ -33,7 +33,7 @@ public class BalanceNumberTest {
         Number number = decimalFormat.parse(strNumber);
         char sign = strNumber.charAt(strNumber.length() - 1);
 
-        BalanceNumber balanceNumber = new BalanceNumber(number, sign, decimalFormat);
+        BalanceNumber balanceNumber = new BalanceNumber(number, sign);
         double expectedValue = -1243.53;
 
         assert (balanceNumber.getValue() == expectedValue);
@@ -48,7 +48,7 @@ public class BalanceNumberTest {
         DecimalFormat decimalFormat = new DecimalFormat();
         decimalFormat.setDecimalFormatSymbols(DecimalFormatSymbols.getInstance(Locale.GERMAN));
 
-        BalanceNumber balanceNumber = new BalanceNumber(number, sign, decimalFormat);
+        BalanceNumber balanceNumber = new BalanceNumber(number, sign);
 
         assert (balanceNumber.getValue() == value);
     }
@@ -62,7 +62,7 @@ public class BalanceNumberTest {
         DecimalFormat decimalFormat = new DecimalFormat();
         decimalFormat.setDecimalFormatSymbols(DecimalFormatSymbols.getInstance(Locale.GERMAN));
 
-        BalanceNumber balanceNumber = new BalanceNumber(number, sign, decimalFormat);
+        BalanceNumber balanceNumber = new BalanceNumber(number, sign);
 
         assert (balanceNumber.getValue() == -1 * value);
     }
@@ -76,7 +76,7 @@ public class BalanceNumberTest {
         DecimalFormat decimalFormat = new DecimalFormat();
         decimalFormat.setDecimalFormatSymbols(DecimalFormatSymbols.getInstance(Locale.GERMAN));
 
-        BalanceNumber balanceNumber = new BalanceNumber(number, sign, decimalFormat);
+        BalanceNumber balanceNumber = new BalanceNumber(number, sign);
 
         assert (balanceNumber.getValue() == value);
     }
@@ -90,7 +90,7 @@ public class BalanceNumberTest {
         DecimalFormat decimalFormat = new DecimalFormat();
         decimalFormat.setDecimalFormatSymbols(DecimalFormatSymbols.getInstance(Locale.GERMAN));
 
-        BalanceNumber balanceNumber = new BalanceNumber(number, sign, decimalFormat);
+        BalanceNumber balanceNumber = new BalanceNumber(number, sign);
 
         assert (balanceNumber.getValue() == -1 * value);
     }
@@ -104,7 +104,7 @@ public class BalanceNumberTest {
         DecimalFormat decimalFormat = new DecimalFormat();
         decimalFormat.setDecimalFormatSymbols(DecimalFormatSymbols.getInstance(Locale.GERMAN));
 
-        BalanceNumber balanceNumber = new BalanceNumber(number, sign, decimalFormat);
+        BalanceNumber balanceNumber = new BalanceNumber(number, sign);
 
         assert (balanceNumber.getValue() == value);
     }
@@ -118,7 +118,7 @@ public class BalanceNumberTest {
         DecimalFormat decimalFormat = new DecimalFormat();
         decimalFormat.setDecimalFormatSymbols(DecimalFormatSymbols.getInstance(Locale.GERMAN));
 
-        BalanceNumber balanceNumber = new BalanceNumber(number, sign, decimalFormat);
+        BalanceNumber balanceNumber = new BalanceNumber(number, sign);
 
         assert (balanceNumber.getValue() == -1 * value);
     }
