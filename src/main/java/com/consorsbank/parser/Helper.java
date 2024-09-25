@@ -48,7 +48,7 @@ public class Helper {
     public static final String CUSTOMER_NAME_AMAZON = "AMAZON";
     public static final String CUSTOMER_NAME_ZALANDO = "ZALANDO";
 
-    public static final String MINDEE_API_KEY = "cee658d8290dfec42dd1e209fe919649";
+    public static final String MINDEE_API_KEY = "e2229e8e121be3f2dea5ce91783bf918";
     public static final String MINDEE_API_ENDPOINT_NAME = "trackinglabel";
     public static final String MINDEE_API_ACCOUNT_NAME = "hjstephan86";
     public static final String MINDEE_API_VERSION = "1";
