@@ -6,11 +6,7 @@ This parser parses PDF reports and prints the data of each transfer in a pretty 
 1. the path to the folder where the PDF reports to pasrse are located in, e.g., `/home/user/Downloads/transfers/`,
 2. the path to the folder where the delivery receipts are located in, e.g., `/home/user/Downloads/receipts/`,
 3. the path to the CSV containing transfers which should be generated, e.g., `/home/user/Downloads/transfers/Transfers-%DATETIME%.csv"` (you can use the `%DATETIME%` macro for a current timestamp),
-4. the path to the CSV containing transfers which are checked for already assigned tracking ids (by a prior execution and CSV generation), e.g., `/home/user/Downloads/transfers/Transfers-2024-09-22_10-55-49.csv`,
-5. the path to the CSV containing delivery receipts which should be generated and used for a later tracking id assignment, e.g., `/home/user/Downloads/Receipts-%DATETIME%.csv`. Notice, not assigned tracking ids are generated into this CSV and can be reused for later tracking id assignments to save mindee API calls,
-6. the path to the CSV containting delivery receipts with tracking ids that were not assigned, e.g., `/home/user/Downloads/receipts/Receipts-2024-09-22_10-55-49.csv`.
-
-For the first execution of the project you can simply use an empty file for arguments 4. and 6.
+4. the path to the CSV containing transfers which are checked for already assigned tracking ids (by a prior execution and CSV generation), e.g., `/home/user/Downloads/transfers/Transfers-2024-09-22_10-55-49.csv`. For the first execution of the project you can simply use an empty file.
 
 Notice, the retoure transfer assignment is respecting 1:1, 1:n, and n:m retoure assignments. For n:m retoure assignments it is first checked whether a best fit packaging is possible with the chronological order given by the transfers. If this order does not work, a best fit packaging is performed where the transfers are ordered in ascending order by the balance value of each transfer.
 

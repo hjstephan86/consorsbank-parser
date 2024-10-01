@@ -2,6 +2,8 @@ package com.consorsbank.parser;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.HashSet;
+import java.util.LinkedHashSet;
 
 public class DeliveryReceipt implements Comparable<DeliveryReceipt> {
 
@@ -10,28 +12,32 @@ public class DeliveryReceipt implements Comparable<DeliveryReceipt> {
     private String date;
     private String time;
     private LocalDateTime dateTime;
-    private String trackingId;
+    private LinkedHashSet<String> trackingIds;
     private String filename;
-    private boolean assigned;
 
     private DateTimeFormatter readFormat;
     private DateTimeFormatter writeFormat;
 
     public DeliveryReceipt() {
-        readFormat = DateTimeFormatter.ofPattern(Helper.DATETIME_FORMAT_READ);
-        writeFormat = DateTimeFormatter.ofPattern(Helper.DATETIME_FORMAT_WRITE);
+        this.readFormat = DateTimeFormatter.ofPattern(Helper.DATETIME_FORMAT_READ);
+        this.writeFormat = DateTimeFormatter.ofPattern(Helper.DATETIME_FORMAT_WRITE);
+        this.trackingIds = new LinkedHashSet<String>();
     }
 
     public LocalDateTime getDateTime() {
         return dateTime;
     }
 
-    public String getTrackingId() {
-        return trackingId;
+    public HashSet<String> getTrackingIds() {
+        return this.trackingIds;
     }
 
-    public void setTrackingId(String trackingId) {
-        this.trackingId = trackingId;
+    public void addTrackingId(String trackingId) {
+        this.trackingIds.add(trackingId);
+    }
+
+    public boolean hasTrackingId() {
+        return this.trackingIds.size() > 0;
     }
 
     public String getRecipient() {
@@ -73,7 +79,7 @@ public class DeliveryReceipt implements Comparable<DeliveryReceipt> {
             return this.getDateTime().isBefore(o.getDateTime()) ? -1 : 1;
     }
 
-    public String toPaddedString() {
+    public String getPaddedStringForTrackingId(String trackingId) {
         return Helper.padRight(
                 Helper.truncate(
                         this.sender != null && !this.sender.toLowerCase().equals("null")
@@ -92,18 +98,9 @@ public class DeliveryReceipt implements Comparable<DeliveryReceipt> {
                 + Helper.padRight(
                         this.dateTime != null ? this.writeFormat.format(this.dateTime) : "",
                         Helper.DATETIME_COL_WIDTH)
-                + Helper.padRight(this.trackingId != null ? this.trackingId : "",
+                + Helper.padRight(trackingId != null ? trackingId : "",
                         Helper.TRACKING_ID_COL_WIDTH)
                 + Helper.padRight(this.filename, Helper.FILENAME_COL_WIDTH);
-    }
-
-    public String toCSVString() {
-        return (!this.sender.toLowerCase().equals("null") ? this.sender
-                : Helper.DELIVERY_RECEIPT_DEFAULT_SENDER)
-                + ";" + (!this.recipient.toLowerCase().equals("null") ? this.recipient : " ")
-                + ";" + (this.dateTime != null ? this.writeFormat.format(this.dateTime) : " ")
-                + ";" + this.trackingId
-                + ";" + this.filename;
     }
 
     public String getFilename() {
@@ -112,13 +109,5 @@ public class DeliveryReceipt implements Comparable<DeliveryReceipt> {
 
     public void setFilename(String filename) {
         this.filename = filename;
-    }
-
-    public boolean isAssigned() {
-        return assigned;
-    }
-
-    public void setAssigned(boolean assigned) {
-        this.assigned = assigned;
     }
 }

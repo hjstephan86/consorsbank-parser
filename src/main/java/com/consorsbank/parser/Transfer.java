@@ -36,9 +36,9 @@ public class Transfer implements Comparable<Transfer> {
     private String IBAN;
     private String name;
     private String purpose;
-    private DeliveryReceipt deliveryReceipt;
     private String hash;
     private String existingTrackingId;
+    private String trackingId;
 
     private SimpleDateFormat dateFormat;
 
@@ -166,17 +166,23 @@ public class Transfer implements Comparable<Transfer> {
         return incomingTransfers;
     }
 
+    public String getExistingTrackingId() {
+        return this.existingTrackingId;
+    }
+
+    public void setExistingTrackingId(String existingTrackingId) {
+        this.existingTrackingId = existingTrackingId;
+    }
+
     private String getTrackingId() {
         return existingTrackingId != null ? existingTrackingId
-                : (deliveryReceipt != null) ? deliveryReceipt.getTrackingId() : "";
+                : (trackingId != null)
+                        ? trackingId
+                        : "";
     }
 
-    public DeliveryReceipt getDeliveryReceipt() {
-        return deliveryReceipt;
-    }
-
-    public void setDeliveryReceipt(DeliveryReceipt deliveryReceipt) {
-        this.deliveryReceipt = deliveryReceipt;
+    public void setTrackingId(String trackingId) {
+        this.trackingId = trackingId;
     }
 
     public void generateHash() {
@@ -201,13 +207,5 @@ public class Transfer implements Comparable<Transfer> {
 
     public void setPositionInMonth(int positionInMonth) {
         this.positionInMonth = positionInMonth;
-    }
-
-    public String getExistingTrackingId() {
-        return this.existingTrackingId;
-    }
-
-    public void setExistingTrackingId(String existingTrackingId) {
-        this.existingTrackingId = existingTrackingId;
     }
 }

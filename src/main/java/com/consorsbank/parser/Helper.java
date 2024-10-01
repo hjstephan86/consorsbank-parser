@@ -29,11 +29,7 @@ public class Helper {
     public static String PATH_TO_TRANSFERS_EXPORT =
             "/home/stephan/Downloads/Kontobewegungen/230583809/Transfers-%DATETIME%.csv";
     public static String PATH_TO_TRANSFERS_IMPORT =
-            "/home/stephan/Downloads/Kontobewegungen/230583809/Transfers-2024-09-22_10-17-23";
-    public static String PATH_TO_DELIVERY_RECEIPTS_EXPORT =
-            "/home/stephan/Downloads/Kontobewegungen/230583809/Receipts-%DATETIME%.csv";
-    public static String PATH_TO_DELIVERY_RECEIPTS_IMPORT =
-            "/home/stephan/Downloads/Kontobewegungen/230583809/Receipts-2024-09-23_16-07-12.csv";
+            "/home/stephan/Downloads/Kontobewegungen/230583809/Transfers-2024-09-22_10-55-49.csv";
 
     public static final String SIMPLE_DATE_FORMAT = "dd.MM.yyyy";
     public static final String SIMPLE_DATE_FORMAT_TIME = "yyyy-MM-dd_HH-mm-ss";
@@ -48,7 +44,7 @@ public class Helper {
     public static final String CUSTOMER_NAME_AMAZON = "AMAZON";
     public static final String CUSTOMER_NAME_ZALANDO = "ZALANDO";
 
-    public static final String MINDEE_API_KEY = "e2229e8e121be3f2dea5ce91783bf918";
+    public static final String MINDEE_API_KEY = "";
     public static final String MINDEE_API_ENDPOINT_NAME = "trackinglabel";
     public static final String MINDEE_API_ACCOUNT_NAME = "hjstephan86";
     public static final String MINDEE_API_VERSION = "1";
@@ -181,17 +177,18 @@ public class Helper {
         return trackingId.matches(regex);
     }
 
-    public static DeliveryReceipt getDeliveryReceipt(List<DeliveryReceipt> receipts,
-            int number) {
+    public static String getTrackingId(List<DeliveryReceipt> receipts, int number) {
         if (receipts.size() == 0)
             return null;
-        if (number > 0 && number <= receipts.size()) {
+        if (number > 0) {
             int counter = 1;
             for (DeliveryReceipt receipt : receipts) {
-                if (counter == number) {
-                    return receipt;
+                for (String trackingId : receipt.getTrackingIds()) {
+                    if (counter == number) {
+                        return trackingId;
+                    }
+                    counter++;
                 }
-                counter++;
             }
         }
         return null;
