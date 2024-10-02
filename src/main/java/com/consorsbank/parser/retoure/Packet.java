@@ -1,6 +1,6 @@
 package com.consorsbank.parser.retoure;
 
-import com.consorsbank.parser.Transfer;
+import com.consorsbank.parser.transfer.Transfer;
 
 public class Packet implements Comparable<Packet> {
     private Transfer transfer;

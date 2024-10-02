@@ -1,6 +1,7 @@
 package com.consorsbank.parser;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -15,6 +16,10 @@ import java.util.regex.Pattern;
 import org.apache.pdfbox.Loader;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.text.PDFTextStripper;
+import com.consorsbank.parser.receipt.DeliveryReceipt;
+import com.consorsbank.parser.receipt.TrackingIdForReceipt;
+import com.consorsbank.parser.transfer.BalanceNumber;
+import com.consorsbank.parser.transfer.Transfer;
 import com.mindee.MindeeClient;
 import com.mindee.http.Endpoint;
 import com.mindee.input.LocalInputSource;
@@ -27,9 +32,12 @@ public class Helper {
     public static String PATH_TO_DELIVERY_RECEIPTS =
             "/home/stephan/Downloads/Kontobewegungen/Retoure/";
     public static String PATH_TO_TRANSFERS_EXPORT =
-            "/home/stephan/Downloads/Kontobewegungen/230583809/Transfers-%DATETIME%.csv";
+            PATH_TO_PDF_REPORTS + "Transfers-%DATETIME%.csv";
     public static String PATH_TO_TRANSFERS_IMPORT =
-            "/home/stephan/Downloads/Kontobewegungen/230583809/Transfers-2024-09-22_10-55-49.csv";
+            PATH_TO_PDF_REPORTS + "Transfers-2024-09-22_10-55-49.csv";
+    public static String PATH_TO_DELIVERY_RECEIPTS_FILE_NAME = ".receipts";
+    public static String PATH_TO_DELIVERY_RECEIPTS_FILE =
+            PATH_TO_DELIVERY_RECEIPTS + PATH_TO_DELIVERY_RECEIPTS_FILE_NAME;
 
     public static final String SIMPLE_DATE_FORMAT = "dd.MM.yyyy";
     public static final String SIMPLE_DATE_FORMAT_TIME = "yyyy-MM-dd_HH-mm-ss";
@@ -41,6 +49,7 @@ public class Helper {
     public static final String PDF_REPORT_KONTOSTAND_ZUM_IN_TXT = "Kontostand zum ";
     public static final String PDF_REPORT_INTERIM_KONTOSTAND_ZUM_IN_TXT = "*** Kontostand zum ";
 
+    public static final String SHA_ALGORITHM = "SHA-256";
     public static final String CUSTOMER_NAME_AMAZON = "AMAZON";
     public static final String CUSTOMER_NAME_ZALANDO = "ZALANDO";
 
@@ -177,7 +186,8 @@ public class Helper {
         return trackingId.matches(regex);
     }
 
-    public static String getTrackingId(List<DeliveryReceipt> receipts, int number) {
+    public static TrackingIdForReceipt getTrackingIdForReceipt(List<DeliveryReceipt> receipts,
+            int number) {
         if (receipts.size() == 0)
             return null;
         if (number > 0) {
@@ -185,7 +195,9 @@ public class Helper {
             for (DeliveryReceipt receipt : receipts) {
                 for (String trackingId : receipt.getTrackingIds()) {
                     if (counter == number) {
-                        return trackingId;
+                        TrackingIdForReceipt trackingIdForReceipt =
+                                new TrackingIdForReceipt(trackingId, receipt);
+                        return trackingIdForReceipt;
                     }
                     counter++;
                 }
@@ -214,5 +226,30 @@ public class Helper {
             e.printStackTrace();
         }
         return hexString.toString();
+    }
+
+    public static String getFileChecksum(String algorithm, String filePath) {
+        try {
+            MessageDigest digest = MessageDigest.getInstance(algorithm);
+            byte[] byteArray = new byte[1024];
+            int bytesCount;
+
+            FileInputStream fis = new FileInputStream(filePath);
+            while ((bytesCount = fis.read(byteArray)) != -1) {
+                digest.update(byteArray, 0, bytesCount);
+            }
+            fis.close();
+
+            byte[] bytes = digest.digest();
+            StringBuilder sb = new StringBuilder();
+            for (byte b : bytes) {
+                sb.append(String.format("%02x", b));
+            }
+
+            return sb.toString();
+        } catch (NoSuchAlgorithmException | IOException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 }

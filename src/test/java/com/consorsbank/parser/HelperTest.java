@@ -2,6 +2,7 @@ package com.consorsbank.parser;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+import java.io.File;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.text.ParseException;
@@ -12,6 +13,9 @@ import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.Locale;
 import org.junit.Test;
+import com.consorsbank.parser.retoure.RetoureHelper;
+import com.consorsbank.parser.transfer.BalanceNumber;
+import com.consorsbank.parser.transfer.Transfer;
 
 public class HelperTest {
 
@@ -131,14 +135,14 @@ public class HelperTest {
         Transfer t = createTransfer("Amazon", 10, 10, '-', "302-8845287-5188355 Amazon.de SSROA");
         Transfer u = createTransfer("Amazon", 10, 11, '+', "302-8845287-5188355 AMZ Amazon.de 1");
 
-        assertTrue(com.consorsbank.parser.retoure.Helper.purposeMatches(t, u));
+        assertTrue(RetoureHelper.purposeMatches(t, u));
 
         t.setPurpose("302-8845287-5188357 AMZ Amazon.de 1");
-        assertFalse(com.consorsbank.parser.retoure.Helper.purposeMatches(t, u));
+        assertFalse(RetoureHelper.purposeMatches(t, u));
 
         u.setPurpose("305-1103929-6143535 AMZN Mktp DE 3E");
         t.setPurpose("303-8151108-6247541 AMZN Mktp DE 48");
-        assertFalse(com.consorsbank.parser.retoure.Helper.purposeMatches(t, u));
+        assertFalse(RetoureHelper.purposeMatches(t, u));
     }
 
     private Transfer createTransfer(String name, double value, int day, char sign, String purpose) {
@@ -184,12 +188,13 @@ public class HelperTest {
 
         LinkedHashMap<String, Transfer> transferMap = getTransferMap(transfers);
 
-        com.consorsbank.parser.retoure.Helper.findRetoureTransfers(transfers);
+        RetoureHelper.findRetoureTransfers(transfers);
         // Here, we expect a 1:n retoure assignment
         assertTrue(x.getOutgoingRetoureTransfer().equals(u));
         assertTrue(y.getOutgoingRetoureTransfer().equals(u));
 
-        com.consorsbank.parser.retoure.Helper.packageRetoureTransfers(transfers, transferMap);
+        RetoureHelper.packageRetoureTransfers(transfers,
+                transferMap);
         // However, after packaging we expect a n:n retoure assignment with a chronological ordering
         assertTrue(x.getOutgoingRetoureTransfer().equals(t));
         assertTrue(y.getOutgoingRetoureTransfer().equals(u));
@@ -217,13 +222,14 @@ public class HelperTest {
 
         LinkedHashMap<String, Transfer> transferMap = getTransferMap(transfers);
 
-        com.consorsbank.parser.retoure.Helper.findRetoureTransfers(transfers);
+        RetoureHelper.findRetoureTransfers(transfers);
         // Here, we expect a 1:n retoure assignment
         assertTrue(x.getOutgoingRetoureTransfer().equals(u));
         assertTrue(y.getOutgoingRetoureTransfer().equals(u));
         assertTrue(z.getOutgoingRetoureTransfer().equals(u));
 
-        com.consorsbank.parser.retoure.Helper.packageRetoureTransfers(transfers, transferMap);
+        RetoureHelper.packageRetoureTransfers(transfers,
+                transferMap);
         // However, after packaging we expect a n:m retoure assignment with a chronological ordering
         assertTrue(x.getOutgoingRetoureTransfer().equals(t));
         assertTrue(y.getOutgoingRetoureTransfer().equals(u));
@@ -251,16 +257,38 @@ public class HelperTest {
 
         LinkedHashMap<String, Transfer> transferMap = getTransferMap(transfers);
 
-        com.consorsbank.parser.retoure.Helper.findRetoureTransfers(transfers);
+        RetoureHelper.findRetoureTransfers(transfers);
         // Here, we expect a 1:n retoure assignment
         assertTrue(x.getOutgoingRetoureTransfer().equals(u));
         assertTrue(y.getOutgoingRetoureTransfer().equals(u));
         assertTrue(z.getOutgoingRetoureTransfer().equals(u));
 
-        com.consorsbank.parser.retoure.Helper.packageRetoureTransfers(transfers, transferMap);
+        RetoureHelper.packageRetoureTransfers(transfers,
+                transferMap);
         // However, after packaging we expect a n:m retoure assignment with a best fit ordering
         assertTrue(x.getOutgoingRetoureTransfer().equals(u));
         assertTrue(y.getOutgoingRetoureTransfer().equals(t));
         assertTrue(z.getOutgoingRetoureTransfer().equals(u));
+    }
+
+    @Test
+    public void testGetFileChecksum() {
+        String algorithm = Helper.SHA_ALGORITHM; // You can use MD5, SHA-1, SHA-256, etc.
+        String oldFilePath =
+                "/home/stephan/Downloads/Kontobewegungen/Test/Retoure/Scanned_20240827-1312.jpg";
+        String newFilePath =
+                "/home/stephan/Downloads/Kontobewegungen/Test/Retoure/Scanned_20240827-1312-new.jpg";
+        String expectedHash = "1ff938c5e589b2f10038ac3acf719ef88e3872f3f243cac0a92c1b26500dcfdd";
+
+        String fileHash = Helper.getFileChecksum(algorithm, oldFilePath);
+        assertTrue(expectedHash.equals(fileHash));
+
+        File oldFile = new File(oldFilePath);
+        File newFile = new File(newFilePath);
+
+        oldFile.renameTo(newFile);
+        assertTrue(expectedHash.equals(fileHash));
+
+        newFile.renameTo(oldFile);
     }
 }

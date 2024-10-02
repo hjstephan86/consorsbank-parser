@@ -1,9 +1,12 @@
-package com.consorsbank.parser;
+package com.consorsbank.parser.receipt;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
+import com.consorsbank.parser.Helper;
+import com.consorsbank.parser.transfer.Transfer;
 
 public class DeliveryReceipt implements Comparable<DeliveryReceipt> {
 
@@ -14,6 +17,9 @@ public class DeliveryReceipt implements Comparable<DeliveryReceipt> {
     private LocalDateTime dateTime;
     private LinkedHashSet<String> trackingIds;
     private String filename;
+    private String fileHash;
+
+    private LinkedHashMap<String, Transfer> trackingIdToTransfer;
 
     private DateTimeFormatter readFormat;
     private DateTimeFormatter writeFormat;
@@ -22,6 +28,7 @@ public class DeliveryReceipt implements Comparable<DeliveryReceipt> {
         this.readFormat = DateTimeFormatter.ofPattern(Helper.DATETIME_FORMAT_READ);
         this.writeFormat = DateTimeFormatter.ofPattern(Helper.DATETIME_FORMAT_WRITE);
         this.trackingIds = new LinkedHashSet<String>();
+        this.trackingIdToTransfer = new LinkedHashMap<String, Transfer>();
     }
 
     public LocalDateTime getDateTime() {
@@ -58,8 +65,14 @@ public class DeliveryReceipt implements Comparable<DeliveryReceipt> {
 
     public void setTime(String time) {
         this.time = time;
-        String dateTime = this.date + " " + this.time;
-        this.dateTime = LocalDateTime.parse(dateTime, readFormat);
+        // Consider also '2024-09-16 null'
+        String strDateTime = "";
+        if (this.time.equals("null")) {
+            strDateTime = this.date + " " + "00:00:00";
+        } else {
+            strDateTime = this.date + " " + this.time;
+        }
+        this.dateTime = LocalDateTime.parse(strDateTime, readFormat);
     }
 
     public void setDate(String date) {
@@ -67,7 +80,8 @@ public class DeliveryReceipt implements Comparable<DeliveryReceipt> {
     }
 
     public void setDateTime(String dateTime) {
-        // We use the write format here
+        // We use the write format here to read the date time, since we used the write format to
+        // write the date time
         this.dateTime = LocalDateTime.parse(dateTime, writeFormat);
     }
 
@@ -109,5 +123,44 @@ public class DeliveryReceipt implements Comparable<DeliveryReceipt> {
 
     public void setFilename(String filename) {
         this.filename = filename;
+    }
+
+    public void setFileHash(String fileHash) {
+        this.fileHash = fileHash;
+    }
+
+    public String getFileHash() {
+        return fileHash;
+    }
+
+    public void addTrackingId(String trackingId, Transfer transfer) {
+        if (trackingIds.contains(trackingId) && transfer != null) {
+            trackingIdToTransfer.put(trackingId, transfer);
+        }
+    }
+
+    public boolean allTrackingIdsAssigned() {
+        return trackingIds.size() == trackingIdToTransfer.size();
+    }
+
+    public String toCSVString() {
+        StringBuilder stringBuilder = new StringBuilder();
+        for (String trackingId : trackingIds) {
+            String line =
+                    this.fileHash
+                            + ";" + this.filename
+                            + ";" + (!this.sender.toLowerCase().equals("null") ? this.sender
+                                    : Helper.DELIVERY_RECEIPT_DEFAULT_SENDER)
+                            + ";"
+                            + (!this.recipient.toLowerCase().equals("null") ? this.recipient : " ")
+                            + ";"
+                            + (this.dateTime != null ? this.writeFormat.format(this.dateTime) : " ")
+                            + ";" + trackingId
+                            + ";" + (this.trackingIdToTransfer.containsKey(trackingId)
+                                    ? this.trackingIdToTransfer.get(trackingId).getHash()
+                                    : "");
+            stringBuilder.append(line + "\n");
+        }
+        return stringBuilder.toString();
     }
 }

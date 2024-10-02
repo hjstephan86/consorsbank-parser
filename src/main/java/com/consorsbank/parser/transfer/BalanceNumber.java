@@ -1,4 +1,4 @@
-package com.consorsbank.parser;
+package com.consorsbank.parser.transfer;
 
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;

@@ -5,9 +5,9 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
-import com.consorsbank.parser.Transfer;
+import com.consorsbank.parser.transfer.Transfer;
 
-public class Helper {
+public class RetoureHelper {
 
     public static void findRetoureTransfers(ArrayList<Transfer> transfers) {
         outer: for (int i = transfers.size() - 1; i > 0; i--) {

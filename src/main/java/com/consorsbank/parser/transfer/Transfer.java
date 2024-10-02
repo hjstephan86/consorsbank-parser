@@ -1,10 +1,11 @@
-package com.consorsbank.parser;
+package com.consorsbank.parser.transfer;
 
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.Date;
 import java.util.LinkedHashMap;
+import com.consorsbank.parser.Helper;
 
 public class Transfer implements Comparable<Transfer> {
 

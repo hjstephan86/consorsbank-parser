@@ -4,7 +4,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.consorsbank.parser</groupId>
 	<artifactId>consorsbank-parser</artifactId>
-	<version>1.1.0</version>
+	<version>1.0.0</version>
 	<name>Consorsbank Parser</name>
 	<description>This is a simple java project to parse monthly PDF reports genrated by Consorsbank</description>
 	<properties>
