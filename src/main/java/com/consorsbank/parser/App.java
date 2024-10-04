@@ -27,7 +27,7 @@ import com.consorsbank.parser.transfer.TransferHelper;
 public class App {
 
     public static void main(String[] args) throws Exception {
-        if (parseArgs(args)) {
+        if (argumentsValid(args)) {
             File folder = new File(Helper.PATH_TO_PDF_REPORTS);
             File[] listOfPDFReportFiles = folder.listFiles();
             ArrayList<Transfer> transfers = TransferHelper.parseTransfers(listOfPDFReportFiles);
@@ -67,7 +67,7 @@ public class App {
         }
     }
 
-    private static boolean parseArgs(String[] args) {
+    private static boolean argumentsValid(String[] args) {
         boolean argumentsValid = false;
         switch (args.length) {
             case 2:

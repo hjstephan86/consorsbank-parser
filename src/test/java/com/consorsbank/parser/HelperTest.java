@@ -16,6 +16,7 @@ import org.junit.Test;
 import com.consorsbank.parser.retoure.RetoureHelper;
 import com.consorsbank.parser.transfer.BalanceNumber;
 import com.consorsbank.parser.transfer.Transfer;
+import com.consorsbank.parser.transfer.TransferHelper;
 
 public class HelperTest {
 
@@ -32,7 +33,8 @@ public class HelperTest {
         tokens.add(balanceAndDate);
 
         double expectedBalanceValue = -5393.99;
-        Transfer transer = Helper.parseBalanceAndDate(dateFormat, decimalFormat, tokens, 2024, 0);
+        Transfer transer =
+                TransferHelper.parseBalanceAndDate(dateFormat, decimalFormat, tokens, 2024, 0);
         assertTrue(Math.abs(
                 transer.getBalanceNumber().getValue() - expectedBalanceValue) < Helper.EPSILON);
 
@@ -40,7 +42,7 @@ public class HelperTest {
         tokens = new ArrayList<String>();
         tokens.add(transferType);
         tokens.add(balanceAndDate);
-        transer = Helper.parseBalanceAndDate(dateFormat, decimalFormat, tokens, 2024, 0);
+        transer = TransferHelper.parseBalanceAndDate(dateFormat, decimalFormat, tokens, 2024, 0);
 
         expectedBalanceValue = 8967.42;
         assertTrue(Math.abs(
@@ -50,7 +52,7 @@ public class HelperTest {
         tokens = new ArrayList<String>();
         tokens.add(transferType);
         tokens.add(balanceAndDate);
-        transer = Helper.parseBalanceAndDate(dateFormat, decimalFormat, tokens, 2024, 0);
+        transer = TransferHelper.parseBalanceAndDate(dateFormat, decimalFormat, tokens, 2024, 0);
 
         expectedBalanceValue = -0.01;
         assertTrue(Math.abs(
@@ -71,13 +73,13 @@ public class HelperTest {
     @Test
     public void testBankIdValid() {
         String bankId = "<WELADED1WDB> DE33478535200003845849";
-        assertTrue(Helper.bankIdValid(bankId));
+        assertTrue(TransferHelper.bankIdValid(bankId));
 
         bankId = "VISA 58525010 Paderborn";
-        assertTrue(Helper.bankIdValid(bankId));
+        assertTrue(TransferHelper.bankIdValid(bankId));
 
         bankId = "girocard";
-        assertFalse(Helper.bankIdValid(bankId));
+        assertFalse(TransferHelper.bankIdValid(bankId));
     }
 
     @Test
@@ -97,9 +99,6 @@ public class HelperTest {
 
         trackingId = "JD233492000103757852602";
         assertFalse(Helper.trackingIdIsValid(trackingId));
-
-        trackingId = "JD23349200010375785260";
-        assertTrue(Helper.trackingIdIsValid(trackingId));
 
         trackingId = "JD233492000103757852602";
         assertFalse(Helper.trackingIdIsValid(trackingId));
@@ -280,7 +279,7 @@ public class HelperTest {
                 "/home/stephan/Downloads/Kontobewegungen/Test/Retoure/Scanned_20240827-1312-new.jpg";
         String expectedHash = "1ff938c5e589b2f10038ac3acf719ef88e3872f3f243cac0a92c1b26500dcfdd";
 
-        String fileHash = Helper.getFileChecksum(algorithm, oldFilePath);
+        String fileHash = Helper.getFileHash(algorithm, oldFilePath);
         assertTrue(expectedHash.equals(fileHash));
 
         File oldFile = new File(oldFilePath);

@@ -36,7 +36,7 @@ public class ReceiptHelper {
                         if (!receiptMap.containsKey(receipt.hashCode())) {
                             receiptMap.put(receipt.hashCode(), receipt);
                             receipt.setFilename(f.getName());
-                            receipt.setFileHash(Helper.getFileChecksum(Helper.SHA_ALGORITHM,
+                            receipt.setFileHash(Helper.getFileHash(Helper.SHA_ALGORITHM,
                                     f.getAbsolutePath()));
                         }
                     }
@@ -130,7 +130,7 @@ public class ReceiptHelper {
             if (f.isFile() && (f.getName().toLowerCase().endsWith(".pdf")
                     || f.getName().toLowerCase().endsWith(".jpg")
                     || f.getName().toLowerCase().endsWith(".jpeg"))) {
-                String fileHash = Helper.getFileChecksum(Helper.SHA_ALGORITHM, f.getAbsolutePath());
+                String fileHash = Helper.getFileHash(Helper.SHA_ALGORITHM, f.getAbsolutePath());
                 if (!existingDeliveryReceiptFileHashes.contains(fileHash)) {
                     listOfRemainingReceiptFiles.add(listOfReceiptFiles[i]);
                 } else {

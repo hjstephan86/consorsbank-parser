@@ -5,21 +5,12 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.text.DecimalFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import org.apache.pdfbox.Loader;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.text.PDFTextStripper;
 import com.consorsbank.parser.receipt.DeliveryReceipt;
 import com.consorsbank.parser.receipt.TrackingIdForReceipt;
-import com.consorsbank.parser.transfer.BalanceNumber;
-import com.consorsbank.parser.transfer.Transfer;
 import com.mindee.MindeeClient;
 import com.mindee.http.Endpoint;
 import com.mindee.input.LocalInputSource;
@@ -127,61 +118,8 @@ public class Helper {
         return response.toString();
     }
 
-    public static Transfer parseBalanceAndDate(SimpleDateFormat dateFormat,
-            DecimalFormat decimalFormat, ArrayList<String> pdfTokens, int year, int i)
-            throws ParseException {
-        String[] splittedLine = pdfTokens.get(i + 1).split(" ");
-        Date date = dateFormat.parse(splittedLine[0] + year);
-        Number number = decimalFormat.parse(splittedLine[3]);
-
-        char sign = splittedLine[3].charAt(splittedLine[3].length() - 1);
-        BalanceNumber balanceNumber = new BalanceNumber(number, sign);
-
-        Transfer transfer = new Transfer(balanceNumber, date);
-        return transfer;
-    }
-
-    public static void parseNameAndBankIdAndPurpose(ArrayList<String> pdfTokens, Transfer transfer,
-            int i) {
-        if (bankIdValid(pdfTokens.get(i + 3))) {
-            transfer.setName(pdfTokens.get(i + 2));
-            transfer.setBankID(pdfTokens.get(i + 3));
-
-            String purpose = pdfTokens.get(i + 4);
-            if (!purpose.startsWith(PDF_REPORT_INTERIM_KONTOSTAND_ZUM_IN_TXT)) {
-                transfer.setPurpose(purpose);
-            }
-        } else {
-            String purpose = pdfTokens.get(i + 2) + " " + pdfTokens.get(i + 3);
-            transfer.setPurpose(purpose);
-        }
-    }
-
-    public static boolean bankIdValid(String bankId) {
-        String[] bankIdarr = bankId.split(" ");
-        if (bankIdarr.length > 1) {
-            String bicPattern = "^[A-Z]{4}[A-Z]{2}[A-Z0-9]{2}([A-Z0-9]{3})?$";
-            Pattern pattern = Pattern.compile(bicPattern);
-
-            String bic = bankIdarr[0];
-            bic = bic.replace("<", "").replace(">", "");
-            Matcher matcher = pattern.matcher(bic);
-
-            if (matcher.matches()) {
-                // Case: "<WELADED1WDB> DE33478535200003845849"
-                return true;
-            } else {
-                // Case: "VISA 58525010 Paderborn"
-                // Simply return true
-                return true;
-            }
-        }
-        // Case: "girocard"
-        return false;
-    }
-
     public static boolean trackingIdIsValid(String trackingId) {
-        // Start optionally with "JD" or "JJD" followed by 10 to 20 digits
+        // DHL: start optionally with "JD" or "JJD" followed by 10 to 20 digits
         String regex = "^(JD|JJD)?[0-9]{10,20}$";
         return trackingId.matches(regex);
     }
@@ -228,7 +166,7 @@ public class Helper {
         return hexString.toString();
     }
 
-    public static String getFileChecksum(String algorithm, String filePath) {
+    public static String getFileHash(String algorithm, String filePath) {
         try {
             MessageDigest digest = MessageDigest.getInstance(algorithm);
             byte[] byteArray = new byte[1024];
