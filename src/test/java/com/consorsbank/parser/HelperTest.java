@@ -83,56 +83,50 @@ public class HelperTest {
     }
 
     @Test
-    public void testDHLTrackingIdIsValid() {
+    public void testIsDHLTrackingId() {
         String trackingId = "2334920001037";
-        assertTrue(Helper.trackingIdIsValid(trackingId));
+        assertTrue(Helper.isDHLTrackingId(trackingId));
 
         trackingId = "JJD2334920001037";
-        assertTrue(Helper.trackingIdIsValid(trackingId));
+        assertTrue(Helper.isDHLTrackingId(trackingId));
 
         trackingId = "JD2334920001037";
-        assertTrue(Helper.trackingIdIsValid(trackingId));
+        assertTrue(Helper.isDHLTrackingId(trackingId));
 
         // Check for at most 20 digits
         trackingId = "JD23349200010375785260";
-        assertTrue(Helper.trackingIdIsValid(trackingId));
+        assertTrue(Helper.isDHLTrackingId(trackingId));
 
         trackingId = "JD233492000103757852602";
-        assertFalse(Helper.trackingIdIsValid(trackingId));
+        assertFalse(Helper.isDHLTrackingId(trackingId));
 
         trackingId = "JD233492000103757852602";
-        assertFalse(Helper.trackingIdIsValid(trackingId));
+        assertFalse(Helper.isDHLTrackingId(trackingId));
 
         trackingId = "JJD23349200010375785260";
-        assertTrue(Helper.trackingIdIsValid(trackingId));
+        assertTrue(Helper.isDHLTrackingId(trackingId));
 
         trackingId = "JJD233492000103757852602";
-        assertFalse(Helper.trackingIdIsValid(trackingId));
+        assertFalse(Helper.isDHLTrackingId(trackingId));
 
         // Check for at least 10 digits
         trackingId = "2334920001";
-        assertTrue(Helper.trackingIdIsValid(trackingId));
+        assertTrue(Helper.isDHLTrackingId(trackingId));
 
         trackingId = "233492000";
-        assertFalse(Helper.trackingIdIsValid(trackingId));
+        assertFalse(Helper.isDHLTrackingId(trackingId));
 
         trackingId = "JD233492000";
-        assertFalse(Helper.trackingIdIsValid(trackingId));
+        assertFalse(Helper.isDHLTrackingId(trackingId));
 
         trackingId = "JD2334920001";
-        assertTrue(Helper.trackingIdIsValid(trackingId));
+        assertTrue(Helper.isDHLTrackingId(trackingId));
 
         trackingId = "JJD233492000";
-        assertFalse(Helper.trackingIdIsValid(trackingId));
+        assertFalse(Helper.isDHLTrackingId(trackingId));
 
         trackingId = "JJD2334920001";
-        assertTrue(Helper.trackingIdIsValid(trackingId));
-    }
-
-    @Test
-    public void testHeremsTrackingIdIsValid() {
-        String trackingId = "H1001990069063401019";
-        assertTrue(Helper.trackingIdIsValid(trackingId));
+        assertTrue(Helper.isDHLTrackingId(trackingId));
     }
 
     @Test
@@ -142,6 +136,15 @@ public class HelperTest {
 
         trackingId = "1001990069063401019";
         assertFalse(Helper.isHermesTrackingId(trackingId));
+    }
+
+    @Test
+    public void testIsTrackingIdValid() {
+        String trackingId = "2334920001037";
+        assertTrue(Helper.isTrackingIdValid(trackingId));
+
+        trackingId = "H1001990069063401019";
+        assertTrue(Helper.isTrackingIdValid(trackingId));
     }
 
     @Test

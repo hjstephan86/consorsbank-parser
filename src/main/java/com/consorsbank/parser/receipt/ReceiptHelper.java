@@ -75,7 +75,7 @@ public class ReceiptHelper {
                     token.substring(token.indexOf("=") + 1, token.lastIndexOf("}"));
             String[] trackingIDValueArr = trackingIdValue.split("[\\{\\},= ]");
             for (String trackingIdValueArrEntry : trackingIDValueArr) {
-                if (Helper.trackingIdIsValid(trackingIdValueArrEntry)) {
+                if (Helper.isTrackingIdValid(trackingIdValueArrEntry)) {
                     receipt.addTrackingId(trackingIdValueArrEntry);
                 }
             }
@@ -85,7 +85,7 @@ public class ReceiptHelper {
             if (receipt == null) {
                 receipt = new DeliveryReceipt();
             }
-            if (Helper.trackingIdIsValid(id)) {
+            if (Helper.isTrackingIdValid(id)) {
                 receipt.addTrackingId(id);
             }
         }
@@ -105,7 +105,7 @@ public class ReceiptHelper {
                     String[] receiptArr = line.split(";");
                     if (receiptArr.length == 6 || receiptArr.length == 7) {
                         String trackingId = receiptArr[5];
-                        if (Helper.trackingIdIsValid(trackingId)) {
+                        if (Helper.isTrackingIdValid(trackingId)) {
                             String fileHash = receiptArr[0];
 
                             DeliveryReceipt receipt = null;

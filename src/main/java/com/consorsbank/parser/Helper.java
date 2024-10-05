@@ -5,6 +5,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.HashSet;
 import java.util.List;
 import org.apache.pdfbox.Loader;
 import org.apache.pdfbox.pdmodel.PDDocument;
@@ -121,8 +122,8 @@ public class Helper {
         return response.toString();
     }
 
-    public static boolean trackingIdIsValid(String trackingId) {
-        return isDHLTrackingId(trackingId) || isHermesTrackingId(trackingId);
+    public static boolean isTrackingIdValid(String trackingId) {
+        return isDHLTrackingId(trackingId) ^ isHermesTrackingId(trackingId);
     }
 
     public static boolean isDHLTrackingId(String trackingId) {
@@ -138,19 +139,21 @@ public class Helper {
     }
 
     public static TrackingIdForReceipt getTrackingIdForReceipt(List<DeliveryReceipt> receipts,
-            int number) {
+            int number, HashSet<String> existingTrackingIds) {
         if (receipts.size() == 0)
             return null;
         if (number > 0) {
             int counter = 1;
             for (DeliveryReceipt receipt : receipts) {
                 for (String trackingId : receipt.getTrackingIds()) {
-                    if (counter == number) {
-                        TrackingIdForReceipt trackingIdForReceipt =
-                                new TrackingIdForReceipt(trackingId, receipt);
-                        return trackingIdForReceipt;
+                    if (!existingTrackingIds.contains(trackingId)) {
+                        if (counter == number) {
+                            TrackingIdForReceipt trackingIdForReceipt =
+                                    new TrackingIdForReceipt(trackingId, receipt);
+                            return trackingIdForReceipt;
+                        }
+                        counter++;
                     }
-                    counter++;
                 }
             }
         }

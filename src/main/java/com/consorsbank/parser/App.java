@@ -63,7 +63,8 @@ public class App {
                             .collect(Collectors.toList());
             printReceipts(allReceipts, existingTrackingIds);
 
-            assignTrackingIdsAndExport(transfers, retoureTransfers, allReceipts);
+            assignTrackingIdsAndExport(transfers, retoureTransfers, allReceipts,
+                    existingTrackingIds);
         }
     }
 
@@ -193,7 +194,8 @@ public class App {
 
     @SuppressWarnings("unused")
     private static void assignTrackingIdsAndExport(ArrayList<Transfer> transfers,
-            List<Transfer> retoureTransfers, List<DeliveryReceipt> receipts) {
+            List<Transfer> retoureTransfers, List<DeliveryReceipt> receipts,
+            HashSet<String> existingTrackingIds) {
         printTrackingIdAssignmentDescr();
         Scanner scanner = new Scanner(System.in);
         HashSet<Integer> assignedNumbers = new HashSet<Integer>();
@@ -206,7 +208,7 @@ public class App {
                 try {
                     int number = Integer.parseInt(input);
                     TrackingIdForReceipt trackingIdForReceipt =
-                            Helper.getTrackingIdForReceipt(receipts, number);
+                            Helper.getTrackingIdForReceipt(receipts, number, existingTrackingIds);
                     if (trackingIdForReceipt != null && !assignedNumbers.contains(number)) {
                         // Assign the tracking id to the retoure transfer
                         transfer.setTrackingId(trackingIdForReceipt.getTrackingId());
@@ -268,7 +270,7 @@ public class App {
     private static void promptForTrackingIdAssignment(Transfer transfer) {
         System.out.print("Enter the " + Helper.CONSOLE_COLOR_YELLOW + "number"
                 + Helper.CONSOLE_COLOR_RESET
-                + " of the delivery receipt to assign its tracking id to retoure transfer "
+                + " of the tracking id to assign it to retoure transfer "
                 + Helper.CONSOLE_COLOR_CYAN + transfer.getPosition()
                 + Helper.CONSOLE_COLOR_RESET
                 + ": ");

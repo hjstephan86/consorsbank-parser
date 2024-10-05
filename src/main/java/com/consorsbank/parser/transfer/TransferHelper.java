@@ -151,7 +151,7 @@ public class TransferHelper {
                 String hashFromCSV = transferArr[0];
                 if (transferArr.length == 10) {
                     String existingTrackingId = transferArr[9];
-                    if (Helper.trackingIdIsValid(existingTrackingId)
+                    if (Helper.isTrackingIdValid(existingTrackingId)
                             && transferMap.containsKey(hashFromCSV)) {
                         Transfer transfer = transferMap.get(hashFromCSV);
                         transfer.setExistingTrackingId(existingTrackingId);
