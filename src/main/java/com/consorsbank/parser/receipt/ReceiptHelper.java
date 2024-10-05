@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -18,7 +19,7 @@ public class ReceiptHelper {
     public static HashMap<Integer, DeliveryReceipt> parseDeliveryReceipts(File[] listOfFiles)
             throws IOException, InterruptedException {
         HashMap<Integer, DeliveryReceipt> receiptMap = new HashMap<Integer, DeliveryReceipt>();
-        for (File f : listOfFiles) {
+        outer: for (File f : listOfFiles) {
             if (f.isFile() && (f.getName().toLowerCase().endsWith(".jpg")
                     || f.getName().toLowerCase().endsWith(".jpeg")
                     || f.getName().toLowerCase().endsWith(".pdf"))) {
@@ -27,7 +28,13 @@ public class ReceiptHelper {
                 DeliveryReceipt receipt = null;
                 while (tokenizer.hasMoreTokens()) {
                     String token = tokenizer.nextToken();
-                    receipt = parseDeliveryReceipt(receipt, token);
+                    try {
+                        receipt = parseDeliveryReceipt(receipt, token);
+                    } catch (DateTimeParseException e) {
+                        // Date could not be parsed, since for time we allow "null"
+                        System.err.println("Date could not be parsed for " + f.getName() + ".");
+                        continue outer;
+                    }
                     if (receipt != null
                             && receipt.getRecipient() != null
                             && receipt.getSender() != null

@@ -19,13 +19,13 @@ import com.mindee.product.generated.GeneratedV1;
 
 public class Helper {
 
-    public static String PATH_TO_PDF_REPORTS = "/home/stephan/Downloads/Kontobewegungen/230583809/";
+    public static String PATH_TO_PDF_REPORTS = "/home/stephan/Downloads/Kontobewegungen/270448588/";
     public static String PATH_TO_DELIVERY_RECEIPTS =
             "/home/stephan/Downloads/Kontobewegungen/Retoure/";
     public static String PATH_TO_TRANSFERS_EXPORT =
             PATH_TO_PDF_REPORTS + "Transfers-%DATETIME%.csv";
     public static String PATH_TO_TRANSFERS_IMPORT =
-            PATH_TO_PDF_REPORTS + "Transfers-2024-09-22_10-55-49.csv";
+            PATH_TO_PDF_REPORTS + "Transfers-2024-09-23_21-56-20.csv";
     public static String PATH_TO_DELIVERY_RECEIPTS_FILE_NAME = ".receipts";
     public static String PATH_TO_DELIVERY_RECEIPTS_FILE =
             PATH_TO_DELIVERY_RECEIPTS + PATH_TO_DELIVERY_RECEIPTS_FILE_NAME;
