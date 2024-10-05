@@ -98,7 +98,9 @@ public class DeliveryReceipt implements Comparable<DeliveryReceipt> {
                 Helper.truncate(
                         this.sender != null && !this.sender.toLowerCase().equals("null")
                                 ? this.sender
-                                : Helper.DELIVERY_RECEIPT_DEFAULT_SENDER,
+                                : (Helper.isHermesTrackingId(trackingId)
+                                        ? Helper.DELIVERY_RECEIPT_HERMES_SENDER
+                                        : Helper.DELIVERY_RECEIPT_DHL_SENDER),
                         Helper.SENDER_COL_WIDTH - Helper.TRUNCATE_COL_WIDTH_DELTA),
                 Helper.SENDER_COL_WIDTH)
                 + Helper.padRight(
@@ -150,7 +152,9 @@ public class DeliveryReceipt implements Comparable<DeliveryReceipt> {
                     this.fileHash
                             + ";" + this.filename
                             + ";" + (!this.sender.toLowerCase().equals("null") ? this.sender
-                                    : Helper.DELIVERY_RECEIPT_DEFAULT_SENDER)
+                                    : (Helper.isHermesTrackingId(trackingId)
+                                            ? Helper.DELIVERY_RECEIPT_HERMES_SENDER
+                                            : Helper.DELIVERY_RECEIPT_DHL_SENDER))
                             + ";"
                             + (!this.recipient.toLowerCase().equals("null") ? this.recipient : " ")
                             + ";"

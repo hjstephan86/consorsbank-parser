@@ -82,7 +82,7 @@ public class AppTest {
                         assert (entriesCount == expectedEntriesCount);
 
                         // Check receipts CSV
-                        expectedEntriesCount = 5;
+                        expectedEntriesCount = 6;
                         expectedLastEntry =
                                         "3efc5eee5d7e2b1e0f6a1ecd03e19e04e95ee83a13178120e033ca80893c2ca5;Pullover-Boss-TomTailor-orig.pdf;Deutsche Post AG; ;29.09.2024 19:57;233543534973;";
 

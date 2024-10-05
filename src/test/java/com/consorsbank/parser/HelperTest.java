@@ -83,7 +83,7 @@ public class HelperTest {
     }
 
     @Test
-    public void testTrackingIdIsValid() {
+    public void testDHLTrackingIdIsValid() {
         String trackingId = "2334920001037";
         assertTrue(Helper.trackingIdIsValid(trackingId));
 
@@ -127,6 +127,21 @@ public class HelperTest {
 
         trackingId = "JJD2334920001";
         assertTrue(Helper.trackingIdIsValid(trackingId));
+    }
+
+    @Test
+    public void testHeremsTrackingIdIsValid() {
+        String trackingId = "H1001990069063401019";
+        assertTrue(Helper.trackingIdIsValid(trackingId));
+    }
+
+    @Test
+    public void testIsHermesTrackingId() {
+        String trackingId = "H1001990069063401019";
+        assertTrue(Helper.isHermesTrackingId(trackingId));
+
+        trackingId = "1001990069063401019";
+        assertFalse(Helper.isHermesTrackingId(trackingId));
     }
 
     @Test

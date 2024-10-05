@@ -49,12 +49,14 @@ public class Helper {
     public static final String MINDEE_API_ACCOUNT_NAME = "hjstephan86";
     public static final String MINDEE_API_VERSION = "1";
 
-    public static final String DELIVERY_RECEIPT_DEFAULT_SENDER = "Deutsche Post AG";
+    public static final String DELIVERY_RECEIPT_DHL_SENDER = "Deutsche Post AG";
+    public static final String DELIVERY_RECEIPT_HERMES_SENDER = "Hermes AG";
     public static final String DELIVERY_RECEIPT_RECIPIENT_IN_TXT = ":recipient_name: [{value=";
     public static final String DELIVERY_RECEIPT_SENDER_IN_TXT = ":sender_name: [{value=";
     public static final String DELIVERY_RECEIPT_DATE_IN_TXT = ":shipment_date: [{value=";
     public static final String DELIVERY_RECEIPT_TIME_IN_TXT = ":shipment_time: [{value=";
     public static final String DELIVERY_RECEIPT_TRACKING_ID_IN_TXT = ":tracking_number: [{value=";
+    public static final String DELIVERY_RECEIPT_ID_IN_TXT = ":id: [{value=";
 
     public static final double EPSILON = 1e-9;
     public static final double CENT = 0.01;
@@ -119,9 +121,19 @@ public class Helper {
     }
 
     public static boolean trackingIdIsValid(String trackingId) {
+        return isDHLTrackingId(trackingId) || isHermesTrackingId(trackingId);
+    }
+
+    public static boolean isDHLTrackingId(String trackingId) {
         // DHL: start optionally with "JD" or "JJD" followed by 10 to 20 digits
-        String regex = "^(JD|JJD)?[0-9]{10,20}$";
-        return trackingId.matches(regex);
+        String DHLRegex = "^(JD|JJD)?[0-9]{10,20}$";
+        return trackingId.matches(DHLRegex);
+    }
+
+    public static boolean isHermesTrackingId(String trackingId) {
+        // Hermes: start with "H" followed by 19 digits
+        String HermesRegex = "H\\d{19}";
+        return trackingId.matches(HermesRegex);
     }
 
     public static TrackingIdForReceipt getTrackingIdForReceipt(List<DeliveryReceipt> receipts,

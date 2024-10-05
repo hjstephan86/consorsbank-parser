@@ -48,7 +48,9 @@ public class ReceiptHelper {
 
     private static DeliveryReceipt parseDeliveryReceipt(DeliveryReceipt receipt, String token) {
         if (token.startsWith(Helper.DELIVERY_RECEIPT_RECIPIENT_IN_TXT)) {
-            receipt = new DeliveryReceipt();
+            if (receipt == null) {
+                receipt = new DeliveryReceipt();
+            }
             String recipient = token.substring(token.indexOf("=") + 1, token.indexOf("}"));
             receipt.setRecipient(recipient);
         } else if (token.startsWith(Helper.DELIVERY_RECEIPT_SENDER_IN_TXT)) {
@@ -61,6 +63,7 @@ public class ReceiptHelper {
             String time = token.substring(token.indexOf("=") + 1, token.indexOf("}"));
             receipt.setTime(time);
         } else if (token.startsWith(Helper.DELIVERY_RECEIPT_TRACKING_ID_IN_TXT)) {
+            // Parse DHL tracking ids
             String trackingIdValue =
                     token.substring(token.indexOf("=") + 1, token.lastIndexOf("}"));
             String[] trackingIDValueArr = trackingIdValue.split("[\\{\\},= ]");
@@ -68,6 +71,15 @@ public class ReceiptHelper {
                 if (Helper.trackingIdIsValid(trackingIdValueArrEntry)) {
                     receipt.addTrackingId(trackingIdValueArrEntry);
                 }
+            }
+        } else if (token.startsWith(Helper.DELIVERY_RECEIPT_ID_IN_TXT)) {
+            // Parse Hermes tracking id
+            String id = token.substring(token.indexOf("=") + 1, token.indexOf("}"));
+            if (receipt == null) {
+                receipt = new DeliveryReceipt();
+            }
+            if (Helper.trackingIdIsValid(id)) {
+                receipt.addTrackingId(id);
             }
         }
         return receipt;
