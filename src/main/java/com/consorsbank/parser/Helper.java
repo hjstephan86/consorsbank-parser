@@ -25,7 +25,7 @@ public class Helper {
     public static String PATH_TO_TRANSFERS_EXPORT =
             PATH_TO_PDF_REPORTS + "Transfers-%DATETIME%.csv";
     public static String PATH_TO_TRANSFERS_IMPORT =
-            PATH_TO_PDF_REPORTS + "Transfers-2024-09-23_21-56-20.csv";
+            PATH_TO_PDF_REPORTS + "Transfers-2024-10-05_19-06-09.csv";
     public static String PATH_TO_DELIVERY_RECEIPTS_FILE_NAME = ".receipts";
     public static String PATH_TO_DELIVERY_RECEIPTS_FILE =
             PATH_TO_DELIVERY_RECEIPTS + PATH_TO_DELIVERY_RECEIPTS_FILE_NAME;
@@ -86,6 +86,7 @@ public class Helper {
     public static final String CONSOLE_COLOR_RESET = "\033[0m";
     public static final String CONSOLE_COLOR_RED = "\033[0;31m";
     public static final String CONSOLE_COLOR_GREEN = "\033[0;32m";
+    public static final String CONSOLE_COLOR_GRAY = "\033[90m";
 
     public static String padRight(String s, int n) {
         return String.format("%-" + n + "s", s);

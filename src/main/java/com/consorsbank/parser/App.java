@@ -181,7 +181,10 @@ public class App {
                     System.out.println(Helper.CONSOLE_COLOR_YELLOW
                             + Helper.padRight(String.valueOf(counter), Helper.EMPTY_COL_WIDTH)
                             + Helper.CONSOLE_COLOR_RESET
-                            + receipt.getPaddedStringForTrackingId(trackingId));
+                            + (counter % 2 != 0 ? Helper.CONSOLE_COLOR_GRAY
+                                    : Helper.CONSOLE_COLOR_RESET)
+                            + receipt.getPaddedStringForTrackingId(trackingId)
+                            + Helper.CONSOLE_COLOR_RESET);
                     counter++;
                 }
             }
