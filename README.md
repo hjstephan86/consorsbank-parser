@@ -13,6 +13,6 @@ Notice, the retoure transfer assignment is respecting 1:1, 1:n, and n:m retoure 
 
 Feel free to add any filter condition inside `App.printTransfers(ArrayList<Transfer> transfers)` for personal evaluations or simply import the generated CSV into a table calculation tool and apply filter conditions there.
 
-Notice, any transfer inside the PDF is identified by one of the following transfer types: `GEHALT/RENTE|EURO-UEBERW.|LASTSCHRIFT|DAUERAUFTRAG|GIROCARD|GEBUEHREN`. If other types of transfers are required, add additional types to `Helper.REGEX_TRANSFER_TYPES`.
+Notice, any transfer inside the PDF is identified by one of the following transfer types: `GEHALT/RENTE|EURO-UEBERW.|LASTSCHRIFT|DAUERAUFTRAG|GIROCARD|GEBUEHREN|GUTSCHRIFT`. If other types of transfers are required, add additional types to `Helper.REGEX_TRANSFER_TYPES`.
 
 This parser supports delivery receipts obtained from a DHL service point, Hermes service point or from a DHL self-service point via mail (simply print the mail as PDF).

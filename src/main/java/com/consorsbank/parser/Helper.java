@@ -37,7 +37,7 @@ public class Helper {
     public static final String DATETIME_FORMAT_WRITE = "dd.MM.yyyy HH:mm";
 
     public static final String PDF_REPORT_REGEX_TRANSFER_TYPES =
-            "GEHALT/RENTE|EURO-UEBERW.|LASTSCHRIFT|DAUERAUFTRAG|GIROCARD|GEBUEHREN";
+            "GEHALT/RENTE|EURO-UEBERW.|LASTSCHRIFT|DAUERAUFTRAG|GIROCARD|GEBUEHREN|GUTSCHRIFT";
     public static final String PDF_REPORT_KONTOSTAND_ZUM_IN_TXT = "Kontostand zum ";
     public static final String PDF_REPORT_INTERIM_KONTOSTAND_ZUM_IN_TXT = "*** Kontostand zum ";
 

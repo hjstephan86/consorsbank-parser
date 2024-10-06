@@ -57,9 +57,9 @@ public class AppTest {
 
                 try {
                         // Check transfers CSV
-                        int expectedEntriesCount = 1554;
+                        int expectedEntriesCount = 1578;
                         String expectedLastEntry =
-                                        "b000b9059601524df6d27601c1e54e16;1554;30.08.2024;500,00;;<SPBIDE3B>;DE72480501610150252765;DAMARIS EPP;Erbe;";
+                                        "b000b9059601524df6d27601c1e54e16;1578;30.08.2024;500,00;;<SPBIDE3B>;DE72480501610150252765;DAMARIS EPP;Erbe;";
 
                         String simulatedInput = "g";
                         ByteArrayInputStream in =
