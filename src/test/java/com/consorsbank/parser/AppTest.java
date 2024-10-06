@@ -84,7 +84,7 @@ public class AppTest {
                         // Check receipts CSV
                         expectedEntriesCount = 6;
                         expectedLastEntry =
-                                        "3efc5eee5d7e2b1e0f6a1ecd03e19e04e95ee83a13178120e033ca80893c2ca5;Pullover-Boss-TomTailor-orig.pdf;Deutsche Post AG; ;29.09.2024 19:57;233543534973;";
+                                        "14d3443920139acedd7ace1e3a304e1fc61b69434996b549d6cd7992702a0a28;Scanned_20241002-1747-Nike-43.jpg;Hermes AG; ;02.10.2024 17:34;H1001990069063401019;";
 
                         f = new File(pathToReceiptsExport);
                         entriesCount = 0;

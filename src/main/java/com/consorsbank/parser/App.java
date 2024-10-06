@@ -55,12 +55,12 @@ public class App {
                     ReceiptHelper.parseDeliveryReceipts(listOfReceiptFiles);
             ArrayList<DeliveryReceipt> receipts =
                     new ArrayList<DeliveryReceipt>(receiptMap.values());
-            Collections.sort(receipts);
 
             printTransfers(transfers, retoureTransfers);
             List<DeliveryReceipt> allReceipts =
                     Stream.concat(receipts.stream(), existingReceipts.values().stream())
                             .collect(Collectors.toList());
+            Collections.sort(allReceipts);
             printReceipts(allReceipts, existingTrackingIds);
 
             assignTrackingIdsAndExport(transfers, retoureTransfers, allReceipts,
