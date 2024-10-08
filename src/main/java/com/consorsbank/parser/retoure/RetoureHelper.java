@@ -28,6 +28,14 @@ public class RetoureHelper {
                         assignRetoureTransfer(transfer, prevTransfer);
                         prevTransfer.setBalanced(true);
                         continue outer;
+                    } else if (balanceValue < 0 && prevBalanceValue > 0
+                            && Math.abs(Math.abs(balanceValue)
+                                    - prevBalanceValue) < com.consorsbank.parser.Helper.EPSILON
+                            && transfer.getName().equals(prevTransfer.getName())) {
+                        // A rare case but it can happen
+                        assignRetoureTransfer(prevTransfer, transfer);
+                        transfer.setBalanced(true);
+                        continue outer;
                     } else if (balanceValue > 0 && prevBalanceValue < 0
                             && (Math.abs(prevBalanceValue)
                                     - balanceValue) >= com.consorsbank.parser.Helper.CENT
