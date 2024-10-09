@@ -52,6 +52,7 @@ public class Helper {
 
     public static final String DELIVERY_RECEIPT_DHL_SENDER = "Deutsche Post AG";
     public static final String DELIVERY_RECEIPT_HERMES_SENDER = "Hermes AG";
+    public static final String DELIVERY_RECEIPT_UPS_SENDER = "United Parcel Service, Inc.";
     public static final String DELIVERY_RECEIPT_RECIPIENT_IN_TXT = ":recipient_name: [{value=";
     public static final String DELIVERY_RECEIPT_SENDER_IN_TXT = ":sender_name: [{value=";
     public static final String DELIVERY_RECEIPT_DATE_IN_TXT = ":shipment_date: [{value=";
@@ -123,7 +124,8 @@ public class Helper {
     }
 
     public static boolean isTrackingIdValid(String trackingId) {
-        return isDHLTrackingId(trackingId) ^ isHermesTrackingId(trackingId);
+        return isDHLTrackingId(trackingId) ^ isHermesTrackingId(trackingId)
+                ^ isUPSTrackingId(trackingId);
     }
 
     public static boolean isDHLTrackingId(String trackingId) {
@@ -135,6 +137,12 @@ public class Helper {
     public static boolean isHermesTrackingId(String trackingId) {
         // Hermes: start with "H" followed by 19 digits
         String HermesRegex = "H\\d{19}";
+        return trackingId.matches(HermesRegex);
+    }
+
+    public static boolean isUPSTrackingId(String trackingId) {
+        // UPS: start with E followed by 13 digits, e.g., E4016129636432
+        String HermesRegex = "E\\d{13}";
         return trackingId.matches(HermesRegex);
     }
 

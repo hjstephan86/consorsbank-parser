@@ -63,6 +63,13 @@ public class DeliveryReceipt implements Comparable<DeliveryReceipt> {
         this.sender = sender;
     }
 
+    private String getDefaultDeliverySender(String trackingId) {
+        return !Helper.isDHLTrackingId(trackingId)
+                ? (Helper.isHermesTrackingId(trackingId) ? Helper.DELIVERY_RECEIPT_HERMES_SENDER
+                        : Helper.DELIVERY_RECEIPT_UPS_SENDER)
+                : Helper.DELIVERY_RECEIPT_DHL_SENDER;
+    }
+
     public void setTime(String time) {
         this.time = time;
         // Consider also '2024-09-16 null'
@@ -98,9 +105,7 @@ public class DeliveryReceipt implements Comparable<DeliveryReceipt> {
                 Helper.truncate(
                         this.sender != null && !this.sender.toLowerCase().equals("null")
                                 ? this.sender
-                                : (Helper.isHermesTrackingId(trackingId)
-                                        ? Helper.DELIVERY_RECEIPT_HERMES_SENDER
-                                        : Helper.DELIVERY_RECEIPT_DHL_SENDER),
+                                : getDefaultDeliverySender(trackingId),
                         Helper.SENDER_COL_WIDTH - Helper.TRUNCATE_COL_WIDTH_DELTA),
                 Helper.SENDER_COL_WIDTH)
                 + Helper.padRight(
@@ -152,9 +157,7 @@ public class DeliveryReceipt implements Comparable<DeliveryReceipt> {
                     this.fileHash
                             + ";" + this.filename
                             + ";" + (!this.sender.toLowerCase().equals("null") ? this.sender
-                                    : (Helper.isHermesTrackingId(trackingId)
-                                            ? Helper.DELIVERY_RECEIPT_HERMES_SENDER
-                                            : Helper.DELIVERY_RECEIPT_DHL_SENDER))
+                                    : getDefaultDeliverySender(trackingId))
                             + ";"
                             + (!this.recipient.toLowerCase().equals("null") ? this.recipient : " ")
                             + ";"

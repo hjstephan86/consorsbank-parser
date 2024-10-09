@@ -134,8 +134,29 @@ public class HelperTest {
         String trackingId = "H1001990069063401019";
         assertTrue(Helper.isHermesTrackingId(trackingId));
 
+        trackingId = "H100199006906340101";
+        assertFalse(Helper.isHermesTrackingId(trackingId));
+
+        trackingId = "H10019900690634010199";
+        assertFalse(Helper.isHermesTrackingId(trackingId));
+
         trackingId = "1001990069063401019";
         assertFalse(Helper.isHermesTrackingId(trackingId));
+    }
+
+    @Test
+    public void testIsUPSTrackingId() {
+        String trackingId = "E4016129636432";
+        assertTrue(Helper.isUPSTrackingId(trackingId));
+
+        trackingId = "E401612963643";
+        assertFalse(Helper.isUPSTrackingId(trackingId));
+
+        trackingId = "E40161296364322";
+        assertFalse(Helper.isUPSTrackingId(trackingId));
+
+        trackingId = "4016129636432";
+        assertFalse(Helper.isUPSTrackingId(trackingId));
     }
 
     @Test
@@ -144,6 +165,9 @@ public class HelperTest {
         assertTrue(Helper.isTrackingIdValid(trackingId));
 
         trackingId = "H1001990069063401019";
+        assertTrue(Helper.isTrackingIdValid(trackingId));
+
+        trackingId = "E4016129636432";
         assertTrue(Helper.isTrackingIdValid(trackingId));
     }
 
