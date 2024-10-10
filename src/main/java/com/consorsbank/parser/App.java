@@ -37,7 +37,7 @@ public class App {
             RetoureHelper.packageRetoureTransfers(transfers, transferMap);
 
             HashSet<String> existingTrackingIds =
-                    TransferHelper.parseForExsistingTrackingIds(transferMap);
+                    TransferHelper.parseForExsistingTrackingIds(transfers, transferMap);
             List<Transfer> retoureTransfers =
                     transfers.stream()
                             .filter(transfer -> transfer.getPointToTransfer() != null

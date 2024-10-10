@@ -141,7 +141,7 @@ public class TransferHelper {
     }
 
     public static HashSet<String> parseForExsistingTrackingIds(
-            LinkedHashMap<String, Transfer> transferMap) {
+            ArrayList<Transfer> transfers, LinkedHashMap<String, Transfer> transferMap) {
         HashSet<String> existingTrackingIds = new HashSet<String>();
         try (BufferedReader br =
                 new BufferedReader(new FileReader(Helper.PATH_TO_TRANSFERS_IMPORT))) {
@@ -153,9 +153,15 @@ public class TransferHelper {
                     String existingTrackingId = transferArr[9];
                     if (Helper.isTrackingIdValid(existingTrackingId)
                             && transferMap.containsKey(hashFromCSV)) {
-                        Transfer transfer = transferMap.get(hashFromCSV);
-                        transfer.setExistingTrackingId(existingTrackingId);
+                        Transfer retoureTransfer = transferMap.get(hashFromCSV);
+                        retoureTransfer.setExistingTrackingId(existingTrackingId);
                         existingTrackingIds.add(existingTrackingId);
+                        // Set the retoure postion
+                        int retourePosition = Integer.parseInt(transferArr[4]);
+                        if (retourePosition > 0 && retourePosition <= transfers.size()) {
+                            Transfer otherTransfer = transfers.get(retourePosition - 1);
+                            retoureTransfer.setPointToTransfer(otherTransfer, false);
+                        }
                     }
                 }
             }
