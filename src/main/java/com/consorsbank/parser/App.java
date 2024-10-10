@@ -40,7 +40,7 @@ public class App {
                     TransferHelper.parseForExsistingTrackingIds(transferMap);
             List<Transfer> retoureTransfers =
                     transfers.stream()
-                            .filter(transfer -> transfer.getOutgoingRetoureTransfer() != null
+                            .filter(transfer -> transfer.getPointToTransfer() != null
                                     && transfer.getExistingTrackingId() == null)
                             .collect(Collectors.toList());
 

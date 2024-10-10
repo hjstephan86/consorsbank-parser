@@ -21,17 +21,6 @@ public class Transfer implements Comparable<Transfer> {
     private Date date;
     private BalanceNumber balanceNumber;
 
-    /**
-     * The outgoing retoure transfer, i.e., the transfer to which this retoure transfer points to.
-     */
-    private Transfer outgoingRetoureTransfer;
-
-    private LinkedHashMap<String, Transfer> incomingTransfers;
-
-    /**
-     * True iff this transfer is balanced by a subsequent retour transfer
-     */
-    private boolean isBalanced;
     private String bankID;
     private String BIC;
     private String IBAN;
@@ -40,6 +29,13 @@ public class Transfer implements Comparable<Transfer> {
     private String hash;
     private String existingTrackingId;
     private String trackingId;
+
+    /**
+     * The transfer to which this retoure transfer points to.
+     */
+    private Transfer pointToTransfer;
+    private double retoureBalance;
+    private LinkedHashMap<String, Transfer> incomingTransfers;
 
     private SimpleDateFormat dateFormat;
 
@@ -51,6 +47,7 @@ public class Transfer implements Comparable<Transfer> {
         this.IBAN = "";
         this.name = "";
         this.purpose = "";
+        this.retoureBalance = balanceNumber.getValue();
 
         this.dateFormat = new SimpleDateFormat(Helper.SIMPLE_DATE_FORMAT);
         this.incomingTransfers = new LinkedHashMap<String, Transfer>();
@@ -103,8 +100,8 @@ public class Transfer implements Comparable<Transfer> {
                 + Helper.padRight(String.format("%12.2f", this.balanceNumber.getValue()),
                         Helper.BALANCE_COL_WIDTH)
                 + Helper.padRight(
-                        String.valueOf(this.outgoingRetoureTransfer != null
-                                ? this.outgoingRetoureTransfer.getPosition()
+                        String.valueOf(this.pointToTransfer != null
+                                ? this.pointToTransfer.getPosition()
                                 : ""),
                         Helper.RETOURE_COL_WIDTH)
                 + Helper.padRight(this.BIC, Helper.BIC_COL_WIDTH)
@@ -122,7 +119,7 @@ public class Transfer implements Comparable<Transfer> {
                 + ";" + this.dateFormat.format(this.date)
                 + ";" + this.balanceNumber.toString()
                 + ";"
-                + (this.outgoingRetoureTransfer != null ? this.outgoingRetoureTransfer.getPosition()
+                + (this.pointToTransfer != null ? this.pointToTransfer.getPosition()
                         : "")
                 + ";" + this.BIC
                 + ";" + this.IBAN
@@ -147,24 +144,30 @@ public class Transfer implements Comparable<Transfer> {
         this.purpose = purpose;
     }
 
-    public boolean isBalanced() {
-        return isBalanced;
+    public void setPointToTransfer(Transfer transfer, boolean findPotentialRetoureTransfer) {
+        this.pointToTransfer = transfer;
+        if (pointToTransfer != null && !findPotentialRetoureTransfer) {
+            // Update the retoure balance value of the pointed transfer
+            double retoureBalance =
+                    pointToTransfer.getRetoureBalance() + this.getBalanceNumber().getValue();
+            pointToTransfer.setRetoureBalance(retoureBalance);
+        }
     }
 
-    public void setBalanced(boolean isBalanced) {
-        this.isBalanced = isBalanced;
-    }
-
-    public void setOutgoingRetoureTransfer(Transfer transfer) {
-        this.outgoingRetoureTransfer = transfer;
-    }
-
-    public Transfer getOutgoingRetoureTransfer() {
-        return outgoingRetoureTransfer;
+    public Transfer getPointToTransfer() {
+        return pointToTransfer;
     }
 
     public LinkedHashMap<String, Transfer> getIncomingTransfers() {
         return incomingTransfers;
+    }
+
+    public double getRetoureBalance() {
+        return retoureBalance;
+    }
+
+    public void setRetoureBalance(double balanceValue) {
+        this.retoureBalance = balanceValue;
     }
 
     public String getExistingTrackingId() {
