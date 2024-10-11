@@ -31,10 +31,10 @@ public class Transfer implements Comparable<Transfer> {
     private String trackingId;
 
     /**
-     * The transfer to which this retoure transfer points to.
+     * The transfer to which this return transfer points to.
      */
     private Transfer pointToTransfer;
-    private double retoureBalance;
+    private double returnBalance;
     private LinkedHashMap<String, Transfer> incomingTransfers;
 
     private SimpleDateFormat dateFormat;
@@ -47,7 +47,7 @@ public class Transfer implements Comparable<Transfer> {
         this.IBAN = "";
         this.name = "";
         this.purpose = "";
-        this.retoureBalance = balanceNumber.getValue();
+        this.returnBalance = balanceNumber.getValue();
 
         this.dateFormat = new SimpleDateFormat(Helper.SIMPLE_DATE_FORMAT);
         this.incomingTransfers = new LinkedHashMap<String, Transfer>();
@@ -144,13 +144,13 @@ public class Transfer implements Comparable<Transfer> {
         this.purpose = purpose;
     }
 
-    public void setPointToTransfer(Transfer transfer, boolean findPotentialRetoureTransfer) {
+    public void setPointToTransfer(Transfer transfer, boolean findPotentialReturnTransfer) {
         this.pointToTransfer = transfer;
-        if (pointToTransfer != null && !findPotentialRetoureTransfer) {
-            // Update the retoure balance value of the pointed transfer
-            double retoureBalance =
-                    pointToTransfer.getRetoureBalance() + this.getBalanceNumber().getValue();
-            pointToTransfer.setRetoureBalance(retoureBalance);
+        if (pointToTransfer != null && !findPotentialReturnTransfer) {
+            // Update the return balance value of the pointed transfer
+            double returnBalance =
+                    pointToTransfer.getReturnBalance() + this.getBalanceNumber().getValue();
+            pointToTransfer.setReturnBalance(returnBalance);
         }
     }
 
@@ -162,12 +162,12 @@ public class Transfer implements Comparable<Transfer> {
         return incomingTransfers;
     }
 
-    public double getRetoureBalance() {
-        return retoureBalance;
+    public double getReturnBalance() {
+        return returnBalance;
     }
 
-    public void setRetoureBalance(double balanceValue) {
-        this.retoureBalance = balanceValue;
+    public void setReturnBalance(double balanceValue) {
+        this.returnBalance = balanceValue;
     }
 
     public String getExistingTrackingId() {

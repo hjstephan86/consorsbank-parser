@@ -153,14 +153,14 @@ public class TransferHelper {
                     String existingTrackingId = transferArr[9];
                     if (Helper.isTrackingIdValid(existingTrackingId)
                             && transferMap.containsKey(hashFromCSV)) {
-                        Transfer retoureTransfer = transferMap.get(hashFromCSV);
-                        retoureTransfer.setExistingTrackingId(existingTrackingId);
+                        Transfer returnTransfer = transferMap.get(hashFromCSV);
+                        returnTransfer.setExistingTrackingId(existingTrackingId);
                         existingTrackingIds.add(existingTrackingId);
-                        // Set the retoure postion
-                        int retourePosition = Integer.parseInt(transferArr[4]);
-                        if (retourePosition > 0 && retourePosition <= transfers.size()) {
-                            Transfer otherTransfer = transfers.get(retourePosition - 1);
-                            retoureTransfer.setPointToTransfer(otherTransfer, false);
+                        // Set the return postion
+                        int returnPosition = Integer.parseInt(transferArr[4]);
+                        if (returnPosition > 0 && returnPosition <= transfers.size()) {
+                            Transfer otherTransfer = transfers.get(returnPosition - 1);
+                            returnTransfer.setPointToTransfer(otherTransfer, false);
                         }
                     }
                 }
@@ -174,7 +174,7 @@ public class TransferHelper {
     public static StringBuilder exportTransfers(ArrayList<Transfer> transfers) {
         StringBuilder stringBuilder = new StringBuilder();
         stringBuilder
-                .append("Hash;Pos;Date;Balance;Retoure (Pos);BIC;IBAN;Name;Purpose;Tracking Id\n");
+                .append("Hash;Pos;Date;Balance;Return (Pos);BIC;IBAN;Name;Purpose;Tracking Id\n");
         for (Transfer transfer : transfers) {
             stringBuilder.append(transfer.toCSVString() + "\n");
         }

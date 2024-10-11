@@ -1,11 +1,12 @@
-package com.consorsbank.parser.retoure;
+package com.consorsbank.parser.retrn;
 
 import com.consorsbank.parser.transfer.Transfer;
 
-public class Packet implements Comparable<Packet> {
+public class Bin implements Comparable<Bin> {
+
     private Transfer transfer;
 
-    public Packet(Transfer transfer) {
+    public Bin(Transfer transfer) {
         this.transfer = transfer;
     }
 
@@ -18,7 +19,7 @@ public class Packet implements Comparable<Packet> {
     }
 
     @Override
-    public int compareTo(Packet o) {
+    public int compareTo(Bin o) {
         if (Math.abs(Math.abs(transfer.getBalanceNumber().getValue())
                 - Math.abs(o.getTransfer().getBalanceNumber()
                         .getValue())) < com.consorsbank.parser.Helper.EPSILON)

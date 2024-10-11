@@ -20,7 +20,7 @@ import java.util.stream.Stream;
 import com.consorsbank.parser.receipt.DeliveryReceipt;
 import com.consorsbank.parser.receipt.ReceiptHelper;
 import com.consorsbank.parser.receipt.TrackingIdForReceipt;
-import com.consorsbank.parser.retoure.RetoureHelper;
+import com.consorsbank.parser.retrn.ReturnHelper;
 import com.consorsbank.parser.transfer.Transfer;
 import com.consorsbank.parser.transfer.TransferHelper;
 
@@ -33,12 +33,12 @@ public class App {
             ArrayList<Transfer> transfers = TransferHelper.parseTransfers(listOfPDFReportFiles);
             Collections.sort(transfers);
             LinkedHashMap<String, Transfer> transferMap = TransferHelper.setPosition(transfers);
-            RetoureHelper.findRetoureTransfers(transfers);
-            RetoureHelper.packageRetoureTransfers(transfers, transferMap);
+            ReturnHelper.findReturnTransfers(transfers);
+            ReturnHelper.packageReturnTransfers(transfers, transferMap);
 
             HashSet<String> existingTrackingIds =
                     TransferHelper.parseForExsistingTrackingIds(transfers, transferMap);
-            List<Transfer> retoureTransfers =
+            List<Transfer> returnTransfers =
                     transfers.stream()
                             .filter(transfer -> transfer.getPointToTransfer() != null
                                     && transfer.getExistingTrackingId() == null)
@@ -56,14 +56,14 @@ public class App {
             ArrayList<DeliveryReceipt> receipts =
                     new ArrayList<DeliveryReceipt>(receiptMap.values());
 
-            printTransfers(transfers, retoureTransfers);
+            printTransfers(transfers, returnTransfers);
             List<DeliveryReceipt> allReceipts =
                     Stream.concat(receipts.stream(), existingReceipts.values().stream())
                             .collect(Collectors.toList());
             Collections.sort(allReceipts);
             printReceipts(allReceipts, existingTrackingIds);
 
-            assignTrackingIdsAndExport(transfers, retoureTransfers, allReceipts,
+            assignTrackingIdsAndExport(transfers, returnTransfers, allReceipts,
                     existingTrackingIds);
         }
     }
@@ -132,10 +132,10 @@ public class App {
     }
 
     private static void printTransfers(ArrayList<Transfer> transfers,
-            List<Transfer> retoureTransfers) {
+            List<Transfer> returnTransfers) {
         printTransfers(transfers, false);
         System.out.println();
-        printTransfers(retoureTransfers, true);
+        printTransfers(returnTransfers, true);
         System.out.println();
     }
 
@@ -145,7 +145,7 @@ public class App {
                 Helper.padRight("Pos", Helper.POS_COL_WIDTH)
                         + Helper.padRight("Date", Helper.DATE_COL_WIDTH)
                         + Helper.padRight("Balance", Helper.BALANCE_COL_WIDTH)
-                        + Helper.padRight("Retoure (Pos)", Helper.RETOURE_COL_WIDTH)
+                        + Helper.padRight("Return (Pos)", Helper.RETOURE_COL_WIDTH)
                         + Helper.padRight("BIC", Helper.BIC_COL_WIDTH)
                         + Helper.padRight("IBAN", Helper.IBAN_COL_WIDTH)
                         + Helper.padRight("Name", Helper.NAME_COL_WIDTH)
@@ -194,13 +194,13 @@ public class App {
 
     @SuppressWarnings("unused")
     private static void assignTrackingIdsAndExport(ArrayList<Transfer> transfers,
-            List<Transfer> retoureTransfers, List<DeliveryReceipt> receipts,
+            List<Transfer> returnTransfers, List<DeliveryReceipt> receipts,
             HashSet<String> existingTrackingIds) {
         printTrackingIdAssignmentDescr();
         Scanner scanner = new Scanner(System.in);
         HashSet<Integer> assignedNumbers = new HashSet<Integer>();
         boolean quit = false;
-        outer: for (Transfer transfer : retoureTransfers) {
+        outer: for (Transfer transfer : returnTransfers) {
             boolean inputValid = false;
             while (!inputValid) {
                 promptForTrackingIdAssignment(transfer);
@@ -210,7 +210,7 @@ public class App {
                     TrackingIdForReceipt trackingIdForReceipt =
                             Helper.getTrackingIdForReceipt(receipts, number, existingTrackingIds);
                     if (trackingIdForReceipt != null && !assignedNumbers.contains(number)) {
-                        // Assign the tracking id to the retoure transfer
+                        // Assign the tracking id to the return transfer
                         transfer.setTrackingId(trackingIdForReceipt.getTrackingId());
                         // Add tracking id assignment to the delivery receipt
                         trackingIdForReceipt.getReceipt()
@@ -260,17 +260,17 @@ public class App {
     private static void printTrackingIdAssignmentDescr() {
         System.out.println();
         System.out.println(
-                "Assign a tracking id to a retoure transfer or enter " + Helper.CONSOLE_COLOR_YELLOW
+                "Assign a tracking id to a return transfer or enter " + Helper.CONSOLE_COLOR_YELLOW
                         + "g" + Helper.CONSOLE_COLOR_RESET
                         + " for CSV generation or " + Helper.CONSOLE_COLOR_YELLOW + "s"
                         + Helper.CONSOLE_COLOR_RESET
-                        + " to skip the retoure transfer or q to quit.");
+                        + " to skip the return transfer or q to quit.");
     }
 
     private static void promptForTrackingIdAssignment(Transfer transfer) {
         System.out.print("Enter the " + Helper.CONSOLE_COLOR_YELLOW + "number"
                 + Helper.CONSOLE_COLOR_RESET
-                + " of the tracking id to assign it to retoure transfer "
+                + " of the tracking id to assign it to return transfer "
                 + Helper.CONSOLE_COLOR_CYAN + transfer.getPosition()
                 + Helper.CONSOLE_COLOR_RESET
                 + ": ");

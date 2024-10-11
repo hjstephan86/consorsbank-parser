@@ -12,7 +12,7 @@ public class AppTest {
 
         private String testFolder = "/home/stephan/Downloads/Kontobewegungen/Test/";
         private String pathToPDFReports = testFolder;
-        private String pathToDeliveryReceipts = pathToPDFReports + "Retoure/";
+        private String pathToDeliveryReceipts = pathToPDFReports + "Return/";
         private String pathToTransfersImport =
                         pathToPDFReports + "Transfers-2024-09-22_10-55-49.csv";
         private String pathToTransfersExport =

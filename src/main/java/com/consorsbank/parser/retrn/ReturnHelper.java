@@ -1,4 +1,4 @@
-package com.consorsbank.parser.retoure;
+package com.consorsbank.parser.retrn;
 
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
@@ -7,9 +7,9 @@ import java.util.HashSet;
 import java.util.LinkedHashMap;
 import com.consorsbank.parser.transfer.Transfer;
 
-public class RetoureHelper {
+public class ReturnHelper {
 
-    public static void findRetoureTransfers(ArrayList<Transfer> transfers) {
+    public static void findReturnTransfers(ArrayList<Transfer> transfers) {
         outer: for (int i = transfers.size() - 1; i > 0; i--) {
             Transfer transfer = transfers.get(i);
             for (int j = i - 1; j >= 0; j--) {
@@ -17,14 +17,14 @@ public class RetoureHelper {
                 long daysBetween = ChronoUnit.DAYS.between(prevTransfer.getLocalDate(),
                         transfer.getLocalDate());
                 if (daysBetween <= com.consorsbank.parser.Helper.RETOURE_LIMIT_DAYS
-                        && Math.abs(prevTransfer.getRetoureBalance()) >= Math
+                        && Math.abs(prevTransfer.getReturnBalance()) >= Math
                                 .abs(transfer.getBalanceNumber().getValue())) {
-                    boolean continueOuter = findRetoureTransfer(transfer, prevTransfer, false);
+                    boolean continueOuter = findReturnTransfer(transfer, prevTransfer, false);
                     if (continueOuter) {
                         continue outer;
                     }
                 } else if (daysBetween <= com.consorsbank.parser.Helper.RETOURE_LIMIT_DAYS) {
-                    boolean continueOuter = findRetoureTransfer(transfer, prevTransfer, true);
+                    boolean continueOuter = findReturnTransfer(transfer, prevTransfer, true);
                     if (continueOuter) {
                         continue outer;
                     }
@@ -33,8 +33,8 @@ public class RetoureHelper {
         }
     }
 
-    private static boolean findRetoureTransfer(Transfer transfer, Transfer prevTransfer,
-            boolean findPotentialRetoureTransfer) {
+    private static boolean findReturnTransfer(Transfer transfer, Transfer prevTransfer,
+            boolean findPotentialReturnTransfer) {
         double balanceValue = transfer.getBalanceNumber().getValue();
         double prevBalanceValue = prevTransfer.getBalanceNumber().getValue();
 
@@ -43,7 +43,7 @@ public class RetoureHelper {
                         .abs(prevBalanceValue)) < com.consorsbank.parser.Helper.EPSILON
                 && transfer.getName().equals(prevTransfer.getName())
                 && purposeMatches(transfer, prevTransfer)) {
-            assignRetoureTransfer(transfer, prevTransfer, findPotentialRetoureTransfer);
+            assignReturnTransfer(transfer, prevTransfer, findPotentialReturnTransfer);
             return true;
         } else if (balanceValue < 0 && prevBalanceValue > 0
                 && Math.abs(Math.abs(balanceValue)
@@ -51,14 +51,14 @@ public class RetoureHelper {
                 && transfer.getName().equals(prevTransfer.getName())
                 && purposeMatches(transfer, prevTransfer)) {
             // A rare case but it can happen
-            assignRetoureTransfer(prevTransfer, transfer, findPotentialRetoureTransfer);
+            assignReturnTransfer(prevTransfer, transfer, findPotentialReturnTransfer);
             return true;
         } else if (balanceValue > 0 && prevBalanceValue < 0
                 && (Math.abs(prevBalanceValue)
                         - balanceValue) >= com.consorsbank.parser.Helper.CENT
                 && transfer.getName().equals(prevTransfer.getName())
                 && purposeMatches(transfer, prevTransfer)) {
-            assignRetoureTransfer(transfer, prevTransfer, findPotentialRetoureTransfer);
+            assignReturnTransfer(transfer, prevTransfer, findPotentialReturnTransfer);
             return true;
         } else if (balanceValue > 0 && prevBalanceValue < 0
                 && (Math.abs(prevBalanceValue)
@@ -66,15 +66,15 @@ public class RetoureHelper {
                 && (transfer.getName().startsWith(prevTransfer.getName())
                         || prevTransfer.getName().startsWith(transfer.getName()))
                 && purposeMatches(transfer, prevTransfer)) {
-            assignRetoureTransfer(transfer, prevTransfer, findPotentialRetoureTransfer);
+            assignReturnTransfer(transfer, prevTransfer, findPotentialReturnTransfer);
             return true;
         }
         return false;
     }
 
-    private static void assignRetoureTransfer(Transfer retoureTransfer, Transfer prevTransfer,
-            boolean findPotentialRetoureTransfer) {
-        retoureTransfer.setPointToTransfer(prevTransfer, findPotentialRetoureTransfer);
+    private static void assignReturnTransfer(Transfer returnTransfer, Transfer prevTransfer,
+            boolean findPotentialReturnTransfer) {
+        returnTransfer.setPointToTransfer(prevTransfer, findPotentialReturnTransfer);
     }
 
     public static boolean purposeMatches(Transfer transfer, Transfer prevTransfer) {
@@ -108,24 +108,24 @@ public class RetoureHelper {
     }
 
     /**
-     * Package n:m retoure transfers, 1:1 and 1:n retoure packagings work already
+     * Package return transfers other than 1:1, i.e, 1:n, n:1, n:n, and n:m
      * 
-     * @param transfers the transfers to find retoure packagings for
+     * @param transfers the transfers to find return packagings for
      * 
-     * @param transferMap the transfer map to find retoure packagings for
+     * @param transferMap the transfer map to find return packagings for
      */
-    public static void packageRetoureTransfers(ArrayList<Transfer> transfers,
+    public static void packageReturnTransfers(ArrayList<Transfer> transfers,
             LinkedHashMap<String, Transfer> transferMap) {
-        HashSet<Transfer> transfersForRetourePackaging =
-                findTransfersForRetourePackaging(transferMap);
+        HashSet<Transfer> transfersForReturnPackaging =
+                findTransfersForReturnPackaging(transferMap);
 
-        for (Transfer transfer : transfersForRetourePackaging) {
+        for (Transfer transfer : transfersForReturnPackaging) {
             ArrayList<Bin> bins = new ArrayList<Bin>();
             ArrayList<Packet> packets = new ArrayList<Packet>();
             setBinsAndPackets(transfers, transfer, bins, packets);
 
             if (!(bins.size() == 1 && packets.size() == 1)) {
-                // 1:1 packagings work already, treat 1:n, n:n, n:1, and n:m packagings instead
+                // 1:1 packagings work already, treat 1:n, n:1, n:n and n:m packagings instead
 
                 // First, check whether a package fits simply perfect into a bin (for all packets)
                 doSimpleBestFitPackaging(bins, packets);
@@ -146,20 +146,20 @@ public class RetoureHelper {
         }
     }
 
-    private static HashSet<Transfer> findTransfersForRetourePackaging(
+    private static HashSet<Transfer> findTransfersForReturnPackaging(
             LinkedHashMap<String, Transfer> transferMap) {
-        HashSet<Transfer> transfersForRetourePackaging = new HashSet<Transfer>();
+        HashSet<Transfer> transfersForReturnPackaging = new HashSet<Transfer>();
         // A retour transfer is a transfer pointing to another transfer
-        for (Transfer retoureTransfer : transferMap.values()) {
-            if (retoureTransfer.getPointToTransfer() != null) {
+        for (Transfer returnTransfer : transferMap.values()) {
+            if (returnTransfer.getPointToTransfer() != null) {
                 Transfer anotherTransfer =
-                        transferMap.get(retoureTransfer.getPointToTransfer().getHash());
-                anotherTransfer.getIncomingTransfers().put(retoureTransfer.getHash(),
-                        retoureTransfer);
-                transfersForRetourePackaging.add(anotherTransfer);
+                        transferMap.get(returnTransfer.getPointToTransfer().getHash());
+                anotherTransfer.getIncomingTransfers().put(returnTransfer.getHash(),
+                        returnTransfer);
+                transfersForReturnPackaging.add(anotherTransfer);
             }
         }
-        return transfersForRetourePackaging;
+        return transfersForReturnPackaging;
     }
 
     private static void setBinsAndPackets(ArrayList<Transfer> transfers, Transfer transfer,
@@ -191,7 +191,7 @@ public class RetoureHelper {
                 if (packets.get(j).getTransfer().getPointToTransfer() == null) {
                     double packetValue = packets.get(j).getTransfer().getBalanceNumber().getValue();
                     if (binValue == packetValue) {
-                        // assign retoure transfer
+                        // assign return transfer
                         packets.get(j).getTransfer()
                                 .setPointToTransfer(bins.get(i).getTransfer(), false);
                         continue outer;
@@ -213,7 +213,7 @@ public class RetoureHelper {
                 if (packets.get(j).getTransfer().getPointToTransfer() == null) {
                     double packetValue = packets.get(j).getTransfer().getBalanceNumber().getValue();
                     if (binValue >= packetValue) {
-                        // assign retoure transfer
+                        // assign return transfer
                         packets.get(j).getTransfer()
                                 .setPointToTransfer(bins.get(i).getTransfer(), false);
                         binValue -= packetValue;

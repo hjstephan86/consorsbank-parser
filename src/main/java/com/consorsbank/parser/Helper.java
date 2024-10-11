@@ -22,11 +22,11 @@ public class Helper {
 
     public static String PATH_TO_PDF_REPORTS = "/home/stephan/Downloads/Kontobewegungen/270448588/";
     public static String PATH_TO_DELIVERY_RECEIPTS =
-            "/home/stephan/Downloads/Kontobewegungen/Retoure/";
+            "/home/stephan/Downloads/Kontobewegungen/Return/";
     public static String PATH_TO_TRANSFERS_EXPORT =
             PATH_TO_PDF_REPORTS + "Transfers-%DATETIME%.csv";
     public static String PATH_TO_TRANSFERS_IMPORT =
-            PATH_TO_PDF_REPORTS + "Transfers-2024-10-08_16-43-27.csv";
+            PATH_TO_PDF_REPORTS + "Transfers-2024-10-10_08-38-24.csv";
     public static String PATH_TO_DELIVERY_RECEIPTS_FILE_NAME = ".receipts";
     public static String PATH_TO_DELIVERY_RECEIPTS_FILE =
             PATH_TO_DELIVERY_RECEIPTS + PATH_TO_DELIVERY_RECEIPTS_FILE_NAME;
