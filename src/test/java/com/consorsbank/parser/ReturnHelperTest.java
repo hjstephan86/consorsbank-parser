@@ -71,13 +71,79 @@ public class ReturnHelperTest {
                 LinkedHashMap<String, Transfer> transferMap = getTransferMap(transfers);
 
                 ReturnHelper.findReturnTransfers(transfers);
+
                 // Here, we expect a 1:1 return assignment
                 assertTrue(x.getPointToTransfer().equals(t));
+                assertTrue(t.getPointToTransfer() == null);
+                assertTrue(!t.isPackaged());
+                assertTrue(!x.isPackaged());
 
                 ReturnHelper.packageReturnTransfers(transfers,
                                 transferMap);
+
                 // After packaging we still expect a 1:1 return assignment
                 assertTrue(x.getPointToTransfer().equals(t));
+                assertTrue(t.getPointToTransfer() == null);
+                assertTrue(t.isPackaged());
+                assertTrue(x.isPackaged());
+        }
+
+        @Test
+        public void testPackageReturnTransfers1To1FitTopDown() {
+                ArrayList<Transfer> transfers = new ArrayList<Transfer>();
+
+                Transfer t = createTransfer("Amazon", 14.5, 10, '+',
+                                "305-1103929-6143535 AMZN Mktp DE IW");
+                transfers.add(t);
+
+                Transfer x = createTransfer("Amazon", 14.5, 14, '-',
+                                "305-1103929-6143535 AMZN Mktp DE WU");
+                transfers.add(x);
+
+                LinkedHashMap<String, Transfer> transferMap = getTransferMap(transfers);
+
+                ReturnHelper.findReturnTransfers(transfers);
+
+                // Here, we expect no 1:1 return assignment
+                assertTrue(x.getPointToTransfer() == null);
+                assertTrue(t.getPointToTransfer() == null);
+                assertTrue(!t.isPackaged());
+                assertTrue(!x.isPackaged());
+
+                ReturnHelper.packageReturnTransfers(transfers,
+                                transferMap);
+                // After packaging we still expect no 1:1 return assignment
+                assertTrue(x.getPointToTransfer() == null);
+                assertTrue(t.getPointToTransfer() == null);
+                assertTrue(!t.isPackaged());
+                assertTrue(!x.isPackaged());
+
+                transfers = new ArrayList<Transfer>();
+                // Now change the date of x
+                t = createTransfer("Amazon", 14.5, 11, '+',
+                                "305-1103929-6143535 AMZN Mktp DE IW");
+                transfers.add(t);
+                x = createTransfer("Amazon", 14.5, 14, '-',
+                                "305-1103929-6143535 AMZN Mktp DE WU");
+                transfers.add(x);
+
+                transferMap = getTransferMap(transfers);
+                ReturnHelper.findReturnTransfers(transfers);
+
+                // Here, we expect a 1:1 return assignment
+                assertTrue(x.getPointToTransfer() == null);
+                assertTrue(t.getPointToTransfer().equals(x));
+                assertTrue(!t.isPackaged());
+                assertTrue(!x.isPackaged());
+
+                ReturnHelper.packageReturnTransfers(transfers,
+                                transferMap);
+
+                // After packaging we still expect a 1:1 return assignment
+                assertTrue(x.getPointToTransfer() == null);
+                assertTrue(t.getPointToTransfer().equals(x));
+                assertTrue(t.isPackaged());
+                assertTrue(x.isPackaged());
         }
 
         @Test
@@ -95,13 +161,20 @@ public class ReturnHelperTest {
                 LinkedHashMap<String, Transfer> transferMap = getTransferMap(transfers);
 
                 ReturnHelper.findReturnTransfers(transfers);
+
                 // Here, we expect a 1:1 return assignment
                 assertTrue(x.getPointToTransfer().equals(t));
+                assertTrue(t.getPointToTransfer() == null);
+                assertTrue(!t.isPackaged());
+                assertTrue(!x.isPackaged());
 
                 ReturnHelper.packageReturnTransfers(transfers,
                                 transferMap);
                 // After packaging we still expect a 1:1 return assignment
                 assertTrue(x.getPointToTransfer().equals(t));
+                assertTrue(t.getPointToTransfer() == null);
+                assertTrue(t.isPackaged());
+                assertTrue(x.isPackaged());
         }
 
         @Test
@@ -127,16 +200,32 @@ public class ReturnHelperTest {
                 LinkedHashMap<String, Transfer> transferMap = getTransferMap(transfers);
 
                 ReturnHelper.findReturnTransfers(transfers);
+
                 // Here, we expect a 1:n return assignment
                 assertTrue(x.getPointToTransfer().equals(u));
                 assertTrue(y.getPointToTransfer().equals(u));
+                assertTrue(t.getPointToTransfer() == null);
+                assertTrue(u.getPointToTransfer() == null);
+
+                assertTrue(!t.isPackaged());
+                assertTrue(!u.isPackaged());
+                assertTrue(!x.isPackaged());
+                assertTrue(!y.isPackaged());
 
                 ReturnHelper.packageReturnTransfers(transfers,
                                 transferMap);
+
                 // However, after packaging we expect a n:n return assignment with a chronological
                 // ordering
                 assertTrue(x.getPointToTransfer().equals(t));
                 assertTrue(y.getPointToTransfer().equals(u));
+                assertTrue(t.getPointToTransfer() == null);
+                assertTrue(u.getPointToTransfer() == null);
+
+                assertTrue(t.isPackaged());
+                assertTrue(u.isPackaged());
+                assertTrue(x.isPackaged());
+                assertTrue(y.isPackaged());
         }
 
         @Test
@@ -162,16 +251,32 @@ public class ReturnHelperTest {
                 LinkedHashMap<String, Transfer> transferMap = getTransferMap(transfers);
 
                 ReturnHelper.findReturnTransfers(transfers);
+
                 // Here, we expect a 1:n return assignment
                 assertTrue(x.getPointToTransfer().equals(u));
                 assertTrue(y.getPointToTransfer().equals(u));
+                assertTrue(t.getPointToTransfer() == null);
+                assertTrue(u.getPointToTransfer() == null);
+
+                assertTrue(!t.isPackaged());
+                assertTrue(!u.isPackaged());
+                assertTrue(!x.isPackaged());
+                assertTrue(!y.isPackaged());
 
                 ReturnHelper.packageReturnTransfers(transfers,
                                 transferMap);
+
                 // However, after packaging we expect a n:n return assignment with a chronological
                 // ordering
                 assertTrue(x.getPointToTransfer().equals(u));
                 assertTrue(y.getPointToTransfer().equals(t));
+                assertTrue(t.getPointToTransfer() == null);
+                assertTrue(u.getPointToTransfer() == null);
+
+                assertTrue(t.isPackaged());
+                assertTrue(u.isPackaged());
+                assertTrue(x.isPackaged());
+                assertTrue(y.isPackaged());
         }
 
 
@@ -197,13 +302,27 @@ public class ReturnHelperTest {
                 LinkedHashMap<String, Transfer> transferMap = getTransferMap(transfers);
 
                 ReturnHelper.findReturnTransfers(transfers);
+
                 // Here, we expect that x is simply packaged to u (as already done)
                 assertTrue(x.getPointToTransfer().equals(u));
+                assertTrue(t.getPointToTransfer() == null);
+                assertTrue(u.getPointToTransfer() == null);
+
+                assertTrue(!t.isPackaged());
+                assertTrue(!u.isPackaged());
+                assertTrue(!x.isPackaged());
 
                 ReturnHelper.packageReturnTransfers(transfers,
                                 transferMap);
+
                 // However, after packaging we expect a simple perfect packaging
                 assertTrue(x.getPointToTransfer().equals(t));
+                assertTrue(t.getPointToTransfer() == null);
+                assertTrue(u.getPointToTransfer() == null);
+
+                assertTrue(t.isPackaged());
+                assertTrue(u.isPackaged());
+                assertTrue(x.isPackaged());
         }
 
         @Test
@@ -228,13 +347,27 @@ public class ReturnHelperTest {
                 LinkedHashMap<String, Transfer> transferMap = getTransferMap(transfers);
 
                 ReturnHelper.findReturnTransfers(transfers);
+
                 // Here, we expect that x is simply packaged to u (as already done)
                 assertTrue(x.getPointToTransfer().equals(u));
+                assertTrue(t.getPointToTransfer() == null);
+                assertTrue(u.getPointToTransfer() == null);
+
+                assertTrue(!t.isPackaged());
+                assertTrue(!u.isPackaged());
+                assertTrue(!x.isPackaged());
 
                 ReturnHelper.packageReturnTransfers(transfers,
                                 transferMap);
+
                 // However, after packaging we still expect the same packaging as before
                 assertTrue(x.getPointToTransfer().equals(t));
+                assertTrue(t.getPointToTransfer() == null);
+                assertTrue(u.getPointToTransfer() == null);
+
+                assertTrue(t.isPackaged());
+                assertTrue(u.isPackaged());
+                assertTrue(x.isPackaged());
         }
 
         @Test
@@ -264,18 +397,36 @@ public class ReturnHelperTest {
                 LinkedHashMap<String, Transfer> transferMap = getTransferMap(transfers);
 
                 ReturnHelper.findReturnTransfers(transfers);
+
                 // Here, we expect a 1:n return assignment
                 assertTrue(x.getPointToTransfer().equals(u));
                 assertTrue(y.getPointToTransfer().equals(u));
                 assertTrue(z.getPointToTransfer().equals(u));
+                assertTrue(t.getPointToTransfer() == null);
+                assertTrue(u.getPointToTransfer() == null);
+
+                assertTrue(!t.isPackaged());
+                assertTrue(!u.isPackaged());
+                assertTrue(!x.isPackaged());
+                assertTrue(!y.isPackaged());
+                assertTrue(!z.isPackaged());
 
                 ReturnHelper.packageReturnTransfers(transfers,
                                 transferMap);
+
                 // However, after packaging we expect a n:m return assignment with a chronological
                 // ordering
                 assertTrue(x.getPointToTransfer().equals(t));
                 assertTrue(y.getPointToTransfer().equals(u));
                 assertTrue(z.getPointToTransfer().equals(u));
+                assertTrue(t.getPointToTransfer() == null);
+                assertTrue(u.getPointToTransfer() == null);
+
+                assertTrue(t.isPackaged());
+                assertTrue(u.isPackaged());
+                assertTrue(x.isPackaged());
+                assertTrue(y.isPackaged());
+                assertTrue(z.isPackaged());
         }
 
         @Test
@@ -305,17 +456,35 @@ public class ReturnHelperTest {
                 LinkedHashMap<String, Transfer> transferMap = getTransferMap(transfers);
 
                 ReturnHelper.findReturnTransfers(transfers);
+
                 // Here, we expect a 1:n return assignment
                 assertTrue(x.getPointToTransfer().equals(u));
                 assertTrue(y.getPointToTransfer().equals(u));
                 assertTrue(z.getPointToTransfer().equals(u));
+                assertTrue(t.getPointToTransfer() == null);
+                assertTrue(u.getPointToTransfer() == null);
+
+                assertTrue(!t.isPackaged());
+                assertTrue(!u.isPackaged());
+                assertTrue(!x.isPackaged());
+                assertTrue(!y.isPackaged());
+                assertTrue(!z.isPackaged());
 
                 ReturnHelper.packageReturnTransfers(transfers,
                                 transferMap);
+
                 // However, after packaging we expect a n:m return assignment with a best fit
                 // ordering
                 assertTrue(x.getPointToTransfer().equals(u));
                 assertTrue(y.getPointToTransfer().equals(t));
                 assertTrue(z.getPointToTransfer().equals(u));
+                assertTrue(t.getPointToTransfer() == null);
+                assertTrue(u.getPointToTransfer() == null);
+
+                assertTrue(t.isPackaged());
+                assertTrue(u.isPackaged());
+                assertTrue(x.isPackaged());
+                assertTrue(y.isPackaged());
+                assertTrue(z.isPackaged());
         }
 }

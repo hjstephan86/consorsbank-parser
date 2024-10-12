@@ -29,15 +29,20 @@ public class Transfer implements Comparable<Transfer> {
     private String hash;
     private String existingTrackingId;
     private String trackingId;
+    private SimpleDateFormat dateFormat;
 
     /**
      * The transfer to which this return transfer points to.
      */
     private Transfer pointToTransfer;
     private double returnBalance;
-    private LinkedHashMap<String, Transfer> incomingTransfers;
 
-    private SimpleDateFormat dateFormat;
+    /**
+     * True iff this transfer is packaged. If this transfer is packaged, it belongs to a return
+     * transfer relation between bins and packets.
+     */
+    private boolean isPackaged;
+    private LinkedHashMap<String, Transfer> incomingTransfers;
 
     public Transfer(BalanceNumber balanceNumber, Date date) {
         this.balanceNumber = balanceNumber;
@@ -103,7 +108,7 @@ public class Transfer implements Comparable<Transfer> {
                         String.valueOf(this.pointToTransfer != null
                                 ? this.pointToTransfer.getPosition()
                                 : ""),
-                        Helper.RETOURE_COL_WIDTH)
+                        Helper.RETURN_COL_WIDTH)
                 + Helper.padRight(this.BIC, Helper.BIC_COL_WIDTH)
                 + Helper.padRight(this.IBAN, Helper.IBAN_COL_WIDTH)
                 + Helper.padRight(
@@ -160,6 +165,19 @@ public class Transfer implements Comparable<Transfer> {
 
     public LinkedHashMap<String, Transfer> getIncomingTransfers() {
         return incomingTransfers;
+    }
+
+    /**
+     * Return {@link #isPackaged}
+     * 
+     * @return {@link #isPackaged}
+     */
+    public boolean isPackaged() {
+        return isPackaged;
+    }
+
+    public void setPackaged(boolean isPackaged) {
+        this.isPackaged = isPackaged;
     }
 
     public double getReturnBalance() {

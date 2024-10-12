@@ -1,28 +1,28 @@
 src/main/java/com/consorsbank/parser/App.java:29:	CyclomaticComplexity:	The method 'main(String[])' has a cyclomatic complexity of 2.
-src/main/java/com/consorsbank/parser/App.java:71:	CyclomaticComplexity:	The method 'argumentsValid(String[])' has a cyclomatic complexity of 9.
-src/main/java/com/consorsbank/parser/App.java:100:	CyclomaticComplexity:	The method 'parsePDFsAndReceiptsPathsArgs(String[])' has a cyclomatic complexity of 5.
-src/main/java/com/consorsbank/parser/App.java:115:	CyclomaticComplexity:	The method 'parseArgTransferImport(String[])' has a cyclomatic complexity of 4.
-src/main/java/com/consorsbank/parser/App.java:125:	CyclomaticComplexity:	The method 'parseArgTransferExport(String[])' has a cyclomatic complexity of 2.
-src/main/java/com/consorsbank/parser/App.java:134:	CyclomaticComplexity:	The method 'printTransfers(ArrayList<Transfer>, List<Transfer>)' has a cyclomatic complexity of 1.
-src/main/java/com/consorsbank/parser/App.java:142:	CyclomaticComplexity:	The method 'printTransfers(List<Transfer>, boolean)' has a cyclomatic complexity of 3.
-src/main/java/com/consorsbank/parser/App.java:169:	CyclomaticComplexity:	The method 'printReceipts(List<DeliveryReceipt>, HashSet<String>)' has a cyclomatic complexity of 5.
-src/main/java/com/consorsbank/parser/App.java:196:	CyclomaticComplexity:	The method 'assignTrackingIdsAndExport(ArrayList<Transfer>, List<Transfer>, List<DeliveryReceipt>, HashSet<String>)' has a cyclomatic complexity of 11.
-src/main/java/com/consorsbank/parser/App.java:247:	CyclomaticComplexity:	The method 'exportTransfers(ArrayList<Transfer>)' has a cyclomatic complexity of 1.
-src/main/java/com/consorsbank/parser/App.java:255:	CyclomaticComplexity:	The method 'exportDeliveryReceipts(List<DeliveryReceipt>)' has a cyclomatic complexity of 1.
-src/main/java/com/consorsbank/parser/App.java:260:	CyclomaticComplexity:	The method 'printTrackingIdAssignmentDescr()' has a cyclomatic complexity of 1.
-src/main/java/com/consorsbank/parser/App.java:270:	CyclomaticComplexity:	The method 'promptForTrackingIdAssignment(Transfer)' has a cyclomatic complexity of 1.
-src/main/java/com/consorsbank/parser/App.java:279:	CyclomaticComplexity:	The method 'generateCSV(StringBuilder, String)' has a cyclomatic complexity of 2.
-src/main/java/com/consorsbank/parser/Helper.java:93:	CyclomaticComplexity:	The method 'padRight(String, int)' has a cyclomatic complexity of 1.
-src/main/java/com/consorsbank/parser/Helper.java:97:	CyclomaticComplexity:	The method 'truncate(String, int)' has a cyclomatic complexity of 2.
-src/main/java/com/consorsbank/parser/Helper.java:103:	CyclomaticComplexity:	The method 'getPDFReportText(String)' has a cyclomatic complexity of 1.
-src/main/java/com/consorsbank/parser/Helper.java:109:	CyclomaticComplexity:	The method 'getDeliveryReceiptText(String)' has a cyclomatic complexity of 1.
-src/main/java/com/consorsbank/parser/Helper.java:126:	CyclomaticComplexity:	The method 'isTrackingIdValid(String)' has a cyclomatic complexity of 1.
-src/main/java/com/consorsbank/parser/Helper.java:131:	CyclomaticComplexity:	The method 'isDHLTrackingId(String)' has a cyclomatic complexity of 1.
-src/main/java/com/consorsbank/parser/Helper.java:137:	CyclomaticComplexity:	The method 'isHermesTrackingId(String)' has a cyclomatic complexity of 1.
-src/main/java/com/consorsbank/parser/Helper.java:143:	CyclomaticComplexity:	The method 'isUPSTrackingId(String)' has a cyclomatic complexity of 1.
-src/main/java/com/consorsbank/parser/Helper.java:149:	CyclomaticComplexity:	The method 'getTrackingIdForReceipt(List<DeliveryReceipt>, int, HashSet<String>)' has a cyclomatic complexity of 7.
-src/main/java/com/consorsbank/parser/Helper.java:171:	CyclomaticComplexity:	The method 'getHash(String)' has a cyclomatic complexity of 4.
-src/main/java/com/consorsbank/parser/Helper.java:193:	CyclomaticComplexity:	The method 'getFileHash(String, String)' has a cyclomatic complexity of 4.
+src/main/java/com/consorsbank/parser/App.java:73:	CyclomaticComplexity:	The method 'argumentsValid(String[])' has a cyclomatic complexity of 9.
+src/main/java/com/consorsbank/parser/App.java:102:	CyclomaticComplexity:	The method 'parsePDFsAndReceiptsPathsArgs(String[])' has a cyclomatic complexity of 5.
+src/main/java/com/consorsbank/parser/App.java:117:	CyclomaticComplexity:	The method 'parseArgTransferImport(String[])' has a cyclomatic complexity of 4.
+src/main/java/com/consorsbank/parser/App.java:127:	CyclomaticComplexity:	The method 'parseArgTransferExport(String[])' has a cyclomatic complexity of 2.
+src/main/java/com/consorsbank/parser/App.java:136:	CyclomaticComplexity:	The method 'printTransfers(ArrayList<Transfer>, List<Transfer>)' has a cyclomatic complexity of 1.
+src/main/java/com/consorsbank/parser/App.java:143:	CyclomaticComplexity:	The method 'printTransfers(List<Transfer>, boolean)' has a cyclomatic complexity of 3.
+src/main/java/com/consorsbank/parser/App.java:170:	CyclomaticComplexity:	The method 'printReceipts(List<DeliveryReceipt>, HashSet<String>)' has a cyclomatic complexity of 5.
+src/main/java/com/consorsbank/parser/App.java:197:	CyclomaticComplexity:	The method 'assignTrackingIdsAndExport(ArrayList<Transfer>, List<Transfer>, List<DeliveryReceipt>, HashSet<String>)' has a cyclomatic complexity of 11.
+src/main/java/com/consorsbank/parser/App.java:250:	CyclomaticComplexity:	The method 'exportTransfers(ArrayList<Transfer>)' has a cyclomatic complexity of 1.
+src/main/java/com/consorsbank/parser/App.java:258:	CyclomaticComplexity:	The method 'exportDeliveryReceipts(List<DeliveryReceipt>)' has a cyclomatic complexity of 1.
+src/main/java/com/consorsbank/parser/App.java:263:	CyclomaticComplexity:	The method 'printTrackingIdAssignmentDescr()' has a cyclomatic complexity of 1.
+src/main/java/com/consorsbank/parser/App.java:272:	CyclomaticComplexity:	The method 'promptForTrackingIdAssignment(Transfer)' has a cyclomatic complexity of 1.
+src/main/java/com/consorsbank/parser/App.java:281:	CyclomaticComplexity:	The method 'generateCSV(StringBuilder, String)' has a cyclomatic complexity of 2.
+src/main/java/com/consorsbank/parser/Helper.java:94:	CyclomaticComplexity:	The method 'padRight(String, int)' has a cyclomatic complexity of 1.
+src/main/java/com/consorsbank/parser/Helper.java:98:	CyclomaticComplexity:	The method 'truncate(String, int)' has a cyclomatic complexity of 2.
+src/main/java/com/consorsbank/parser/Helper.java:104:	CyclomaticComplexity:	The method 'getPDFReportText(String)' has a cyclomatic complexity of 1.
+src/main/java/com/consorsbank/parser/Helper.java:110:	CyclomaticComplexity:	The method 'getDeliveryReceiptText(String)' has a cyclomatic complexity of 1.
+src/main/java/com/consorsbank/parser/Helper.java:127:	CyclomaticComplexity:	The method 'isTrackingIdValid(String)' has a cyclomatic complexity of 1.
+src/main/java/com/consorsbank/parser/Helper.java:132:	CyclomaticComplexity:	The method 'isDHLTrackingId(String)' has a cyclomatic complexity of 1.
+src/main/java/com/consorsbank/parser/Helper.java:138:	CyclomaticComplexity:	The method 'isHermesTrackingId(String)' has a cyclomatic complexity of 1.
+src/main/java/com/consorsbank/parser/Helper.java:144:	CyclomaticComplexity:	The method 'isUPSTrackingId(String)' has a cyclomatic complexity of 1.
+src/main/java/com/consorsbank/parser/Helper.java:150:	CyclomaticComplexity:	The method 'getTrackingIdForReceipt(List<DeliveryReceipt>, int, HashSet<String>)' has a cyclomatic complexity of 7.
+src/main/java/com/consorsbank/parser/Helper.java:172:	CyclomaticComplexity:	The method 'getHash(String)' has a cyclomatic complexity of 4.
+src/main/java/com/consorsbank/parser/Helper.java:194:	CyclomaticComplexity:	The method 'getFileHash(String, String)' has a cyclomatic complexity of 4.
 src/main/java/com/consorsbank/parser/receipt/DeliveryReceipt.java:27:	CyclomaticComplexity:	The constructor 'DeliveryReceipt()' has a cyclomatic complexity of 1.
 src/main/java/com/consorsbank/parser/receipt/DeliveryReceipt.java:34:	CyclomaticComplexity:	The method 'getDateTime()' has a cyclomatic complexity of 1.
 src/main/java/com/consorsbank/parser/receipt/DeliveryReceipt.java:38:	CyclomaticComplexity:	The method 'getTrackingIds()' has a cyclomatic complexity of 1.
@@ -53,55 +53,62 @@ src/main/java/com/consorsbank/parser/receipt/ReceiptHelper.java:166:	CyclomaticC
 src/main/java/com/consorsbank/parser/receipt/TrackingIdForReceipt.java:9:	CyclomaticComplexity:	The constructor 'TrackingIdForReceipt(String, DeliveryReceipt)' has a cyclomatic complexity of 1.
 src/main/java/com/consorsbank/parser/receipt/TrackingIdForReceipt.java:14:	CyclomaticComplexity:	The method 'getTrackingId()' has a cyclomatic complexity of 1.
 src/main/java/com/consorsbank/parser/receipt/TrackingIdForReceipt.java:18:	CyclomaticComplexity:	The method 'getReceipt()' has a cyclomatic complexity of 1.
-src/main/java/com/consorsbank/parser/return/Bin.java:9:	CyclomaticComplexity:	The constructor 'Bin(Transfer)' has a cyclomatic complexity of 1.
-src/main/java/com/consorsbank/parser/return/Bin.java:13:	CyclomaticComplexity:	The method 'getTransfer()' has a cyclomatic complexity of 1.
-src/main/java/com/consorsbank/parser/return/Bin.java:17:	CyclomaticComplexity:	The method 'setTransfer(Transfer)' has a cyclomatic complexity of 1.
-src/main/java/com/consorsbank/parser/return/Bin.java:22:	CyclomaticComplexity:	The method 'compareTo(Bin)' has a cyclomatic complexity of 3.
-src/main/java/com/consorsbank/parser/return/Packet.java:8:	CyclomaticComplexity:	The constructor 'Packet(Transfer)' has a cyclomatic complexity of 1.
-src/main/java/com/consorsbank/parser/return/Packet.java:12:	CyclomaticComplexity:	The method 'getTransfer()' has a cyclomatic complexity of 1.
-src/main/java/com/consorsbank/parser/return/Packet.java:16:	CyclomaticComplexity:	The method 'setTransfer(Transfer)' has a cyclomatic complexity of 1.
-src/main/java/com/consorsbank/parser/return/Packet.java:21:	CyclomaticComplexity:	The method 'compareTo(Packet)' has a cyclomatic complexity of 3.
-src/main/java/com/consorsbank/parser/return/ReturnHelper.java:12:	CyclomaticComplexity:	The method 'findReturnTransfers(ArrayList<Transfer>)' has a cyclomatic complexity of 8.
-src/main/java/com/consorsbank/parser/return/ReturnHelper.java:36:	CyclomaticComplexity:	The method 'findReturnTransfer(Transfer, Transfer, boolean)' has a cyclomatic complexity of 22.
-src/main/java/com/consorsbank/parser/return/ReturnHelper.java:75:	CyclomaticComplexity:	The method 'assignReturnTransfer(Transfer, Transfer, boolean)' has a cyclomatic complexity of 1.
-src/main/java/com/consorsbank/parser/return/ReturnHelper.java:80:	CyclomaticComplexity:	The method 'purposeMatches(Transfer, Transfer)' has a cyclomatic complexity of 8.
-src/main/java/com/consorsbank/parser/return/ReturnHelper.java:117:	CyclomaticComplexity:	The method 'packageReturnTransfers(ArrayList<Transfer>, LinkedHashMap<String, Transfer>)' has a cyclomatic complexity of 6.
-src/main/java/com/consorsbank/parser/return/ReturnHelper.java:149:	CyclomaticComplexity:	The method 'findTransfersForReturnPackaging(LinkedHashMap<String, Transfer>)' has a cyclomatic complexity of 3.
-src/main/java/com/consorsbank/parser/return/ReturnHelper.java:165:	CyclomaticComplexity:	The method 'setBinsAndPackets(ArrayList<Transfer>, Transfer, ArrayList<Bin>, ArrayList<Packet>)' has a cyclomatic complexity of 5.
-src/main/java/com/consorsbank/parser/return/ReturnHelper.java:183:	CyclomaticComplexity:	The method 'doSimpleBestFitPackaging(ArrayList<Bin>, ArrayList<Packet>)' has a cyclomatic complexity of 6.
-src/main/java/com/consorsbank/parser/return/ReturnHelper.java:204:	CyclomaticComplexity:	The method 'doBestFitPackaging(ArrayList<Bin>, ArrayList<Packet>, boolean)' has a cyclomatic complexity of 7.
-src/main/java/com/consorsbank/parser/return/ReturnHelper.java:230:	CyclomaticComplexity:	The method 'allPacketsPackaged(ArrayList<Packet>)' has a cyclomatic complexity of 3.
+src/main/java/com/consorsbank/parser/retrn/Bin.java:9:	CyclomaticComplexity:	The constructor 'Bin(Transfer)' has a cyclomatic complexity of 1.
+src/main/java/com/consorsbank/parser/retrn/Bin.java:13:	CyclomaticComplexity:	The method 'getTransfer()' has a cyclomatic complexity of 1.
+src/main/java/com/consorsbank/parser/retrn/Bin.java:17:	CyclomaticComplexity:	The method 'setTransfer(Transfer)' has a cyclomatic complexity of 1.
+src/main/java/com/consorsbank/parser/retrn/Bin.java:22:	CyclomaticComplexity:	The method 'compareTo(Bin)' has a cyclomatic complexity of 3.
+src/main/java/com/consorsbank/parser/retrn/Packet.java:8:	CyclomaticComplexity:	The constructor 'Packet(Transfer)' has a cyclomatic complexity of 1.
+src/main/java/com/consorsbank/parser/retrn/Packet.java:12:	CyclomaticComplexity:	The method 'getTransfer()' has a cyclomatic complexity of 1.
+src/main/java/com/consorsbank/parser/retrn/Packet.java:16:	CyclomaticComplexity:	The method 'setTransfer(Transfer)' has a cyclomatic complexity of 1.
+src/main/java/com/consorsbank/parser/retrn/Packet.java:21:	CyclomaticComplexity:	The method 'compareTo(Packet)' has a cyclomatic complexity of 3.
+src/main/java/com/consorsbank/parser/retrn/ReturnHelper.java:10:	CyclomaticComplexity:	The class 'ReturnHelper' has a total cyclomatic complexity of 82 (highest 17).
+src/main/java/com/consorsbank/parser/retrn/ReturnHelper.java:12:	CyclomaticComplexity:	The method 'findReturnTransfers(ArrayList<Transfer>)' has a cyclomatic complexity of 1.
+src/main/java/com/consorsbank/parser/retrn/ReturnHelper.java:17:	CyclomaticComplexity:	The method 'findReturnTransfersBottomUp(ArrayList<Transfer>)' has a cyclomatic complexity of 4.
+src/main/java/com/consorsbank/parser/retrn/ReturnHelper.java:31:	CyclomaticComplexity:	The method 'findReturnTransfersTopDown(ArrayList<Transfer>)' has a cyclomatic complexity of 4.
+src/main/java/com/consorsbank/parser/retrn/ReturnHelper.java:45:	CyclomaticComplexity:	The method 'findReturnTransfers(Transfer, Transfer, long)' has a cyclomatic complexity of 14.
+src/main/java/com/consorsbank/parser/retrn/ReturnHelper.java:69:	CyclomaticComplexity:	The method 'findReturnTransfer(Transfer, Transfer, boolean)' has a cyclomatic complexity of 17.
+src/main/java/com/consorsbank/parser/retrn/ReturnHelper.java:100:	CyclomaticComplexity:	The method 'assignReturnTransfer(Transfer, Transfer, boolean)' has a cyclomatic complexity of 1.
+src/main/java/com/consorsbank/parser/retrn/ReturnHelper.java:105:	CyclomaticComplexity:	The method 'purposeMatches(Transfer, Transfer)' has a cyclomatic complexity of 8.
+src/main/java/com/consorsbank/parser/retrn/ReturnHelper.java:142:	CyclomaticComplexity:	The method 'packageReturnTransfers(ArrayList<Transfer>, LinkedHashMap<String, Transfer>)' has a cyclomatic complexity of 6.
+src/main/java/com/consorsbank/parser/retrn/ReturnHelper.java:179:	CyclomaticComplexity:	The method 'findTransfersForReturnPackaging(LinkedHashMap<String, Transfer>)' has a cyclomatic complexity of 3.
+src/main/java/com/consorsbank/parser/retrn/ReturnHelper.java:195:	CyclomaticComplexity:	The method 'setBinsAndPackets(ArrayList<Transfer>, Transfer, ArrayList<Bin>, ArrayList<Packet>)' has a cyclomatic complexity of 5.
+src/main/java/com/consorsbank/parser/retrn/ReturnHelper.java:213:	CyclomaticComplexity:	The method 'doSimpleBestFitPackaging(ArrayList<Bin>, ArrayList<Packet>)' has a cyclomatic complexity of 6.
+src/main/java/com/consorsbank/parser/retrn/ReturnHelper.java:234:	CyclomaticComplexity:	The method 'doBestFitPackaging(ArrayList<Bin>, ArrayList<Packet>, boolean)' has a cyclomatic complexity of 7.
+src/main/java/com/consorsbank/parser/retrn/ReturnHelper.java:260:	CyclomaticComplexity:	The method 'allPacketsPackaged(ArrayList<Packet>)' has a cyclomatic complexity of 3.
+src/main/java/com/consorsbank/parser/retrn/ReturnHelper.java:269:	CyclomaticComplexity:	The method 'markBinsAndPacketsAsPackaged(ArrayList<Bin>, ArrayList<Packet>)' has a cyclomatic complexity of 3.
 src/main/java/com/consorsbank/parser/transfer/BalanceNumber.java:13:	CyclomaticComplexity:	The constructor 'BalanceNumber(Number, char)' has a cyclomatic complexity of 4.
 src/main/java/com/consorsbank/parser/transfer/BalanceNumber.java:28:	CyclomaticComplexity:	The method 'getValue()' has a cyclomatic complexity of 9.
 src/main/java/com/consorsbank/parser/transfer/BalanceNumber.java:42:	CyclomaticComplexity:	The method 'toString()' has a cyclomatic complexity of 1.
-src/main/java/com/consorsbank/parser/transfer/Transfer.java:42:	CyclomaticComplexity:	The constructor 'Transfer(BalanceNumber, Date)' has a cyclomatic complexity of 1.
-src/main/java/com/consorsbank/parser/transfer/Transfer.java:56:	CyclomaticComplexity:	The method 'getPosition()' has a cyclomatic complexity of 1.
-src/main/java/com/consorsbank/parser/transfer/Transfer.java:60:	CyclomaticComplexity:	The method 'setPosition(int)' has a cyclomatic complexity of 1.
-src/main/java/com/consorsbank/parser/transfer/Transfer.java:64:	CyclomaticComplexity:	The method 'getBalanceNumber()' has a cyclomatic complexity of 1.
-src/main/java/com/consorsbank/parser/transfer/Transfer.java:68:	CyclomaticComplexity:	The method 'getDate()' has a cyclomatic complexity of 1.
-src/main/java/com/consorsbank/parser/transfer/Transfer.java:72:	CyclomaticComplexity:	The method 'getLocalDate()' has a cyclomatic complexity of 1.
-src/main/java/com/consorsbank/parser/transfer/Transfer.java:78:	CyclomaticComplexity:	The method 'getName()' has a cyclomatic complexity of 1.
-src/main/java/com/consorsbank/parser/transfer/Transfer.java:82:	CyclomaticComplexity:	The method 'setName(String)' has a cyclomatic complexity of 1.
-src/main/java/com/consorsbank/parser/transfer/Transfer.java:86:	CyclomaticComplexity:	The method 'setBankID(String)' has a cyclomatic complexity of 1.
-src/main/java/com/consorsbank/parser/transfer/Transfer.java:94:	CyclomaticComplexity:	The method 'getPaddedPosistion()' has a cyclomatic complexity of 1.
-src/main/java/com/consorsbank/parser/transfer/Transfer.java:98:	CyclomaticComplexity:	The method 'toPaddedString()' has a cyclomatic complexity of 2.
-src/main/java/com/consorsbank/parser/transfer/Transfer.java:116:	CyclomaticComplexity:	The method 'toCSVString()' has a cyclomatic complexity of 2.
-src/main/java/com/consorsbank/parser/transfer/Transfer.java:132:	CyclomaticComplexity:	The method 'compareTo(Transfer)' has a cyclomatic complexity of 3.
-src/main/java/com/consorsbank/parser/transfer/Transfer.java:139:	CyclomaticComplexity:	The method 'getPurpose()' has a cyclomatic complexity of 1.
-src/main/java/com/consorsbank/parser/transfer/Transfer.java:143:	CyclomaticComplexity:	The method 'setPurpose(String)' has a cyclomatic complexity of 1.
-src/main/java/com/consorsbank/parser/transfer/Transfer.java:147:	CyclomaticComplexity:	The method 'setPointToTransfer(Transfer, boolean)' has a cyclomatic complexity of 3.
-src/main/java/com/consorsbank/parser/transfer/Transfer.java:157:	CyclomaticComplexity:	The method 'getPointToTransfer()' has a cyclomatic complexity of 1.
-src/main/java/com/consorsbank/parser/transfer/Transfer.java:161:	CyclomaticComplexity:	The method 'getIncomingTransfers()' has a cyclomatic complexity of 1.
-src/main/java/com/consorsbank/parser/transfer/Transfer.java:165:	CyclomaticComplexity:	The method 'getReturnBalance()' has a cyclomatic complexity of 1.
-src/main/java/com/consorsbank/parser/transfer/Transfer.java:169:	CyclomaticComplexity:	The method 'setReturnBalance(double)' has a cyclomatic complexity of 1.
-src/main/java/com/consorsbank/parser/transfer/Transfer.java:173:	CyclomaticComplexity:	The method 'getExistingTrackingId()' has a cyclomatic complexity of 1.
-src/main/java/com/consorsbank/parser/transfer/Transfer.java:177:	CyclomaticComplexity:	The method 'setExistingTrackingId(String)' has a cyclomatic complexity of 1.
-src/main/java/com/consorsbank/parser/transfer/Transfer.java:181:	CyclomaticComplexity:	The method 'getTrackingId()' has a cyclomatic complexity of 3.
-src/main/java/com/consorsbank/parser/transfer/Transfer.java:188:	CyclomaticComplexity:	The method 'setTrackingId(String)' has a cyclomatic complexity of 1.
-src/main/java/com/consorsbank/parser/transfer/Transfer.java:192:	CyclomaticComplexity:	The method 'generateHash()' has a cyclomatic complexity of 1.
-src/main/java/com/consorsbank/parser/transfer/Transfer.java:204:	CyclomaticComplexity:	The method 'getHash()' has a cyclomatic complexity of 1.
-src/main/java/com/consorsbank/parser/transfer/Transfer.java:208:	CyclomaticComplexity:	The method 'getPositionInMonth()' has a cyclomatic complexity of 1.
-src/main/java/com/consorsbank/parser/transfer/Transfer.java:212:	CyclomaticComplexity:	The method 'setPositionInMonth(int)' has a cyclomatic complexity of 1.
+src/main/java/com/consorsbank/parser/transfer/Transfer.java:47:	CyclomaticComplexity:	The constructor 'Transfer(BalanceNumber, Date)' has a cyclomatic complexity of 1.
+src/main/java/com/consorsbank/parser/transfer/Transfer.java:61:	CyclomaticComplexity:	The method 'getPosition()' has a cyclomatic complexity of 1.
+src/main/java/com/consorsbank/parser/transfer/Transfer.java:65:	CyclomaticComplexity:	The method 'setPosition(int)' has a cyclomatic complexity of 1.
+src/main/java/com/consorsbank/parser/transfer/Transfer.java:69:	CyclomaticComplexity:	The method 'getBalanceNumber()' has a cyclomatic complexity of 1.
+src/main/java/com/consorsbank/parser/transfer/Transfer.java:73:	CyclomaticComplexity:	The method 'getDate()' has a cyclomatic complexity of 1.
+src/main/java/com/consorsbank/parser/transfer/Transfer.java:77:	CyclomaticComplexity:	The method 'getLocalDate()' has a cyclomatic complexity of 1.
+src/main/java/com/consorsbank/parser/transfer/Transfer.java:83:	CyclomaticComplexity:	The method 'getName()' has a cyclomatic complexity of 1.
+src/main/java/com/consorsbank/parser/transfer/Transfer.java:87:	CyclomaticComplexity:	The method 'setName(String)' has a cyclomatic complexity of 1.
+src/main/java/com/consorsbank/parser/transfer/Transfer.java:91:	CyclomaticComplexity:	The method 'setBankID(String)' has a cyclomatic complexity of 1.
+src/main/java/com/consorsbank/parser/transfer/Transfer.java:99:	CyclomaticComplexity:	The method 'getPaddedPosistion()' has a cyclomatic complexity of 1.
+src/main/java/com/consorsbank/parser/transfer/Transfer.java:103:	CyclomaticComplexity:	The method 'toPaddedString()' has a cyclomatic complexity of 2.
+src/main/java/com/consorsbank/parser/transfer/Transfer.java:121:	CyclomaticComplexity:	The method 'toCSVString()' has a cyclomatic complexity of 2.
+src/main/java/com/consorsbank/parser/transfer/Transfer.java:137:	CyclomaticComplexity:	The method 'compareTo(Transfer)' has a cyclomatic complexity of 3.
+src/main/java/com/consorsbank/parser/transfer/Transfer.java:144:	CyclomaticComplexity:	The method 'getPurpose()' has a cyclomatic complexity of 1.
+src/main/java/com/consorsbank/parser/transfer/Transfer.java:148:	CyclomaticComplexity:	The method 'setPurpose(String)' has a cyclomatic complexity of 1.
+src/main/java/com/consorsbank/parser/transfer/Transfer.java:152:	CyclomaticComplexity:	The method 'setPointToTransfer(Transfer, boolean)' has a cyclomatic complexity of 3.
+src/main/java/com/consorsbank/parser/transfer/Transfer.java:162:	CyclomaticComplexity:	The method 'getPointToTransfer()' has a cyclomatic complexity of 1.
+src/main/java/com/consorsbank/parser/transfer/Transfer.java:166:	CyclomaticComplexity:	The method 'getIncomingTransfers()' has a cyclomatic complexity of 1.
+src/main/java/com/consorsbank/parser/transfer/Transfer.java:175:	CyclomaticComplexity:	The method 'isPackaged()' has a cyclomatic complexity of 1.
+src/main/java/com/consorsbank/parser/transfer/Transfer.java:179:	CyclomaticComplexity:	The method 'setPackaged(boolean)' has a cyclomatic complexity of 1.
+src/main/java/com/consorsbank/parser/transfer/Transfer.java:183:	CyclomaticComplexity:	The method 'getReturnBalance()' has a cyclomatic complexity of 1.
+src/main/java/com/consorsbank/parser/transfer/Transfer.java:187:	CyclomaticComplexity:	The method 'setReturnBalance(double)' has a cyclomatic complexity of 1.
+src/main/java/com/consorsbank/parser/transfer/Transfer.java:191:	CyclomaticComplexity:	The method 'getExistingTrackingId()' has a cyclomatic complexity of 1.
+src/main/java/com/consorsbank/parser/transfer/Transfer.java:195:	CyclomaticComplexity:	The method 'setExistingTrackingId(String)' has a cyclomatic complexity of 1.
+src/main/java/com/consorsbank/parser/transfer/Transfer.java:199:	CyclomaticComplexity:	The method 'getTrackingId()' has a cyclomatic complexity of 3.
+src/main/java/com/consorsbank/parser/transfer/Transfer.java:206:	CyclomaticComplexity:	The method 'setTrackingId(String)' has a cyclomatic complexity of 1.
+src/main/java/com/consorsbank/parser/transfer/Transfer.java:210:	CyclomaticComplexity:	The method 'generateHash()' has a cyclomatic complexity of 1.
+src/main/java/com/consorsbank/parser/transfer/Transfer.java:222:	CyclomaticComplexity:	The method 'getHash()' has a cyclomatic complexity of 1.
+src/main/java/com/consorsbank/parser/transfer/Transfer.java:226:	CyclomaticComplexity:	The method 'getPositionInMonth()' has a cyclomatic complexity of 1.
+src/main/java/com/consorsbank/parser/transfer/Transfer.java:230:	CyclomaticComplexity:	The method 'setPositionInMonth(int)' has a cyclomatic complexity of 1.
 src/main/java/com/consorsbank/parser/transfer/TransferHelper.java:22:	CyclomaticComplexity:	The method 'parseTransfers(File[])' has a cyclomatic complexity of 4.
 src/main/java/com/consorsbank/parser/transfer/TransferHelper.java:34:	CyclomaticComplexity:	The method 'parseTransfers(String, ArrayList<Transfer>)' has a cyclomatic complexity of 7.
 src/main/java/com/consorsbank/parser/transfer/TransferHelper.java:72:	CyclomaticComplexity:	The method 'parseBalanceAndDate(SimpleDateFormat, DecimalFormat, ArrayList<String>, int, int)' has a cyclomatic complexity of 1.
@@ -110,10 +117,9 @@ src/main/java/com/consorsbank/parser/transfer/TransferHelper.java:93:	Cyclomatic
 src/main/java/com/consorsbank/parser/transfer/TransferHelper.java:109:	CyclomaticComplexity:	The method 'bankIdValid(String)' has a cyclomatic complexity of 3.
 src/main/java/com/consorsbank/parser/transfer/TransferHelper.java:132:	CyclomaticComplexity:	The method 'setPosition(ArrayList<Transfer>)' has a cyclomatic complexity of 2.
 src/main/java/com/consorsbank/parser/transfer/TransferHelper.java:143:	CyclomaticComplexity:	The method 'parseForExsistingTrackingIds(ArrayList<Transfer>, LinkedHashMap<String, Transfer>)' has a cyclomatic complexity of 8.
-src/main/java/com/consorsbank/parser/transfer/TransferHelper.java:174:	CyclomaticComplexity:	The method 'exportTransfers(ArrayList<Transfer>)' has a cyclomatic complexity of 2.
-src/test/java/com/consorsbank/parser/AppTest.java:22:	CyclomaticComplexity:	The method 'testMain()' has a cyclomatic complexity of 1.
-src/test/java/com/consorsbank/parser/AppTest.java:36:	CyclomaticComplexity:	The method 'testMainParseForExistingTrackingIds()' has a cyclomatic complexity of 2.
-src/test/java/com/consorsbank/parser/AppTest.java:53:	CyclomaticComplexity:	The method 'testMainExport()' has a cyclomatic complexity of 4.
+src/main/java/com/consorsbank/parser/transfer/TransferHelper.java:176:	CyclomaticComplexity:	The method 'exportTransfers(ArrayList<Transfer>)' has a cyclomatic complexity of 2.
+src/test/java/com/consorsbank/parser/AppTest.java:22:	CyclomaticComplexity:	The method 'testMainExpectException()' has a cyclomatic complexity of 1.
+src/test/java/com/consorsbank/parser/AppTest.java:36:	CyclomaticComplexity:	The method 'testMainExport()' has a cyclomatic complexity of 4.
 src/test/java/com/consorsbank/parser/BalanceNumberTest.java:12:	CyclomaticComplexity:	The method 'testGetValuePositive()' has a cyclomatic complexity of 1.
 src/test/java/com/consorsbank/parser/BalanceNumberTest.java:28:	CyclomaticComplexity:	The method 'testGetValueNegative()' has a cyclomatic complexity of 1.
 src/test/java/com/consorsbank/parser/BalanceNumberTest.java:44:	CyclomaticComplexity:	The method 'testGetValueLongPositive()' has a cyclomatic complexity of 1.
@@ -131,13 +137,14 @@ src/test/java/com/consorsbank/parser/HelperTest.java:143:	CyclomaticComplexity:	
 src/test/java/com/consorsbank/parser/HelperTest.java:158:	CyclomaticComplexity:	The method 'testIsTrackingIdValid()' has a cyclomatic complexity of 1.
 src/test/java/com/consorsbank/parser/HelperTest.java:170:	CyclomaticComplexity:	The method 'testGetFileChecksum()' has a cyclomatic complexity of 1.
 src/test/java/com/consorsbank/parser/ReturnHelperTest.java:16:	CyclomaticComplexity:	The method 'createTransfer(String, double, int, char, String)' has a cyclomatic complexity of 1.
-src/test/java/com/consorsbank/parser/ReturnHelperTest.java:30:	CyclomaticComplexity:	The method 'getTransferMap(ArrayList<Transfer>)' has a cyclomatic complexity of 2.
-src/test/java/com/consorsbank/parser/ReturnHelperTest.java:42:	CyclomaticComplexity:	The method 'testPurposeMatches()' has a cyclomatic complexity of 1.
-src/test/java/com/consorsbank/parser/ReturnHelperTest.java:57:	CyclomaticComplexity:	The method 'testPackageReturnTransfers1To1Fit()' has a cyclomatic complexity of 1.
-src/test/java/com/consorsbank/parser/ReturnHelperTest.java:79:	CyclomaticComplexity:	The method 'testPackageReturnTransfers1To1NotFit()' has a cyclomatic complexity of 1.
-src/test/java/com/consorsbank/parser/ReturnHelperTest.java:101:	CyclomaticComplexity:	The method 'testPackageReturnTransfersNToNNotFit()' has a cyclomatic complexity of 1.
-src/test/java/com/consorsbank/parser/ReturnHelperTest.java:131:	CyclomaticComplexity:	The method 'testPackageReturnTransfersNToNFit()' has a cyclomatic complexity of 1.
-src/test/java/com/consorsbank/parser/ReturnHelperTest.java:162:	CyclomaticComplexity:	The method 'testPackageReturnTransfersNTo1Fit()' has a cyclomatic complexity of 1.
-src/test/java/com/consorsbank/parser/ReturnHelperTest.java:190:	CyclomaticComplexity:	The method 'testPackageReturnTransfersNTo1NotFit()' has a cyclomatic complexity of 1.
-src/test/java/com/consorsbank/parser/ReturnHelperTest.java:218:	CyclomaticComplexity:	The method 'testPackageReturnTransfersNToMNotFit()' has a cyclomatic complexity of 1.
-src/test/java/com/consorsbank/parser/ReturnHelperTest.java:253:	CyclomaticComplexity:	The method 'testPackageReturnTransfersNToMNotFitBestFit()' has a cyclomatic complexity of 1.
+src/test/java/com/consorsbank/parser/ReturnHelperTest.java:31:	CyclomaticComplexity:	The method 'getTransferMap(ArrayList<Transfer>)' has a cyclomatic complexity of 2.
+src/test/java/com/consorsbank/parser/ReturnHelperTest.java:43:	CyclomaticComplexity:	The method 'testPurposeMatches()' has a cyclomatic complexity of 1.
+src/test/java/com/consorsbank/parser/ReturnHelperTest.java:60:	CyclomaticComplexity:	The method 'testPackageReturnTransfers1To1Fit()' has a cyclomatic complexity of 1.
+src/test/java/com/consorsbank/parser/ReturnHelperTest.java:92:	CyclomaticComplexity:	The method 'testPackageReturnTransfers1To1FitTopDown()' has a cyclomatic complexity of 1.
+src/test/java/com/consorsbank/parser/ReturnHelperTest.java:150:	CyclomaticComplexity:	The method 'testPackageReturnTransfers1To1NotFit()' has a cyclomatic complexity of 1.
+src/test/java/com/consorsbank/parser/ReturnHelperTest.java:181:	CyclomaticComplexity:	The method 'testPackageReturnTransfersNToNNotFit()' has a cyclomatic complexity of 1.
+src/test/java/com/consorsbank/parser/ReturnHelperTest.java:232:	CyclomaticComplexity:	The method 'testPackageReturnTransfersNToNFit()' has a cyclomatic complexity of 1.
+src/test/java/com/consorsbank/parser/ReturnHelperTest.java:284:	CyclomaticComplexity:	The method 'testPackageReturnTransfersNTo1Fit()' has a cyclomatic complexity of 1.
+src/test/java/com/consorsbank/parser/ReturnHelperTest.java:329:	CyclomaticComplexity:	The method 'testPackageReturnTransfersNTo1NotFit()' has a cyclomatic complexity of 1.
+src/test/java/com/consorsbank/parser/ReturnHelperTest.java:374:	CyclomaticComplexity:	The method 'testPackageReturnTransfersNToMNotFit()' has a cyclomatic complexity of 1.
+src/test/java/com/consorsbank/parser/ReturnHelperTest.java:433:	CyclomaticComplexity:	The method 'testPackageReturnTransfersNToMNotFitBestFit()' has a cyclomatic complexity of 1.

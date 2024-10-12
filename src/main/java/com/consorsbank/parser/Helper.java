@@ -26,7 +26,7 @@ public class Helper {
     public static String PATH_TO_TRANSFERS_EXPORT =
             PATH_TO_PDF_REPORTS + "Transfers-%DATETIME%.csv";
     public static String PATH_TO_TRANSFERS_IMPORT =
-            PATH_TO_PDF_REPORTS + "Transfers-2024-10-10_08-38-24.csv";
+            PATH_TO_PDF_REPORTS + "Transfers-2024-10-13_09-22-03.csv";
     public static String PATH_TO_DELIVERY_RECEIPTS_FILE_NAME = ".receipts";
     public static String PATH_TO_DELIVERY_RECEIPTS_FILE =
             PATH_TO_DELIVERY_RECEIPTS + PATH_TO_DELIVERY_RECEIPTS_FILE_NAME;
@@ -63,12 +63,13 @@ public class Helper {
     public static final double EPSILON = 1e-9;
     public static final double CENT = 0.01;
 
-    public static final int RETOURE_LIMIT_DAYS = 100;
+    public static final int RETURN_LIMIT_DAYS = 100;
+    public static final int RETURN_LIMIT_DAYS_TOP_DOWN = -3;
 
     public static final int POS_COL_WIDTH = 10;
     public static final int DATE_COL_WIDTH = 15;
     public static final int BALANCE_COL_WIDTH = 15;
-    public static final int RETOURE_COL_WIDTH = 15;
+    public static final int RETURN_COL_WIDTH = 15;
     public static final int BIC_COL_WIDTH = 15;
     public static final int IBAN_COL_WIDTH = 25;
     public static final int NAME_COL_WIDTH = 25;

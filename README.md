@@ -16,3 +16,17 @@ Feel free to add any filter condition inside `App.printTransfers(ArrayList<Trans
 Notice, any transfer inside the PDF is identified by one of the following transfer types: `GEHALT/RENTE|EURO-UEBERW.|LASTSCHRIFT|DAUERAUFTRAG|GIROCARD|GEBUEHREN|GUTSCHRIFT`. If other types of transfers are required, add additional types to `Helper.REGEX_TRANSFER_TYPES`.
 
 This parser supports delivery receipts obtained from a DHL service point, Hermes service point or from a DHL self-service point via mail (simply print the mail as PDF).
+
+### General Features
+- Export parsed transfers to CSV
+- Find return transfers (bottom up and top down)
+- Package return transfers with 1:1, 1:n, n:1, and n:m relations
+- Tracking id assignments: assign a tracking id to a return transfer via console
+- Return window notification (planned)
+#### Features for receipts
+- File formats: pdf, jpg, jpeg
+- Suppliers: DHL, Hermes, UPS (planned: DPD, FedEx, GLS)
+- On program exit a .receipts file is generated with all receipts from .receipts and the receipts folder, i.e., any parsed delivery receipt is stored
+- Use more than one tracking id per delivery receipt
+- Rename filename of delivery receipt
+- A duplicated delivery receipt wrt file content is ignored

@@ -56,13 +56,15 @@ public class App {
             ArrayList<DeliveryReceipt> receipts =
                     new ArrayList<DeliveryReceipt>(receiptMap.values());
 
+            System.out.println();
             printTransfers(transfers, returnTransfers);
+            System.out.println();
             List<DeliveryReceipt> allReceipts =
                     Stream.concat(receipts.stream(), existingReceipts.values().stream())
                             .collect(Collectors.toList());
             Collections.sort(allReceipts);
             printReceipts(allReceipts, existingTrackingIds);
-
+            System.out.println();
             assignTrackingIdsAndExport(transfers, returnTransfers, allReceipts,
                     existingTrackingIds);
         }
@@ -136,7 +138,6 @@ public class App {
         printTransfers(transfers, false);
         System.out.println();
         printTransfers(returnTransfers, true);
-        System.out.println();
     }
 
     private static void printTransfers(List<Transfer> transfers, boolean color) {
@@ -145,7 +146,7 @@ public class App {
                 Helper.padRight("Pos", Helper.POS_COL_WIDTH)
                         + Helper.padRight("Date", Helper.DATE_COL_WIDTH)
                         + Helper.padRight("Balance", Helper.BALANCE_COL_WIDTH)
-                        + Helper.padRight("Return (Pos)", Helper.RETOURE_COL_WIDTH)
+                        + Helper.padRight("Return (Pos)", Helper.RETURN_COL_WIDTH)
                         + Helper.padRight("BIC", Helper.BIC_COL_WIDTH)
                         + Helper.padRight("IBAN", Helper.IBAN_COL_WIDTH)
                         + Helper.padRight("Name", Helper.NAME_COL_WIDTH)
@@ -238,6 +239,8 @@ public class App {
             }
         }
         scanner.close();
+        System.out.println();
+
         if (!quit) {
             exportTransfers(transfers);
         }
@@ -258,7 +261,6 @@ public class App {
     }
 
     private static void printTrackingIdAssignmentDescr() {
-        System.out.println();
         System.out.println(
                 "Assign a tracking id to a return transfer or enter " + Helper.CONSOLE_COLOR_YELLOW
                         + "g" + Helper.CONSOLE_COLOR_RESET

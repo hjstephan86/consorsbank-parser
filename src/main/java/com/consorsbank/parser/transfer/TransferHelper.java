@@ -145,6 +145,8 @@ public class TransferHelper {
         HashSet<String> existingTrackingIds = new HashSet<String>();
         try (BufferedReader br =
                 new BufferedReader(new FileReader(Helper.PATH_TO_TRANSFERS_IMPORT))) {
+            System.out.println(
+                    "Parse existing tracking ids from: " + Helper.PATH_TO_TRANSFERS_IMPORT);
             String line;
             while ((line = br.readLine()) != null) {
                 String[] transferArr = line.split(";");

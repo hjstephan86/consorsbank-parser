@@ -10,27 +10,60 @@ import com.consorsbank.parser.transfer.Transfer;
 public class ReturnHelper {
 
     public static void findReturnTransfers(ArrayList<Transfer> transfers) {
+        findReturnTransfersBottomUp(transfers);
+        findReturnTransfersTopDown(transfers);
+    }
+
+    private static void findReturnTransfersBottomUp(ArrayList<Transfer> transfers) {
         outer: for (int i = transfers.size() - 1; i > 0; i--) {
             Transfer transfer = transfers.get(i);
             for (int j = i - 1; j >= 0; j--) {
                 Transfer prevTransfer = transfers.get(j);
-                long daysBetween = ChronoUnit.DAYS.between(prevTransfer.getLocalDate(),
-                        transfer.getLocalDate());
-                if (daysBetween <= com.consorsbank.parser.Helper.RETOURE_LIMIT_DAYS
-                        && Math.abs(prevTransfer.getReturnBalance()) >= Math
-                                .abs(transfer.getBalanceNumber().getValue())) {
-                    boolean continueOuter = findReturnTransfer(transfer, prevTransfer, false);
-                    if (continueOuter) {
-                        continue outer;
-                    }
-                } else if (daysBetween <= com.consorsbank.parser.Helper.RETOURE_LIMIT_DAYS) {
-                    boolean continueOuter = findReturnTransfer(transfer, prevTransfer, true);
-                    if (continueOuter) {
-                        continue outer;
-                    }
+                boolean continueOuter = findReturnTransfers(transfer, prevTransfer,
+                        com.consorsbank.parser.Helper.RETURN_LIMIT_DAYS);
+                if (continueOuter) {
+                    continue outer;
                 }
             }
         }
+    }
+
+    private static void findReturnTransfersTopDown(ArrayList<Transfer> transfers) {
+        outer: for (int i = 0; i < transfers.size() - 1; i++) {
+            Transfer transfer = transfers.get(i);
+            for (int j = i + 1; j < transfers.size(); j++) {
+                Transfer prevTransfer = transfers.get(j);
+                boolean continueOuter = findReturnTransfers(transfer, prevTransfer,
+                        com.consorsbank.parser.Helper.RETURN_LIMIT_DAYS_TOP_DOWN);
+                if (continueOuter) {
+                    continue outer;
+                }
+            }
+        }
+    }
+
+    private static boolean findReturnTransfers(Transfer transfer, Transfer prevTransfer,
+            long daysBetweenTransfers) {
+        if (!transfer.isPackaged() && !prevTransfer.isPackaged()) {
+            long daysBetween = ChronoUnit.DAYS.between(prevTransfer.getLocalDate(),
+                    transfer.getLocalDate());
+            if ((daysBetween <= 0 && daysBetween >= daysBetweenTransfers)
+                    || (daysBetween >= 0 && daysBetween <= daysBetweenTransfers)
+                            && Math.abs(prevTransfer.getReturnBalance()) >= Math
+                                    .abs(transfer.getBalanceNumber().getValue())) {
+                boolean continueOuter = findReturnTransfer(transfer, prevTransfer, false);
+                if (continueOuter) {
+                    return true;
+                }
+            } else if ((daysBetween <= 0 && daysBetween >= daysBetweenTransfers)
+                    || (daysBetween >= 0 && daysBetween <= daysBetweenTransfers)) {
+                boolean continueOuter = findReturnTransfer(transfer, prevTransfer, true);
+                if (continueOuter) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     private static boolean findReturnTransfer(Transfer transfer, Transfer prevTransfer,
@@ -44,14 +77,6 @@ public class ReturnHelper {
                 && transfer.getName().equals(prevTransfer.getName())
                 && purposeMatches(transfer, prevTransfer)) {
             assignReturnTransfer(transfer, prevTransfer, findPotentialReturnTransfer);
-            return true;
-        } else if (balanceValue < 0 && prevBalanceValue > 0
-                && Math.abs(Math.abs(balanceValue)
-                        - prevBalanceValue) < com.consorsbank.parser.Helper.EPSILON
-                && transfer.getName().equals(prevTransfer.getName())
-                && purposeMatches(transfer, prevTransfer)) {
-            // A rare case but it can happen
-            assignReturnTransfer(prevTransfer, transfer, findPotentialReturnTransfer);
             return true;
         } else if (balanceValue > 0 && prevBalanceValue < 0
                 && (Math.abs(prevBalanceValue)
@@ -130,11 +155,13 @@ public class ReturnHelper {
                 // First, check whether a package fits simply perfect into a bin (for all packets)
                 doSimpleBestFitPackaging(bins, packets);
                 if (allPacketsPackaged(packets)) {
+                    markBinsAndPacketsAsPackaged(bins, packets);
                     continue;
                 }
                 // If not, check whether a best fit packaging is possible with a chronological order
                 doBestFitPackaging(bins, packets, true);
                 if (allPacketsPackaged(packets)) {
+                    markBinsAndPacketsAsPackaged(bins, packets);
                     continue;
                 }
                 // If not, do a best fit packaging where the bins and packets are ordered by the
@@ -142,21 +169,24 @@ public class ReturnHelper {
                 Collections.sort(bins);
                 Collections.sort(packets);
                 doBestFitPackaging(bins, packets, false);
+                // Even if not all packets are packaged mark all bins and packets as packaged,
+                // since they are related to this return transfer
             }
+            markBinsAndPacketsAsPackaged(bins, packets);
         }
     }
 
     private static HashSet<Transfer> findTransfersForReturnPackaging(
             LinkedHashMap<String, Transfer> transferMap) {
         HashSet<Transfer> transfersForReturnPackaging = new HashSet<Transfer>();
-        // A retour transfer is a transfer pointing to another transfer
+        // A return transfer is a transfer pointing to another transfer
         for (Transfer returnTransfer : transferMap.values()) {
             if (returnTransfer.getPointToTransfer() != null) {
-                Transfer anotherTransfer =
+                Transfer pointToTransfer =
                         transferMap.get(returnTransfer.getPointToTransfer().getHash());
-                anotherTransfer.getIncomingTransfers().put(returnTransfer.getHash(),
+                pointToTransfer.getIncomingTransfers().put(returnTransfer.getHash(),
                         returnTransfer);
-                transfersForReturnPackaging.add(anotherTransfer);
+                transfersForReturnPackaging.add(pointToTransfer);
             }
         }
         return transfersForReturnPackaging;
@@ -234,5 +264,15 @@ public class ReturnHelper {
             }
         }
         return true;
+    }
+
+    private static void markBinsAndPacketsAsPackaged(ArrayList<Bin> bins,
+            ArrayList<Packet> packets) {
+        for (Bin b : bins) {
+            b.getTransfer().setPackaged(true);
+        }
+        for (Packet p : packets) {
+            p.getTransfer().setPackaged(true);
+        }
     }
 }
