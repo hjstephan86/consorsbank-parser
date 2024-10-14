@@ -9,14 +9,18 @@ import java.text.DecimalFormatSymbols;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Locale;
 import java.util.StringTokenizer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 import com.consorsbank.parser.Helper;
+import com.consorsbank.parser.retrn.ReturnWindow;
 
 public class TransferHelper {
     public static ArrayList<Transfer> parseTransfers(File[] listOfFiles)
@@ -181,5 +185,29 @@ public class TransferHelper {
             stringBuilder.append(transfer.toCSVString() + "\n");
         }
         return stringBuilder;
+    }
+
+    public static ArrayList<Transfer> getOpenTransfers(ArrayList<Transfer> transfers,
+            ArrayList<ReturnWindow> returnWindows) {
+        ArrayList<Transfer> openTransfers = new ArrayList<Transfer>();
+        for (ReturnWindow returnWindow : returnWindows) {
+            Date end = new Date();
+
+            Calendar calendar = Calendar.getInstance();
+            calendar.setTime(end);
+            calendar.add(Calendar.DAY_OF_MONTH, -returnWindow.getWindow());
+            Date start = calendar.getTime();
+
+            List<Transfer> openTransfersForWindow =
+                    transfers.stream()
+                            .filter(transfer -> transfer.getName().toLowerCase()
+                                    .contains(returnWindow.getSeller().toLowerCase())
+                                    && transfer.getDate().after(start)
+                                    && transfer.getDate().before(end)
+                                    && transfer.getPointToTransfer() == null)
+                            .collect(Collectors.toList());
+            openTransfers.addAll(openTransfersForWindow);
+        }
+        return openTransfers;
     }
 }

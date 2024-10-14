@@ -1,10 +1,15 @@
 package com.consorsbank.parser.retrn;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
+import com.consorsbank.parser.Helper;
 import com.consorsbank.parser.transfer.Transfer;
 
 public class ReturnHelper {
@@ -274,5 +279,22 @@ public class ReturnHelper {
         for (Packet p : packets) {
             p.getTransfer().setPackaged(true);
         }
+    }
+
+    public static ArrayList<ReturnWindow> readSellers() throws IOException {
+        ArrayList<ReturnWindow> returnWindows = new ArrayList<ReturnWindow>();
+        File f = new File(Helper.PATH_TO_SELLERS);
+        try (BufferedReader br = new BufferedReader(new FileReader(f))) {
+            String line;
+            while ((line = br.readLine()) != null) {
+                String[] lineArr = line.split(";");
+                if (lineArr.length == 2) {
+                    String seller = lineArr[0];
+                    int window = Integer.parseInt(lineArr[1]);
+                    returnWindows.add(new ReturnWindow(seller, window));
+                }
+            }
+        }
+        return returnWindows;
     }
 }

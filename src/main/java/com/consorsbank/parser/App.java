@@ -21,6 +21,7 @@ import com.consorsbank.parser.receipt.DeliveryReceipt;
 import com.consorsbank.parser.receipt.ReceiptHelper;
 import com.consorsbank.parser.receipt.TrackingIdForReceipt;
 import com.consorsbank.parser.retrn.ReturnHelper;
+import com.consorsbank.parser.retrn.ReturnWindow;
 import com.consorsbank.parser.transfer.Transfer;
 import com.consorsbank.parser.transfer.TransferHelper;
 
@@ -35,6 +36,10 @@ public class App {
             LinkedHashMap<String, Transfer> transferMap = TransferHelper.setPosition(transfers);
             ReturnHelper.findReturnTransfers(transfers);
             ReturnHelper.packageReturnTransfers(transfers, transferMap);
+            ArrayList<ReturnWindow> returnWindows = ReturnHelper.readSellers();
+            ArrayList<Transfer> openTransfers =
+                    TransferHelper.getOpenTransfers(transfers, returnWindows);
+            Collections.sort(openTransfers);
 
             HashSet<String> existingTrackingIds =
                     TransferHelper.parseForExsistingTrackingIds(transfers, transferMap);
@@ -56,9 +61,7 @@ public class App {
             ArrayList<DeliveryReceipt> receipts =
                     new ArrayList<DeliveryReceipt>(receiptMap.values());
 
-            System.out.println();
-            printTransfers(transfers, returnTransfers);
-            System.out.println();
+            printTransfers(transfers, openTransfers, returnTransfers);
             List<DeliveryReceipt> allReceipts =
                     Stream.concat(receipts.stream(), existingReceipts.values().stream())
                             .collect(Collectors.toList());
@@ -134,23 +137,35 @@ public class App {
     }
 
     private static void printTransfers(ArrayList<Transfer> transfers,
-            List<Transfer> returnTransfers) {
-        printTransfers(transfers, false);
+            List<Transfer> openTransfers, List<Transfer> returnTransfers) {
         System.out.println();
+        System.out
+                .println(Helper.CONSOLE_COLOR_BLUE_BOLD + "Transfers" + Helper.CONSOLE_COLOR_RESET);
+        printTransfers(transfers, false);
+
+        System.out.println();
+        System.out.println(
+                Helper.CONSOLE_COLOR_BLUE_BOLD + "Open Transfers" + Helper.CONSOLE_COLOR_RESET);
+        printTransfers(openTransfers, false);
+
+        System.out.println();
+        System.out.println(
+                Helper.CONSOLE_COLOR_BLUE_BOLD + "Return Transfers" + Helper.CONSOLE_COLOR_RESET);
         printTransfers(returnTransfers, true);
     }
 
     private static void printTransfers(List<Transfer> transfers, boolean color) {
         double sum = 0;
-        System.out.println(
-                Helper.padRight("Pos", Helper.POS_COL_WIDTH)
-                        + Helper.padRight("Date", Helper.DATE_COL_WIDTH)
-                        + Helper.padRight("Balance", Helper.BALANCE_COL_WIDTH)
-                        + Helper.padRight("Return (Pos)", Helper.RETURN_COL_WIDTH)
-                        + Helper.padRight("BIC", Helper.BIC_COL_WIDTH)
-                        + Helper.padRight("IBAN", Helper.IBAN_COL_WIDTH)
-                        + Helper.padRight("Name", Helper.NAME_COL_WIDTH)
-                        + "Purpose");
+        System.out.println(Helper.CONSOLE_COLOR_GRAY_BOLD
+                + Helper.padRight("Pos", Helper.POS_COL_WIDTH)
+                + Helper.padRight("Date", Helper.DATE_COL_WIDTH)
+                + Helper.padRight("Balance", Helper.BALANCE_COL_WIDTH)
+                + Helper.padRight("Return (Pos)", Helper.RETURN_COL_WIDTH)
+                + Helper.padRight("BIC", Helper.BIC_COL_WIDTH)
+                + Helper.padRight("IBAN", Helper.IBAN_COL_WIDTH)
+                + Helper.padRight("Name", Helper.NAME_COL_WIDTH)
+                + "Purpose"
+                + Helper.CONSOLE_COLOR_RESET);
 
         for (Transfer transfer : transfers) {
             if (color) {
@@ -164,17 +179,28 @@ public class App {
 
         DecimalFormat decimalFormat = new DecimalFormat("#.00");
         decimalFormat.setDecimalFormatSymbols(DecimalFormatSymbols.getInstance(Locale.GERMAN));
-        System.out.println("Total sum: " + decimalFormat.format(sum));
+        String strSum = decimalFormat.format(sum);
+        System.out
+                .println(
+                        "Total sum: "
+                                + (sum >= 0 ? Helper.CONSOLE_COLOR_GREEN + strSum
+                                        : Helper.CONSOLE_COLOR_RED + strSum)
+                                + Helper.CONSOLE_COLOR_RESET);
     }
 
     private static void printReceipts(List<DeliveryReceipt> receipts,
             HashSet<String> existingTrackingIds) {
-        System.out.println(Helper.padRight("", Helper.EMPTY_COL_WIDTH)
+        System.out.println();
+        System.out.println(
+                Helper.CONSOLE_COLOR_BLUE_BOLD + "Delivery Receipts" + Helper.CONSOLE_COLOR_RESET);
+        System.out.println(Helper.CONSOLE_COLOR_GRAY_BOLD
+                + Helper.padRight("", Helper.EMPTY_COL_WIDTH)
                 + Helper.padRight("Sender", Helper.SENDER_COL_WIDTH)
                 + Helper.padRight("Recipient", Helper.RECEPIENT_COL_WIDTH)
                 + Helper.padRight("Datetime", Helper.DATETIME_COL_WIDTH)
                 + Helper.padRight("Tracking Id", Helper.TRACKING_ID_COL_WIDTH)
-                + Helper.padRight("Filename", Helper.FILENAME_COL_WIDTH));
+                + Helper.padRight("Filename", Helper.FILENAME_COL_WIDTH)
+                + Helper.CONSOLE_COLOR_RESET);
 
         int counter = 1;
         for (DeliveryReceipt receipt : receipts) {
@@ -183,7 +209,7 @@ public class App {
                     System.out.println(Helper.CONSOLE_COLOR_YELLOW
                             + Helper.padRight(String.valueOf(counter), Helper.EMPTY_COL_WIDTH)
                             + Helper.CONSOLE_COLOR_RESET
-                            + (counter % 2 != 0 ? Helper.CONSOLE_COLOR_GRAY
+                            + (counter % 2 == 0 ? Helper.CONSOLE_COLOR_GRAY
                                     : Helper.CONSOLE_COLOR_RESET)
                             + receipt.getPaddedStringForTrackingId(trackingId)
                             + Helper.CONSOLE_COLOR_RESET);

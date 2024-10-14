@@ -30,6 +30,7 @@ public class Helper {
     public static String PATH_TO_DELIVERY_RECEIPTS_FILE_NAME = ".receipts";
     public static String PATH_TO_DELIVERY_RECEIPTS_FILE =
             PATH_TO_DELIVERY_RECEIPTS + PATH_TO_DELIVERY_RECEIPTS_FILE_NAME;
+    public static String PATH_TO_SELLERS = ".sellers";
 
     public static final String SIMPLE_DATE_FORMAT = "dd.MM.yyyy";
     public static final String SIMPLE_DATE_FORMAT_TIME = "yyyy-MM-dd_HH-mm-ss";
@@ -85,11 +86,14 @@ public class Helper {
 
     public static final String CONSOLE_COLOR_YELLOW = "\033[0;33m";
     public static final String CONSOLE_COLOR_BLUE = "\033[0;34m";
+    public static final String CONSOLE_COLOR_BLUE_BOLD = "\033[1;34m";
     public static final String CONSOLE_COLOR_CYAN = "\033[0;36m";
     public static final String CONSOLE_COLOR_RESET = "\033[0m";
     public static final String CONSOLE_COLOR_RED = "\033[0;31m";
     public static final String CONSOLE_COLOR_GREEN = "\033[0;32m";
     public static final String CONSOLE_COLOR_GRAY = "\033[90m";
+    public static final String CONSOLE_COLOR_WHITE_BOLD = "\033[1;37m";
+    public static final String CONSOLE_COLOR_GRAY_BOLD = "\033[1;90m";;
 
     public static String padRight(String s, int n) {
         return String.format("%-" + n + "s", s);
