@@ -51,9 +51,11 @@ public class Helper {
     public static final String MINDEE_API_ACCOUNT_NAME = "hjstephan86";
     public static final String MINDEE_API_VERSION = "1";
 
-    public static final String DELIVERY_RECEIPT_DHL_SENDER = "Deutsche Post AG";
-    public static final String DELIVERY_RECEIPT_HERMES_SENDER = "Hermes AG";
-    public static final String DELIVERY_RECEIPT_UPS_SENDER = "United Parcel Service, Inc.";
+    public static final String DELIVERY_RECEIPT_COURIER_DHL = "Deutsche Post AG";
+    public static final String DELIVERY_RECEIPT_COURIER_HERMES = "Hermes AG";
+    public static final String DELIVERY_RECEIPT_COURIER_UPS = "United Parcel Service, Inc.";
+    public static final String DELIVERY_RECEIPT_COURIER_DPD = "DPD Deutschland GmbH";
+
     public static final String DELIVERY_RECEIPT_RECIPIENT_IN_TXT = ":recipient_name: [{value=";
     public static final String DELIVERY_RECEIPT_SENDER_IN_TXT = ":sender_name: [{value=";
     public static final String DELIVERY_RECEIPT_DATE_IN_TXT = ":shipment_date: [{value=";
@@ -130,12 +132,12 @@ public class Helper {
 
     public static boolean isTrackingIdValid(String trackingId) {
         return isDHLTrackingId(trackingId) ^ isHermesTrackingId(trackingId)
-                ^ isUPSTrackingId(trackingId);
+                ^ isUPSTrackingId(trackingId) ^ isDPDTrackingId(trackingId);
     }
 
     public static boolean isDHLTrackingId(String trackingId) {
-        // DHL: start optionally with "JD" or "JJD" followed by 10 to 20 digits
-        String DHLRegex = "^(JD|JJD)?[0-9]{10,20}$";
+        // DHL: start optionally with "JD" or "JJD" followed by 10 or 20 digits
+        String DHLRegex = "^(JD|JJD)?(\\d{12}|\\d{20})$";
         return trackingId.matches(DHLRegex);
     }
 
@@ -149,6 +151,12 @@ public class Helper {
         // UPS: start with E followed by 13 digits, e.g., E4016129636432
         String HermesRegex = "E\\d{13}";
         return trackingId.matches(HermesRegex);
+    }
+
+    public static boolean isDPDTrackingId(String trackingId) {
+        // DPD: 14 digits
+        String dpdRegex = "\\d{14}";
+        return trackingId.matches(dpdRegex);
     }
 
     public static TrackingIdForReceipt getTrackingIdForReceipt(List<DeliveryReceipt> receipts,

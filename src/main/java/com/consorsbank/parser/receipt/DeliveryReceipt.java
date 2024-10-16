@@ -63,11 +63,11 @@ public class DeliveryReceipt implements Comparable<DeliveryReceipt> {
         this.sender = sender;
     }
 
-    private String getDefaultDeliverySender(String trackingId) {
-        return !Helper.isDHLTrackingId(trackingId)
-                ? (Helper.isHermesTrackingId(trackingId) ? Helper.DELIVERY_RECEIPT_HERMES_SENDER
-                        : Helper.DELIVERY_RECEIPT_UPS_SENDER)
-                : Helper.DELIVERY_RECEIPT_DHL_SENDER;
+    private String getDefaultDeliveryCourier(String trackingId) {
+        return Helper.isDHLTrackingId(trackingId) ? Helper.DELIVERY_RECEIPT_COURIER_DHL
+                : Helper.isHermesTrackingId(trackingId) ? Helper.DELIVERY_RECEIPT_COURIER_HERMES
+                        : Helper.isUPSTrackingId(trackingId) ? Helper.DELIVERY_RECEIPT_COURIER_UPS
+                                : Helper.DELIVERY_RECEIPT_COURIER_DPD;
     }
 
     public void setTime(String time) {
@@ -105,7 +105,7 @@ public class DeliveryReceipt implements Comparable<DeliveryReceipt> {
                 Helper.truncate(
                         this.sender != null && !this.sender.toLowerCase().equals("null")
                                 ? this.sender
-                                : getDefaultDeliverySender(trackingId),
+                                : getDefaultDeliveryCourier(trackingId),
                         Helper.SENDER_COL_WIDTH - Helper.TRUNCATE_COL_WIDTH_DELTA),
                 Helper.SENDER_COL_WIDTH)
                 + Helper.padRight(
@@ -157,7 +157,7 @@ public class DeliveryReceipt implements Comparable<DeliveryReceipt> {
                     this.fileHash
                             + ";" + this.filename
                             + ";" + (!this.sender.toLowerCase().equals("null") ? this.sender
-                                    : getDefaultDeliverySender(trackingId))
+                                    : getDefaultDeliveryCourier(trackingId))
                             + ";"
                             + (!this.recipient.toLowerCase().equals("null") ? this.recipient : " ")
                             + ";"
