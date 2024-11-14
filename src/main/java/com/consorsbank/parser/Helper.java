@@ -46,10 +46,12 @@ public class Helper {
     public static final String CUSTOMER_NAME_AMAZON = "AMAZON";
     public static final String CUSTOMER_NAME_ZALANDO = "ZALANDO";
 
-    public static final String MINDEE_API_KEY = "9468d0540da244809c41064177e21dd1";
+    public static final String MINDEE_API_KEY = "";
     public static final String MINDEE_API_ENDPOINT_NAME = "trackinglabel";
     public static final String MINDEE_API_ACCOUNT_NAME = "hjstephan86";
     public static final String MINDEE_API_VERSION = "1";
+
+    public static final String RETURN_TRANSFER_NO_PACKAGE = "###########";
 
     public static final String DELIVERY_RECEIPT_COURIER_DHL = "Deutsche Post AG";
     public static final String DELIVERY_RECEIPT_COURIER_HERMES = "Hermes AG";
@@ -95,7 +97,7 @@ public class Helper {
     public static final String CONSOLE_COLOR_GREEN = "\033[0;32m";
     public static final String CONSOLE_COLOR_GRAY = "\033[90m";
     public static final String CONSOLE_COLOR_WHITE_BOLD = "\033[1;37m";
-    public static final String CONSOLE_COLOR_GRAY_BOLD = "\033[1;90m";;
+    public static final String CONSOLE_COLOR_GRAY_BOLD = "\033[1;90m";
 
     public static String padRight(String s, int n) {
         return String.format("%-" + n + "s", s);
@@ -131,8 +133,9 @@ public class Helper {
     }
 
     public static boolean isTrackingIdValid(String trackingId) {
-        return isDHLTrackingId(trackingId) ^ isHermesTrackingId(trackingId)
-                ^ isUPSTrackingId(trackingId) ^ isDPDTrackingId(trackingId);
+        return trackingId.equals(Helper.RETURN_TRANSFER_NO_PACKAGE) ^ isDHLTrackingId(trackingId)
+                ^ isHermesTrackingId(trackingId) ^ isUPSTrackingId(trackingId)
+                ^ isDPDTrackingId(trackingId);
     }
 
     public static boolean isDHLTrackingId(String trackingId) {

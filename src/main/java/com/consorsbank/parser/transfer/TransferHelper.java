@@ -160,14 +160,18 @@ public class TransferHelper {
                     if (Helper.isTrackingIdValid(existingTrackingId)
                             && transferMap.containsKey(hashFromCSV)) {
                         Transfer returnTransfer = transferMap.get(hashFromCSV);
-                        returnTransfer.setExistingTrackingId(existingTrackingId);
-                        existingTrackingId2Transfer.put(existingTrackingId,
-                                returnTransfer.getHash());
-                        // Set the return postion
-                        int returnPosition = Integer.parseInt(transferArr[4]);
-                        if (returnPosition > 0 && returnPosition <= transfers.size()) {
-                            Transfer otherTransfer = transfers.get(returnPosition - 1);
-                            returnTransfer.setPointToTransfer(otherTransfer, false);
+                        if (existingTrackingId.equals(Helper.RETURN_TRANSFER_NO_PACKAGE)) {
+                            returnTransfer.setTrackingId(Helper.RETURN_TRANSFER_NO_PACKAGE);
+                        } else {
+                            returnTransfer.setExistingTrackingId(existingTrackingId);
+                            existingTrackingId2Transfer.put(existingTrackingId,
+                                    returnTransfer.getHash());
+                            // Set the return postion
+                            int returnPosition = Integer.parseInt(transferArr[4]);
+                            if (returnPosition > 0 && returnPosition <= transfers.size()) {
+                                Transfer otherTransfer = transfers.get(returnPosition - 1);
+                                returnTransfer.setPointToTransfer(otherTransfer, false);
+                            }
                         }
                     }
                 }

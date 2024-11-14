@@ -196,7 +196,7 @@ public class Transfer implements Comparable<Transfer> {
         this.existingTrackingId = existingTrackingId;
     }
 
-    private String getTrackingId() {
+    public String getTrackingId() {
         return existingTrackingId != null ? existingTrackingId
                 : (trackingId != null)
                         ? trackingId

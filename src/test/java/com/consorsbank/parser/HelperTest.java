@@ -170,8 +170,11 @@ public class HelperTest {
 
     @Test
     public void testIsTrackingIdValid() {
+        String trackingId = Helper.RETURN_TRANSFER_NO_PACKAGE;
+        assertTrue(Helper.isTrackingIdValid(trackingId));
+
         // DHL
-        String trackingId = "233507677656";
+        trackingId = "233507677656";
         assertTrue(Helper.isTrackingIdValid(trackingId));
 
         // Hermes

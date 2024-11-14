@@ -46,7 +46,9 @@ public class App {
             List<Transfer> returnTransfers =
                     transfers.stream()
                             .filter(transfer -> transfer.getPointToTransfer() != null
-                                    && transfer.getExistingTrackingId() == null)
+                                    && transfer.getExistingTrackingId() == null
+                                    && !transfer.getTrackingId()
+                                            .equals(Helper.RETURN_TRANSFER_NO_PACKAGE))
                             .collect(Collectors.toList());
 
             LinkedHashMap<String, DeliveryReceipt> existingReceipts =
@@ -256,6 +258,9 @@ public class App {
                 } catch (Exception e) {
                     if (input.equals("s")) {
                         continue outer;
+                    } else if (input.equals("n")) {
+                        transfer.setTrackingId(Helper.RETURN_TRANSFER_NO_PACKAGE);
+                        continue outer;
                     } else if (input.equals("g")) {
                         break outer;
                     } else if (input.equals("q")) {
@@ -289,11 +294,14 @@ public class App {
 
     private static void printTrackingIdAssignmentDescr() {
         System.out.println(
-                "Assign a tracking id to a return transfer or enter " + Helper.CONSOLE_COLOR_YELLOW
-                        + "g" + Helper.CONSOLE_COLOR_RESET
-                        + " for CSV generation or " + Helper.CONSOLE_COLOR_YELLOW + "s"
-                        + Helper.CONSOLE_COLOR_RESET
-                        + " to skip the return transfer or q to quit.");
+                "Assign a tracking id to a return transfer or enter "
+                        + Helper.CONSOLE_COLOR_YELLOW + "g" + Helper.CONSOLE_COLOR_RESET
+                        + " for CSV generation or "
+                        + Helper.CONSOLE_COLOR_YELLOW + "n" + Helper.CONSOLE_COLOR_RESET
+                        + " for no tracking id available or "
+                        + Helper.CONSOLE_COLOR_YELLOW + "s" + Helper.CONSOLE_COLOR_RESET
+                        + " to skip the return transfer or"
+                        + " q to quit.");
     }
 
     private static void promptForTrackingIdAssignment(Transfer transfer) {
