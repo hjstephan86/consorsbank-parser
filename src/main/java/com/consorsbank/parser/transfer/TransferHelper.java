@@ -93,6 +93,23 @@ public class TransferHelper {
         return year;
     }
 
+    /***
+     * Parses the specified PDF tokens for a name and a bank id of the specified transfer.
+     * The array list of tokens can contain the following string values:
+     * 
+     * ................................................................................
+     * .....0.......LASTSCHRIFT..............................GEBUEHREN
+     * .....1.......02.01. 8421 02.01. 393,00-...............28.06. 5910 28.06. 10,00-
+     * .....2.......HUK-COBURG UNTERNEHMENSGRUPPE............Gebuehr fuer neue
+     * .....3.......<BYLADEMM > DE14700500000002034343.......girocard
+     * .....4.......HUK-COBURG, KRAFTFAHRT-VERS..............Konto/IBAN Auftragg. 09295
+     * .....5.......36019 Konto/IBAN Empf. 027 0448588.................................
+     * ................................................................................
+     * 
+     * @param pdfTokens the string array list of tokens to parse
+     * @param transfer the transfer to parse for
+     * @param i the index of the array list of tokens
+     */
     private static void parseNameAndBankIdAndPurpose(ArrayList<String> pdfTokens, Transfer transfer,
             int i) {
         if (bankIdValid(pdfTokens.get(i + 3))) {

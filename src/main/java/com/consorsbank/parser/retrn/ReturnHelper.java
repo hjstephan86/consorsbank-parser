@@ -221,12 +221,12 @@ public class ReturnHelper {
         }
 
         outer: for (int i = 0; i < bins.size(); i++) {
-            double binValue = Math.abs(bins.get(i).getTransfer().getBalanceNumber().getValue());
             for (int j = 0; j < packets.size(); j++) {
                 if (packets.get(j).getTransfer().getPointToTransfer() == null) {
                     double packetValue = packets.get(j).getTransfer().getBalanceNumber().getValue();
-                    if (binValue == packetValue) {
+                    if ((bins.get(i).getValue() - packetValue) < Helper.EPSILON) {
                         // assign return transfer
+                        bins.get(i).setValue(0);
                         packets.get(j).getTransfer()
                                 .setPointToTransfer(bins.get(i).getTransfer(), false);
                         continue outer;
@@ -238,20 +238,15 @@ public class ReturnHelper {
 
     private static void doBestFitPackaging(ArrayList<Bin> bins, ArrayList<Packet> packets,
             boolean timeDriven) {
-        for (int i = 0; i < packets.size(); i++) {
-            packets.get(i).getTransfer().setPointToTransfer(null, false);
-        }
-
         outer: for (int i = 0; i < bins.size(); i++) {
-            double binValue = Math.abs(bins.get(i).getTransfer().getBalanceNumber().getValue());
             for (int j = 0; j < packets.size(); j++) {
                 if (packets.get(j).getTransfer().getPointToTransfer() == null) {
                     double packetValue = packets.get(j).getTransfer().getBalanceNumber().getValue();
-                    if (binValue >= packetValue) {
+                    if (bins.get(i).getValue() >= packetValue) {
                         // assign return transfer
+                        bins.get(i).setValue(bins.get(i).getValue() - packetValue);
                         packets.get(j).getTransfer()
                                 .setPointToTransfer(bins.get(i).getTransfer(), false);
-                        binValue -= packetValue;
                     } else {
                         if (timeDriven) {
                             continue outer;

@@ -268,8 +268,8 @@ public class ReturnHelperTest {
 
                 // However, after packaging we expect a n:n return assignment with a chronological
                 // ordering
-                assertTrue(x.getPointToTransfer().equals(u));
-                assertTrue(y.getPointToTransfer().equals(t));
+                assertTrue(x.getPointToTransfer().equals(t));
+                assertTrue(y.getPointToTransfer().equals(u));
                 assertTrue(t.getPointToTransfer() == null);
                 assertTrue(u.getPointToTransfer() == null);
 
@@ -451,6 +451,65 @@ public class ReturnHelperTest {
 
                 Transfer z = createTransfer("Amazon", 5.5, 14, '+',
                                 "305-1103929-6143535 AMZN Mktp DE PT");
+                transfers.add(z);
+
+                LinkedHashMap<String, Transfer> transferMap = getTransferMap(transfers);
+
+                ReturnHelper.findReturnTransfers(transfers);
+
+                // Here, we expect a 1:n return assignment
+                assertTrue(x.getPointToTransfer().equals(u));
+                assertTrue(y.getPointToTransfer().equals(u));
+                assertTrue(z.getPointToTransfer().equals(u));
+                assertTrue(t.getPointToTransfer() == null);
+                assertTrue(u.getPointToTransfer() == null);
+
+                assertTrue(!t.isPackaged());
+                assertTrue(!u.isPackaged());
+                assertTrue(!x.isPackaged());
+                assertTrue(!y.isPackaged());
+                assertTrue(!z.isPackaged());
+
+                ReturnHelper.packageReturnTransfers(transfers,
+                                transferMap);
+
+                // However, after packaging we expect a n:m return assignment with a best fit
+                // ordering
+                assertTrue(x.getPointToTransfer().equals(t));
+                assertTrue(y.getPointToTransfer().equals(u));
+                assertTrue(z.getPointToTransfer().equals(u));
+                assertTrue(t.getPointToTransfer() == null);
+                assertTrue(u.getPointToTransfer() == null);
+
+                assertTrue(t.isPackaged());
+                assertTrue(u.isPackaged());
+                assertTrue(x.isPackaged());
+                assertTrue(y.isPackaged());
+                assertTrue(z.isPackaged());
+        }
+
+        @Test
+        public void testPackageReturnTransfersNToMNotFitPackY() {
+                ArrayList<Transfer> transfers = new ArrayList<Transfer>();
+
+                Transfer t = createTransfer("Amazon", 19.93, 11, '-',
+                                "303-9119904-0875516 Amazon.de 5MPCJ");
+                transfers.add(t);
+
+                Transfer u = createTransfer("Amazon", 37.96, 11, '-',
+                                "303-9119904-0875516 Amazon.de 6PGVD");
+                transfers.add(u);
+
+                Transfer x = createTransfer("Amazon", 18.98, 14, '+',
+                                "303-9119904-0875516 Amazon.de 10ID2");
+                transfers.add(x);
+
+                Transfer y = createTransfer("Amazon", 19.93, 14, '+',
+                                "303-9119904-0875516 Amazon.de 5MBA3");
+                transfers.add(y);
+
+                Transfer z = createTransfer("Amazon", 18.98, 30, '+',
+                                "303-9119904-0875516 Amazon.de 3KAJS");
                 transfers.add(z);
 
                 LinkedHashMap<String, Transfer> transferMap = getTransferMap(transfers);
