@@ -11,7 +11,6 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
@@ -144,9 +143,10 @@ public class TransferHelper {
         return transferMap;
     }
 
-    public static HashSet<String> parseForExsistingTrackingIds(
+    public static LinkedHashMap<String, String> parseForExsistingTrackingIds(
             ArrayList<Transfer> transfers, LinkedHashMap<String, Transfer> transferMap) {
-        HashSet<String> existingTrackingIds = new HashSet<String>();
+        LinkedHashMap<String, String> existingTrackingId2Transfer =
+                new LinkedHashMap<String, String>();
         try (BufferedReader br =
                 new BufferedReader(new FileReader(Helper.PATH_TO_TRANSFERS_IMPORT))) {
             System.out.println(
@@ -161,7 +161,8 @@ public class TransferHelper {
                             && transferMap.containsKey(hashFromCSV)) {
                         Transfer returnTransfer = transferMap.get(hashFromCSV);
                         returnTransfer.setExistingTrackingId(existingTrackingId);
-                        existingTrackingIds.add(existingTrackingId);
+                        existingTrackingId2Transfer.put(existingTrackingId,
+                                returnTransfer.getHash());
                         // Set the return postion
                         int returnPosition = Integer.parseInt(transferArr[4]);
                         if (returnPosition > 0 && returnPosition <= transfers.size()) {
@@ -174,7 +175,7 @@ public class TransferHelper {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        return existingTrackingIds;
+        return existingTrackingId2Transfer;
     }
 
     public static StringBuilder exportTransfers(ArrayList<Transfer> transfers) {

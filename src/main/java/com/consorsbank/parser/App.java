@@ -41,7 +41,7 @@ public class App {
                     TransferHelper.getOpenTransfers(transfers, returnWindows);
             Collections.sort(openTransfers);
 
-            HashSet<String> existingTrackingIds =
+            LinkedHashMap<String, String> existingTrackingId2Transfer =
                     TransferHelper.parseForExsistingTrackingIds(transfers, transferMap);
             List<Transfer> returnTransfers =
                     transfers.stream()
@@ -50,7 +50,8 @@ public class App {
                             .collect(Collectors.toList());
 
             LinkedHashMap<String, DeliveryReceipt> existingReceipts =
-                    ReceiptHelper.parseForExistingDeliveryReceipts(transferMap);
+                    ReceiptHelper.parseForExistingDeliveryReceipts(transferMap,
+                            existingTrackingId2Transfer);
             folder = new File(Helper.PATH_TO_DELIVERY_RECEIPTS);
             File[] listOfReceiptFiles = folder.listFiles();
             listOfReceiptFiles =
@@ -66,10 +67,10 @@ public class App {
                     Stream.concat(receipts.stream(), existingReceipts.values().stream())
                             .collect(Collectors.toList());
             Collections.sort(allReceipts);
-            printReceipts(allReceipts, existingTrackingIds);
+            printReceipts(allReceipts, existingTrackingId2Transfer);
             System.out.println();
             assignTrackingIdsAndExport(transfers, returnTransfers, allReceipts,
-                    existingTrackingIds);
+                    existingTrackingId2Transfer);
         }
     }
 
@@ -189,7 +190,7 @@ public class App {
     }
 
     private static void printReceipts(List<DeliveryReceipt> receipts,
-            HashSet<String> existingTrackingIds) {
+            LinkedHashMap<String, String> existingTrackingId2Transfer) {
         System.out.println();
         System.out.println(
                 Helper.CONSOLE_COLOR_BLUE_BOLD + "Delivery Receipts" + Helper.CONSOLE_COLOR_RESET);
@@ -205,7 +206,7 @@ public class App {
         int counter = 1;
         for (DeliveryReceipt receipt : receipts) {
             for (String trackingId : receipt.getTrackingIds()) {
-                if (!existingTrackingIds.contains(trackingId)) {
+                if (existingTrackingId2Transfer.get(trackingId) == null) {
                     System.out.println(Helper.CONSOLE_COLOR_YELLOW
                             + Helper.padRight(String.valueOf(counter), Helper.EMPTY_COL_WIDTH)
                             + Helper.CONSOLE_COLOR_RESET
@@ -219,10 +220,9 @@ public class App {
         }
     }
 
-    @SuppressWarnings("unused")
     private static void assignTrackingIdsAndExport(ArrayList<Transfer> transfers,
             List<Transfer> returnTransfers, List<DeliveryReceipt> receipts,
-            HashSet<String> existingTrackingIds) {
+            LinkedHashMap<String, String> existingTrackingId2Transfer) {
         printTrackingIdAssignmentDescr();
         Scanner scanner = new Scanner(System.in);
         HashSet<Integer> assignedNumbers = new HashSet<Integer>();
@@ -235,7 +235,8 @@ public class App {
                 try {
                     int number = Integer.parseInt(input);
                     TrackingIdForReceipt trackingIdForReceipt =
-                            Helper.getTrackingIdForReceipt(receipts, number, existingTrackingIds);
+                            Helper.getTrackingIdForReceipt(receipts, number,
+                                    existingTrackingId2Transfer);
                     if (trackingIdForReceipt != null && !assignedNumbers.contains(number)) {
                         // Assign the tracking id to the return transfer
                         transfer.setTrackingId(trackingIdForReceipt.getTrackingId());

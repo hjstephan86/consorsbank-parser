@@ -93,7 +93,8 @@ public class ReceiptHelper {
     }
 
     public static LinkedHashMap<String, DeliveryReceipt> parseForExistingDeliveryReceipts(
-            LinkedHashMap<String, Transfer> transferMap) {
+            LinkedHashMap<String, Transfer> transferMap,
+            LinkedHashMap<String, String> existingTrackingId2Transfer) {
         LinkedHashMap<String, DeliveryReceipt> existingDeliveryReceipts =
                 new LinkedHashMap<String, DeliveryReceipt>();
         File deliveryReceiptsCSV = new File(Helper.PATH_TO_DELIVERY_RECEIPTS_FILE);
@@ -124,6 +125,10 @@ public class ReceiptHelper {
                             receipt.addTrackingId(trackingId);
                             if (receiptArr.length == 7) {
                                 receipt.addTrackingId(trackingId, transferMap.get(receiptArr[6]));
+                            } else {
+                                Transfer transfer = transferMap.get(existingTrackingId2Transfer
+                                        .get(trackingId));
+                                receipt.addTrackingId(trackingId, transfer);
                             }
                         }
                     }

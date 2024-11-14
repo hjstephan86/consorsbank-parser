@@ -5,7 +5,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
 import org.apache.pdfbox.Loader;
 import org.apache.pdfbox.pdmodel.PDDocument;
@@ -46,7 +46,7 @@ public class Helper {
     public static final String CUSTOMER_NAME_AMAZON = "AMAZON";
     public static final String CUSTOMER_NAME_ZALANDO = "ZALANDO";
 
-    public static final String MINDEE_API_KEY = "";
+    public static final String MINDEE_API_KEY = "9468d0540da244809c41064177e21dd1";
     public static final String MINDEE_API_ENDPOINT_NAME = "trackinglabel";
     public static final String MINDEE_API_ACCOUNT_NAME = "hjstephan86";
     public static final String MINDEE_API_VERSION = "1";
@@ -160,14 +160,14 @@ public class Helper {
     }
 
     public static TrackingIdForReceipt getTrackingIdForReceipt(List<DeliveryReceipt> receipts,
-            int number, HashSet<String> existingTrackingIds) {
+            int number, LinkedHashMap<String, String> existingTrackingId2Transfer) {
         if (receipts.size() == 0)
             return null;
         if (number > 0) {
             int counter = 1;
             for (DeliveryReceipt receipt : receipts) {
                 for (String trackingId : receipt.getTrackingIds()) {
-                    if (!existingTrackingIds.contains(trackingId)) {
+                    if (existingTrackingId2Transfer.get(trackingId) == null) {
                         if (counter == number) {
                             TrackingIdForReceipt trackingIdForReceipt =
                                     new TrackingIdForReceipt(trackingId, receipt);
