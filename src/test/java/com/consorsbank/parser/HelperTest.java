@@ -194,10 +194,10 @@ public class HelperTest {
     public void testGetFileChecksum() {
         String algorithm = Helper.SHA_ALGORITHM; // You can use MD5, SHA-1, SHA-256, etc.
         String oldFilePath =
-                "/home/stephan/Downloads/Kontobewegungen/Test/Return/Scanned_20240827-1312.jpg";
+                "/home/stephan/Downloads/Kontobewegungen/Test/Return/Scanned_20240906-1640_Sennheiser.jpg";
         String newFilePath =
-                "/home/stephan/Downloads/Kontobewegungen/Test/Return/Scanned_20240827-1312-new.jpg";
-        String expectedHash = "1ff938c5e589b2f10038ac3acf719ef88e3872f3f243cac0a92c1b26500dcfdd";
+                "/home/stephan/Downloads/Kontobewegungen/Test/Return/Scanned_20240906-1640_Sennheiser-new.jpg";
+        String expectedHash = "5193b688cb5d1179f9b67326afadf0e00086aedd13bbfea019b70b46ec50e19b";
 
         String fileHash = Helper.getFileHash(algorithm, oldFilePath);
         assertTrue(expectedHash.equals(fileHash));

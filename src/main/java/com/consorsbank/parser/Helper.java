@@ -30,6 +30,9 @@ public class Helper {
     public static String PATH_TO_DELIVERY_RECEIPTS_FILE_NAME = ".receipts";
     public static String PATH_TO_DELIVERY_RECEIPTS_FILE =
             PATH_TO_DELIVERY_RECEIPTS + PATH_TO_DELIVERY_RECEIPTS_FILE_NAME;
+    public static String DELIVERY_RECEIPTS_ASSIGNED_FOLDER = "assigned/";
+    public static String PATH_TO_DELIVERY_RECEIPTS_ASSIGNED_FOLDER =
+            PATH_TO_DELIVERY_RECEIPTS + DELIVERY_RECEIPTS_ASSIGNED_FOLDER;
     public static String PATH_TO_SELLERS = ".sellers";
 
     public static final String SIMPLE_DATE_FORMAT = "dd.MM.yyyy";

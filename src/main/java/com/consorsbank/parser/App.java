@@ -3,6 +3,9 @@ package com.consorsbank.parser;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.text.SimpleDateFormat;
@@ -112,9 +115,11 @@ public class App {
                 && pathToDeliveryReceipts.exists() && pathToDeliveryReceipts.isDirectory()) {
             Helper.PATH_TO_PDF_REPORTS = args[0];
             Helper.PATH_TO_DELIVERY_RECEIPTS = args[1];
-            // Update the CSV file path accordingly
+            // Update the delivery receipts file path accordingly
             Helper.PATH_TO_DELIVERY_RECEIPTS_FILE =
                     Helper.PATH_TO_DELIVERY_RECEIPTS + Helper.PATH_TO_DELIVERY_RECEIPTS_FILE_NAME;
+            Helper.PATH_TO_DELIVERY_RECEIPTS_ASSIGNED_FOLDER =
+                    Helper.PATH_TO_DELIVERY_RECEIPTS + Helper.DELIVERY_RECEIPTS_ASSIGNED_FOLDER;
             return true;
         }
         return false;
@@ -276,6 +281,7 @@ public class App {
         if (!quit) {
             exportTransfers(transfers);
         }
+        moveAssignedDeliveryReceipts(receipts);
         exportDeliveryReceipts(receipts);
     }
 
@@ -325,5 +331,34 @@ public class App {
                     "An error occurred while writing to " + filename + ".");
             e.printStackTrace();
         }
+    }
+
+    private static void moveAssignedDeliveryReceipts(List<DeliveryReceipt> receipts) {
+        File assignedFolder = new File(Helper.PATH_TO_DELIVERY_RECEIPTS_ASSIGNED_FOLDER);
+        if (!assignedFolder.exists()
+                && receipts.stream().anyMatch(receipt -> receipt.allTrackingIdsAssigned())) {
+            System.out.println("Assigned folder for delivery receipts does not exist. Creating...");
+            assignedFolder.mkdir();
+        }
+
+        int movedReceipts = 0;
+        for (DeliveryReceipt receipt : receipts) {
+            if (receipt.allTrackingIdsAssigned()) {
+                File file = new File(Helper.PATH_TO_DELIVERY_RECEIPTS + receipt.getFilename());
+                if (file.isFile()) {
+                    Path sourcePath = Paths.get(file.getAbsolutePath());
+                    Path targetPath = Paths.get(assignedFolder.getAbsolutePath(), file.getName());
+
+                    try {
+                        Files.move(sourcePath, targetPath);
+                        // System.out.println("Moved " + file.getName() + " to assigned folder.");
+                        movedReceipts++;
+                    } catch (IOException e) {
+                        System.err.println("Error moving file: " + e.getMessage());
+                    }
+                }
+            }
+        }
+        System.out.println("Moved " + movedReceipts + " delivery receipt(s) to assigned folder.");
     }
 }
