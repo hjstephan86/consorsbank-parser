@@ -17,6 +17,7 @@ import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Scanner;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -32,6 +33,9 @@ public class App {
 
     public static void main(String[] args) throws Exception {
         if (argumentsValid(args)) {
+            Map<String, String> env = System.getenv();
+            Helper.MINDEE_API_KEY = env.getOrDefault("MINDEE_API_KEY", "");
+
             File folder = new File(Helper.PATH_TO_PDF_REPORTS);
             File[] listOfPDFReportFiles = folder.listFiles();
             ArrayList<Transfer> transfers = TransferHelper.parseTransfers(listOfPDFReportFiles);
@@ -304,10 +308,11 @@ public class App {
                         + Helper.CONSOLE_COLOR_YELLOW + "g" + Helper.CONSOLE_COLOR_RESET
                         + " for CSV generation or "
                         + Helper.CONSOLE_COLOR_YELLOW + "n" + Helper.CONSOLE_COLOR_RESET
-                        + " for no tracking id available or "
+                        + " for 'no tracking id available' or "
                         + Helper.CONSOLE_COLOR_YELLOW + "s" + Helper.CONSOLE_COLOR_RESET
-                        + " to skip the return transfer or"
-                        + " q to quit.");
+                        + " to skip the return transfer or "
+                        + Helper.CONSOLE_COLOR_RED + "q" + Helper.CONSOLE_COLOR_RESET
+                        + " to quit.");
     }
 
     private static void promptForTrackingIdAssignment(Transfer transfer) {

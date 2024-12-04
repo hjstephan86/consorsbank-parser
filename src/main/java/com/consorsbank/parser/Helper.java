@@ -26,7 +26,7 @@ public class Helper {
     public static String PATH_TO_TRANSFERS_EXPORT =
             PATH_TO_PDF_REPORTS + "Transfers-%DATETIME%.csv";
     public static String PATH_TO_TRANSFERS_IMPORT =
-            PATH_TO_PDF_REPORTS + "Transfers-2024-11-14_11-43-47.csv";
+            PATH_TO_PDF_REPORTS + "Transfers-2024-12-04_08-45-55.csv";
     public static String PATH_TO_DELIVERY_RECEIPTS_FILE_NAME = ".receipts";
     public static String PATH_TO_DELIVERY_RECEIPTS_FILE =
             PATH_TO_DELIVERY_RECEIPTS + PATH_TO_DELIVERY_RECEIPTS_FILE_NAME;
@@ -49,7 +49,7 @@ public class Helper {
     public static final String CUSTOMER_NAME_AMAZON = "AMAZON";
     public static final String CUSTOMER_NAME_ZALANDO = "ZALANDO";
 
-    public static final String MINDEE_API_KEY = "";
+    public static String MINDEE_API_KEY;
     public static final String MINDEE_API_ENDPOINT_NAME = "trackinglabel";
     public static final String MINDEE_API_ACCOUNT_NAME = "hjstephan86";
     public static final String MINDEE_API_VERSION = "1";

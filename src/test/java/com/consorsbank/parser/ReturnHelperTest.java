@@ -178,6 +178,43 @@ public class ReturnHelperTest {
         }
 
         @Test
+        public void testPackageReturnTransfers1ToNFit() {
+                ArrayList<Transfer> transfers = new ArrayList<Transfer>();
+
+                Transfer t = createTransfer("Amazon", 95.82, 8, '-',
+                                "P02-5863826-2652163 AMZN Mktp DE IW");
+                transfers.add(t);
+
+                Transfer x = createTransfer("Amazon", 46.86, 18, '+',
+                                "P02-5863826-2652163 AMZN Mktp DE WU");
+                transfers.add(x);
+
+                Transfer y = createTransfer("Amazon", 48.96, 20, '+',
+                                "P02-5863826-2652163 AMZN Mktp DE AB");
+                transfers.add(y);
+
+                LinkedHashMap<String, Transfer> transferMap = getTransferMap(transfers);
+
+                ReturnHelper.findReturnTransfers(transfers);
+
+                // Here, we expect a 1:n return assignment
+                assertTrue(t.getPointToTransfer() == null);
+                assertTrue(x.getPointToTransfer().equals(t));
+                assertTrue(y.getPointToTransfer().equals(t));
+                assertTrue(!t.isPackaged());
+                assertTrue(!x.isPackaged());
+
+                ReturnHelper.packageReturnTransfers(transfers,
+                                transferMap);
+                // After packaging we still expect a 1:n return assignment
+                assertTrue(t.getPointToTransfer() == null);
+                assertTrue(x.getPointToTransfer().equals(t));
+                assertTrue(y.getPointToTransfer().equals(t));
+                assertTrue(t.isPackaged());
+                assertTrue(x.isPackaged());
+        }
+
+        @Test
         public void testPackageReturnTransfersNToNNotFit() {
                 ArrayList<Transfer> transfers = new ArrayList<Transfer>();
 
@@ -268,8 +305,8 @@ public class ReturnHelperTest {
 
                 // However, after packaging we expect a n:n return assignment with a chronological
                 // ordering
-                assertTrue(x.getPointToTransfer().equals(t));
-                assertTrue(y.getPointToTransfer().equals(u));
+                assertTrue(x.getPointToTransfer().equals(u));
+                assertTrue(y.getPointToTransfer().equals(t));
                 assertTrue(t.getPointToTransfer() == null);
                 assertTrue(u.getPointToTransfer() == null);
 
@@ -284,19 +321,16 @@ public class ReturnHelperTest {
         public void testPackageReturnTransfersNTo1Fit() {
                 ArrayList<Transfer> transfers = new ArrayList<Transfer>();
 
-                Transfer t =
-                                createTransfer("Amazon", 11.16, 11, '-',
-                                                "305-1103929-6143535 AMZN Mktp DE IW");
+                Transfer t = createTransfer("Amazon", 11.16, 11, '-',
+                                "305-1103929-6143535 AMZN Mktp DE IW");
                 transfers.add(t);
 
-                Transfer u =
-                                createTransfer("Amazon", 12.99, 12, '-',
-                                                "305-1103929-6143535 AMZN Mktp DE OM");
+                Transfer u = createTransfer("Amazon", 12.99, 12, '-',
+                                "305-1103929-6143535 AMZN Mktp DE OM");
                 transfers.add(u);
 
-                Transfer x =
-                                createTransfer("Amazon", 11.16, 14, '+',
-                                                "305-1103929-6143535 AMZN Mktp DE WU");
+                Transfer x = createTransfer("Amazon", 11.16, 14, '+',
+                                "305-1103929-6143535 AMZN Mktp DE WU");
                 transfers.add(x);
 
                 LinkedHashMap<String, Transfer> transferMap = getTransferMap(transfers);
@@ -329,19 +363,16 @@ public class ReturnHelperTest {
         public void testPackageReturnTransfersNTo1NotFit() {
                 ArrayList<Transfer> transfers = new ArrayList<Transfer>();
 
-                Transfer t =
-                                createTransfer("Amazon", 11.16, 11, '-',
-                                                "305-1103929-6143535 AMZN Mktp DE IW");
+                Transfer t = createTransfer("Amazon", 11.16, 11, '-',
+                                "305-1103929-6143535 AMZN Mktp DE IW");
                 transfers.add(t);
 
-                Transfer u =
-                                createTransfer("Amazon", 12.99, 12, '-',
-                                                "305-1103929-6143535 AMZN Mktp DE OM");
+                Transfer u = createTransfer("Amazon", 12.99, 12, '-',
+                                "305-1103929-6143535 AMZN Mktp DE OM");
                 transfers.add(u);
 
-                Transfer x =
-                                createTransfer("Amazon", 10.16, 14, '+',
-                                                "305-1103929-6143535 AMZN Mktp DE WU");
+                Transfer x = createTransfer("Amazon", 10.16, 14, '+',
+                                "305-1103929-6143535 AMZN Mktp DE WU");
                 transfers.add(x);
 
                 LinkedHashMap<String, Transfer> transferMap = getTransferMap(transfers);
@@ -360,7 +391,7 @@ public class ReturnHelperTest {
                 ReturnHelper.packageReturnTransfers(transfers,
                                 transferMap);
 
-                // However, after packaging we still expect the same packaging as before
+                // However, after packaging we expect that x is packaged to t
                 assertTrue(x.getPointToTransfer().equals(t));
                 assertTrue(t.getPointToTransfer() == null);
                 assertTrue(u.getPointToTransfer() == null);
@@ -475,9 +506,9 @@ public class ReturnHelperTest {
 
                 // However, after packaging we expect a n:m return assignment with a best fit
                 // ordering
-                assertTrue(x.getPointToTransfer().equals(t));
+                assertTrue(x.getPointToTransfer().equals(u));
                 assertTrue(y.getPointToTransfer().equals(u));
-                assertTrue(z.getPointToTransfer().equals(u));
+                assertTrue(z.getPointToTransfer().equals(t));
                 assertTrue(t.getPointToTransfer() == null);
                 assertTrue(u.getPointToTransfer() == null);
 
