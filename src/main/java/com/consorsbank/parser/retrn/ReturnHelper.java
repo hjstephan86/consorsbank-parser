@@ -9,7 +9,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
-import com.consorsbank.parser.Helper;
 import com.consorsbank.parser.transfer.Transfer;
 
 public class ReturnHelper {
@@ -54,8 +53,11 @@ public class ReturnHelper {
                     transfer.getLocalDate());
             if ((daysBetween <= 0 && daysBetween >= daysBetweenTransfers)
                     || (daysBetween >= 0 && daysBetween <= daysBetweenTransfers)
-                            && Math.abs(prevTransfer.getReturnBalance()) >= Math
-                                    .abs(transfer.getBalanceNumber().getValue())) {
+                            && (Math.abs(prevTransfer.getReturnBalance()) > Math
+                                    .abs(transfer.getBalanceNumber().getValue())
+                                    || Math.abs(prevTransfer.getReturnBalance()) -
+                                            Math.abs(transfer.getBalanceNumber()
+                                                    .getValue()) < com.consorsbank.parser.Helper.EPSILON)) {
                 boolean continueOuter = findReturnTransfer(transfer, prevTransfer, false);
                 if (continueOuter) {
                     return true;
@@ -84,15 +86,17 @@ public class ReturnHelper {
             assignReturnTransfer(transfer, prevTransfer, findPotentialReturnTransfer);
             return true;
         } else if (balanceValue > 0 && prevBalanceValue < 0
-                && (Math.abs(prevBalanceValue)
-                        - balanceValue) >= com.consorsbank.parser.Helper.CENT
+                && ((Math.abs(prevBalanceValue) - balanceValue) > com.consorsbank.parser.Helper.CENT
+                        || (Math.abs(prevBalanceValue)
+                                - balanceValue) < -com.consorsbank.parser.Helper.EPSILON)
                 && transfer.getName().equals(prevTransfer.getName())
                 && purposeMatches(transfer, prevTransfer)) {
             assignReturnTransfer(transfer, prevTransfer, findPotentialReturnTransfer);
             return true;
         } else if (balanceValue > 0 && prevBalanceValue < 0
-                && (Math.abs(prevBalanceValue)
-                        - balanceValue) >= com.consorsbank.parser.Helper.CENT
+                && ((Math.abs(prevBalanceValue) - balanceValue) > com.consorsbank.parser.Helper.CENT
+                        || (Math.abs(prevBalanceValue)
+                                - balanceValue) < -com.consorsbank.parser.Helper.EPSILON)
                 && (transfer.getName().startsWith(prevTransfer.getName())
                         || prevTransfer.getName().startsWith(transfer.getName()))
                 && purposeMatches(transfer, prevTransfer)) {
@@ -154,8 +158,8 @@ public class ReturnHelper {
             ArrayList<Packet> packets = new ArrayList<Packet>();
             setBinsAndPackets(transfers, transfer, bins, packets);
 
-            if (!(bins.size() == 1 && packets.size() == 1)) {
-                // 1:1 packagings work already, treat 1:n, n:1, n:n and n:m packagings instead
+            if (!(bins.size() == 1 && packets.size() >= 1)) {
+                // 1:1 and 1:n packagings work already, treat n:1, n:n and n:m packagings instead
 
                 // First, check whether a package fits simply perfect into a bin (for all packets)
                 doSimpleBestFitPackaging(bins, packets);
@@ -174,8 +178,6 @@ public class ReturnHelper {
                 Collections.sort(bins);
                 Collections.sort(packets);
                 doBestFitPackaging(bins, packets, false);
-                // Even if not all packets are packaged mark all bins and packets as packaged,
-                // since they are related to this return transfer
             }
             markBinsAndPacketsAsPackaged(bins, packets);
         }
@@ -224,7 +226,8 @@ public class ReturnHelper {
             for (int j = 0; j < packets.size(); j++) {
                 if (packets.get(j).getTransfer().getPointToTransfer() == null) {
                     double packetValue = packets.get(j).getTransfer().getBalanceNumber().getValue();
-                    if ((bins.get(i).getValue() - packetValue) < Helper.EPSILON) {
+                    if (Math.abs(bins.get(i).getValue()
+                            - packetValue) < com.consorsbank.parser.Helper.EPSILON) {
                         // assign return transfer
                         bins.get(i).setValue(0);
                         packets.get(j).getTransfer()
@@ -242,7 +245,8 @@ public class ReturnHelper {
             for (int j = 0; j < packets.size(); j++) {
                 if (packets.get(j).getTransfer().getPointToTransfer() == null) {
                     double packetValue = packets.get(j).getTransfer().getBalanceNumber().getValue();
-                    if (bins.get(i).getValue() >= packetValue) {
+                    if (bins.get(i).getValue() > packetValue || Math.abs(bins.get(i).getValue()
+                            - packetValue) < com.consorsbank.parser.Helper.EPSILON) {
                         // assign return transfer
                         bins.get(i).setValue(bins.get(i).getValue() - packetValue);
                         packets.get(j).getTransfer()
@@ -278,7 +282,7 @@ public class ReturnHelper {
 
     public static ArrayList<ReturnWindow> readSellers() throws IOException {
         ArrayList<ReturnWindow> returnWindows = new ArrayList<ReturnWindow>();
-        File f = new File(Helper.PATH_TO_SELLERS);
+        File f = new File(com.consorsbank.parser.Helper.PATH_TO_SELLERS);
         try (BufferedReader br = new BufferedReader(new FileReader(f))) {
             String line;
             while ((line = br.readLine()) != null) {

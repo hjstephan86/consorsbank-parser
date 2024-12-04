@@ -304,10 +304,11 @@ public class App {
                         + Helper.CONSOLE_COLOR_YELLOW + "g" + Helper.CONSOLE_COLOR_RESET
                         + " for CSV generation or "
                         + Helper.CONSOLE_COLOR_YELLOW + "n" + Helper.CONSOLE_COLOR_RESET
-                        + " for no tracking id available or "
+                        + " for 'no tracking id available' or "
                         + Helper.CONSOLE_COLOR_YELLOW + "s" + Helper.CONSOLE_COLOR_RESET
-                        + " to skip the return transfer or"
-                        + " q to quit.");
+                        + " to skip the return transfer or "
+                        + Helper.CONSOLE_COLOR_RED + "q" + Helper.CONSOLE_COLOR_RESET
+                        + " to quit.");
     }
 
     private static void promptForTrackingIdAssignment(Transfer transfer) {

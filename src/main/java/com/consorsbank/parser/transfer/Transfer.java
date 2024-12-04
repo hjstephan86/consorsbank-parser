@@ -230,4 +230,8 @@ public class Transfer implements Comparable<Transfer> {
     public void setPositionInMonth(int positionInMonth) {
         this.positionInMonth = positionInMonth;
     }
+
+    public String toString() {
+        return this.dateFormat.format(this.date) + " " + this.getBalanceNumber().getValue() + "EUR";
+    }
 }
